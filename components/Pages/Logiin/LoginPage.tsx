@@ -7,19 +7,37 @@ import Image from 'next/image'
 import { ButtonComponents } from '@/components/CommonComponents/Fields/Button/ButtonComponents'
 import { useRouter } from 'next/navigation';
 import { loginDataI } from './Components/LoginStateI';
+import { validateEmail, validatePassword } from '@/utils/Helper';
 const LoginPage = () => {
     const navigate = useRouter();
     const [formData, setFormData] = useState<loginDataI>({
         email: "",
         password: ""
     });
+    const [emailError, setEmailError] = useState<boolean>(false);
+    const [passwordError, setPasswordError] = useState<boolean>(false);
     const handleLoginInputChange = (key: string, value: string) => {
+        if (validateEmail(formData?.email)) {
+            setEmailError(false);  
+        }
+        if (validatePassword(formData?.password)) {
+            setPasswordError(false);
+        }
         setFormData((prevState) => ({
             ...prevState,
             [key]: value
         }))
     }
     const handleNavigate = () => {
+        if (!validateEmail(formData?.email)) {
+            setEmailError(true);
+            return;
+        }
+        if (!validatePassword(formData?.password)) {
+            setPasswordError(true);
+            return;
+        }
+        
         navigate.push(`/citation`)
     }
     return (
@@ -42,15 +60,24 @@ const LoginPage = () => {
                             fieldName=''
                             value={formData?.email}
                             placeholder='Email address'
-                            onChangeValue={(e)=>handleLoginInputChange("email",e)}
+                            onChangeValue={(e) => handleLoginInputChange("email", e)}
                         />
+                        {emailError && <p style={{ fontSize: "10px", fontStyle: "italic",color:"red" }}>
+                            Enter Valid Email
+                        </p>}
                     </div>
                     <div className="_password_container">
                         <TextBoxComponent
                             placeholder='Password'
                             value={formData?.password}
-                            onChangeValue={(e)=>handleLoginInputChange("password",e)}
+                            onChangeValue={(e) => handleLoginInputChange("password", e)}
                         />
+                        {
+                            passwordError &&
+                            <p style={{ fontSize: "10px", fontStyle: "italic",color:"red" }}>
+                                Password must be at least 8 characters long, contain at least one letter, one number, and one special character.
+                            </p>
+                        }
                     </div>
 
                     <div className="_button_container">
