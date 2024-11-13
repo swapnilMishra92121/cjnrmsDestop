@@ -1,9 +1,4 @@
 
-
-
-
-
-# Check if running on Windows
 # Check if running on Windows
 Write-Host "Running on Windows"
 

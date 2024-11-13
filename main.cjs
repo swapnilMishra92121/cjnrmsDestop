@@ -41,7 +41,7 @@ function createWindow() {
   appWindow.loadURL(
     isDev
       ? 'http://localhost:3000' // Next.js dev server URL
-      : `file:///C:/Users/swapn/Downloads/qss/cjncitation/out/index.html` // Adjusted production path
+      : `file:///C:/Users/swapn/Downloads/qss/cjnrmsDestop/out/index.html` // Adjusted production path
   );
 
   if (isDev) {
@@ -66,6 +66,10 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
+
+
+
+
 
 function registerIPCHandlers() {
   ipcMain.handle('get-printers', async () => {
@@ -95,13 +99,13 @@ function registerIPCHandlers() {
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
       const args = [
-        `C:/Users/swapn/Downloads/qss/cjncitation/CJNCitationService/parser.db`,
+        `C:/Users/swapn/Downloads/qss/cjnrmsDestop/CJNCitationService/parser.db`,
         someParameter,
         'read',
       ].join(' ');
 
       sudo.exec(
-        `C:/Users/swapn/Downloads/qss/cjncitation/litedb_demo3.exe ${args}`,
+        `C:/Users/swapn/Downloads/qss/cjnrmsDestop/litedb_demo3.exe ${args}`,
         { name: 'LiteDB App' },
         (error, stdout, stderr) => {
           if (error) {
