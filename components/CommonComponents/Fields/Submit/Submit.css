@@ -1,0 +1,32 @@
+.Submit {
+  gap: 10px;
+  display: flex;
+  margin-top: 2%;
+}
+.cancel {
+  background-color: white;
+  border: none;
+  border-radius: 3px;
+  height: 36px;
+  width: 81px;
+  text-decoration: underline;
+}
+.save {
+  background-color: #3672b3;
+  color: white;
+  border-radius: 5px;
+  height: 36px;
+  /* width: 77px; */
+  border: none;
+}
+.related_button{
+  background-color: #3672b3;
+  color: white;
+  border-radius: 5px;
+  height: 36px;
+  border: none;
+}
+.Submit_container {
+  display: flex;
+  justify-content: right;
+}
