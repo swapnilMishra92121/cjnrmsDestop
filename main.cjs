@@ -7,7 +7,7 @@ const { exec } = require('child_process');
 
 
 // const isDev = process.env.NODE_ENV !== 'production' && !app.isPackaged;
-const isDev = false;
+const isDev = true;
 
 let appWindow; // Corrected to ensure a single global appWindow instance
 
@@ -40,7 +40,7 @@ function createWindow() {
   appWindow.loadURL(
     isDev
       ? 'http://localhost:3000' // Next.js dev server URL
-      : `file:///${path.join(__dirname, "out", "index.html")}` // Adjusted production path
+      : `file:///${path.join(__dirname, "out", "index.html")}`
   );
 
   if (isDev) {

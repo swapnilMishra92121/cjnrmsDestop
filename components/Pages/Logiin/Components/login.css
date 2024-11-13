@@ -1,0 +1,27 @@
+._login_form_container_body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 95vh;
+    width: 95%;
+}
+._login_form_container_fluid{
+    min-height: 200px;
+    min-width: 400px;
+    width: 500px;
+    height: 300px;
+    border: 1px solid black;
+    padding: 10px 50px;
+    border-radius: 5px;
+}
+._email_address_container,._password_container{
+    margin-bottom: 10px;
+}
+._button_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+._sign_in_title_container{
+    margin-top: -10px;
+}
