@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Form, FormikProvider, useFormik } from "formik";
 import styled from "styled-components";
 import Flex from "antd/lib/flex";
@@ -19,6 +19,20 @@ type VehicleProps = {
   isGlanceView?: boolean;
 };
 
+interface PlateData {
+  Plate: string;
+  id: string;
+}
+
+export interface parserVehicleDetailsResponce {
+  _id: number;
+  Fields: string;
+  Content: string;
+  FileName: string;
+  Success: boolean;
+  Plate: string;
+}
+
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
   ${({ $customPadding }) => `padding: ${$customPadding ?? "16px"};`}
 `;
@@ -28,6 +42,9 @@ const Vehicles: FC<VehicleProps> = ({
   customPadding,
   isGlanceView,
 }) => {
+  const [Plate, setPlate] = useState<PlateData[]>([]);
+  const [allData, setAllData] = useState<parserVehicleDetailsResponce[]>([]);
+
   const vehicleForm = useFormik({
     initialValues: {
       plate: "",
@@ -55,6 +72,32 @@ const Vehicles: FC<VehicleProps> = ({
       console.log(values);
     },
   });
+
+  const initialRender = () => {
+    window.electronAPI
+      .readXMLFiles("parser_vehicle_details")
+      .then((e: string) => {
+        const ParserVehicleDetailsResponce: parserVehicleDetailsResponce[] = e
+          .trim()
+          .split("\n")
+          .map((line: string) => JSON.parse(line));
+
+        const arr: PlateData[] = ParserVehicleDetailsResponce.map((val) => ({
+          Plate: val.Plate ? val.Plate : "",
+          id: String(val._id),
+        }));
+
+        setAllData(ParserVehicleDetailsResponce);
+        setPlate(arr);
+      });
+  };
+
+  useEffect(() => {
+    initialRender();
+  }, []);
+
+
+  console.log(Plate)
 
   return (
     <StyledFormContainer $customPadding={customPadding}>

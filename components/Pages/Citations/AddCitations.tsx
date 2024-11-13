@@ -17,7 +17,7 @@ import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsCompon
 const { SplitView, GridView } = images;
 
 export const AddCitations: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
 
   return (

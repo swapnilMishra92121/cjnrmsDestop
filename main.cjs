@@ -33,7 +33,6 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   });
-  
 
 
 
@@ -41,7 +40,7 @@ function createWindow() {
   appWindow.loadURL(
     isDev
       ? 'http://localhost:3000' // Next.js dev server URL
-      : `file:///C:/Users/swapn/Downloads/qss/cjnrmsDestop/out/index.html` // Adjusted production path
+      : `file:///${path.join(__dirname, "out", "index.html")}` // Adjusted production path
   );
 
   if (isDev) {
@@ -99,13 +98,13 @@ function registerIPCHandlers() {
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
       const args = [
-        `C:/Users/swapn/Downloads/qss/cjnrmsDestop/CJNCitationService/parser.db`,
+        path.join(__dirname, "CJNCitationService", "parser.db"),
         someParameter,
         'read',
       ].join(' ');
 
       sudo.exec(
-        `C:/Users/swapn/Downloads/qss/cjnrmsDestop/litedb_demo3.exe ${args}`,
+        `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
         { name: 'LiteDB App' },
         (error, stdout, stderr) => {
           if (error) {
@@ -162,7 +161,7 @@ function registerIPCHandlers() {
   ipcMain.handle('update-json-data', async (event, updatedData) => {
     const filePath = path.join(__dirname, 'Vehicle', 'data.json');
 
-    console.log(updatedData,'kjshfd')
+    console.log(updatedData, 'kjshfd')
     try {
       const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
       let jsonData = [];
