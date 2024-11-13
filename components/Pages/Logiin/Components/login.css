@@ -4,15 +4,17 @@
     justify-content: center;
     height: 95vh;
     width: 95%;
+    background-color: gainsboro;
 }
 ._login_form_container_fluid{
     min-height: 200px;
     min-width: 400px;
     width: 500px;
     height: 300px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     padding: 10px 50px;
     border-radius: 5px;
+    background-color: #fff;
 }
 ._email_address_container,._password_container{
     margin-bottom: 10px;

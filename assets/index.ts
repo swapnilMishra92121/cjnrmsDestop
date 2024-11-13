@@ -34,7 +34,7 @@ import Enlarge from "./icons/enlarge.svg";
 import ArrowIcon from "./icons/ArrowIcon.svg";
 import SplitView from "./icons/split-view.svg";
 import GridView from "./icons/grid.svg";
-
+import Logo from "./icons/mini.png"
 const images = {
   Menu,
   Car,
@@ -71,5 +71,6 @@ const images = {
   ArrowIcon,
   SplitView,
   GridView,
+  Logo
 };
 export default images;

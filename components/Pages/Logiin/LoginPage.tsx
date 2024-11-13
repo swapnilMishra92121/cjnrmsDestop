@@ -8,6 +8,9 @@ import { ButtonComponents } from '@/components/CommonComponents/Fields/Button/Bu
 import { useRouter } from 'next/navigation';
 import { loginDataI } from './Components/LoginStateI';
 import { validateEmail, validatePassword } from '@/utils/Helper';
+import logo from "../../../assets/icons/mini.png"
+import images from '@/assets';
+
 const LoginPage = () => {
     const navigate = useRouter();
     const [formData, setFormData] = useState<loginDataI>({
@@ -44,10 +47,12 @@ const LoginPage = () => {
         <>
             <div className="_login_form_container_body">
                 <div className="_login_form_container_fluid">
-                    <div className="_logo_conatiner">
+                    <div className="_logo_conatiner" style={{display:"flex",gap:"10px", alignItems:"center"}}>
                         <Image
-                            src={""}
+                            src={images?.Login}
                             alt=''
+                            height={40}
+                            width={40}
                         />
                         <h3>CJN</h3>
                     </div>
