@@ -160,8 +160,6 @@ function registerIPCHandlers() {
 
   ipcMain.handle('update-json-data', async (event, updatedData) => {
     const filePath = path.join(__dirname, 'Vehicle', 'data.json');
-
-    console.log(updatedData, 'kjshfd')
     try {
       const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
       let jsonData = [];
