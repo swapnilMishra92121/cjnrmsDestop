@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
-const Service = require("node-windows").Service;
 
 
 
