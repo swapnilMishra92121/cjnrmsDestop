@@ -7,8 +7,8 @@ const page = () => {
 
   return (
     <>
-      <LoginPage/>
-      {/* <AddCitations /> */}
+      {/* <LoginPage/> */}
+      <AddCitations />
     </>
   );
 };

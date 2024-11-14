@@ -39,8 +39,6 @@ export interface parserVehicleDetailsResponce {
   FileName: string;
   Success: boolean;
   Plate: string;
-
- 
 }
 
 

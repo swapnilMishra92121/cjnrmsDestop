@@ -71,6 +71,8 @@ const Vehicles: FC<VehicleProps> = ({
           .trim()
           .split("\n")
           .map((line: string) => JSON.parse(line));
+       
+          console.log("ParserVehicleDetailsResponce",ParserVehicleDetailsResponce);
 
         const arr: PlateData[] = ParserVehicleDetailsResponce.map((val) => ({
           lable: val.Plate ? val.Plate : "",

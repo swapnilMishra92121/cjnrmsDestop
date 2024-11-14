@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   EnhancedCheckbox,
   EnhancedInput,
@@ -12,6 +12,8 @@ import styled from "styled-components";
 import Flex from "antd/lib/flex";
 import EnhancedSelect from "../../../../CommonComponents/Fields/EnhancedInput/EnhancedSelect";
 import Button from "antd/lib/button";
+import { parserVehicleDetailsResponce, PlateData } from "../Vehicles/VehiclesI";
+import { perticulardataI } from "./Subjectsl";
 
 type SubjectProps = {
   customWidth?: string;
@@ -41,8 +43,12 @@ const Subject: FC<SubjectProps> = ({
   customPadding,
   isGlanceView = false,
 }) => {
+  const [allData, setAllData] = useState<parserVehicleDetailsResponce[]>([]);
+  const [Plate, setPlate] = useState<PlateData[]>([]);
+
   const subjectForm = useFormik({
     initialValues: {
+      plate:"",
       identificationType: "1",
       subjectType: "1",
       dlState: "",
@@ -105,6 +111,31 @@ const Subject: FC<SubjectProps> = ({
   const isJuvenileDetailsRequired =
     juvenileSubjectForm.values.juvenileInfoRequired;
 
+    const initialRender = () => {
+      window.electronAPI
+        .readXMLFiles("driver_details")
+        .then((e: string) => {
+          const ParserSubjectDetailsResponce: any = e
+            .trim()
+            .split("\n")
+            .map((line: string) => JSON.parse(line));
+            console.log("Hello world",ParserSubjectDetailsResponce);
+
+            const arr: PlateData[] = ParserSubjectDetailsResponce?.map((val:any) => ({
+              lable: val?.DriverName ? val.DriverName : "",
+              value: String(val._id),
+            }));
+
+            setAllData(ParserSubjectDetailsResponce);
+            setPlate(arr);
+
+        });
+    };
+
+useEffect(()=>{
+  initialRender();
+},[]);
+
   return (
     <StyledFormContainer $customPadding={customPadding}>
       <Flex gap="large" vertical wrap>
@@ -127,6 +158,7 @@ const Subject: FC<SubjectProps> = ({
               </Flex>
 
               <Flex gap="middle" align="flex-end" wrap>
+             
                 <EnhancedInput name="dl" label="DL" width="20%" />
                 <EnhancedInput name="dlState" label="DL State" width="10%" />
                 <EnhancedCheckbox name="cdl">CDL</EnhancedCheckbox>
@@ -135,10 +167,57 @@ const Subject: FC<SubjectProps> = ({
 
               <Flex gap="middle" align="flex-end" wrap>
                 <EnhancedInput name="lastName" label="Last Name" width="20%" />
-                <EnhancedInput
-                  name="firstName"
+                <EnhancedSelect
+                  name="firstname"
                   label="First Name"
-                  width="20%"
+                  containerStyles={{ width: "20%" }}
+                  options={Plate.map((val) => ({
+                    value: val.value,
+                    label: val.lable,
+                  })).filter((val) => val.label)}
+                  onChange={(e) => {
+                    subjectForm.setFieldValue("plate", e);
+
+                    const perticulardata: perticulardataI = JSON.parse(
+                      allData.find((item) => item._id === Number(e))?.Fields ||
+                        "{}"
+                    );
+                    console.log("perticular data",perticulardata);
+
+                    subjectForm.setValues({
+                      ...subjectForm.values,
+                      plate: perticulardata?.plate ,
+                      identificationType: perticulardata?.identificationType ,
+                      subjectType: perticulardata?.subjectType,
+                      dlState: perticulardata?.dlState,
+                      cdl: perticulardata?.cdl,
+                      parked: perticulardata?.parked,
+                      lastName: perticulardata?.lastName,
+                      firstName: perticulardata?.firstName,
+                      middleName: perticulardata?.middleName,
+                      suffix: perticulardata?.suffix,
+                      address: perticulardata?.Address,
+                      apt: perticulardata?.apt,
+                      city: perticulardata?.City,
+                      state: perticulardata?.State,
+                      zip: perticulardata?.Zip,
+                      race: perticulardata?.race,
+                      gender: perticulardata?.gender,
+                      dob: perticulardata?.DOB,
+                      age: perticulardata?.age,
+                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense,
+                      juvenileOffenseType: perticulardata?.juvenileOffenseType,
+                      height: perticulardata?.Height,
+                      weight: perticulardata?.Weight,
+                      hair: perticulardata?.hair,
+                      eyes: perticulardata?.Eye,
+                      driver: perticulardata?.driver,
+                      owner: perticulardata?.owner,
+                      citee: perticulardata?.citee,
+                      passenger: perticulardata?.passenger,
+                    });
+                  }}
+                  value={subjectForm.values.firstName}
                 />
                 <EnhancedInput
                   name="middleName"
