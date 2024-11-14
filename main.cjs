@@ -2,11 +2,20 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const sudo = require("sudo-prompt");
-const {  exec } = require("child_process");
+const { exec } = require("child_process");
+const Service = require("node-windows").Service;
+
+
+
+
+
+
 
 
 const isDev = false;
-let appWindow; 
+let appWindow;
+
+
 
 
 function runAdminScript() {
@@ -94,9 +103,6 @@ function registerIPCHandlers() {
 
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
-
-      console.log(path.join(__dirname, "CJNCitationService", "parser.db"))
-      console.log(path.join(__dirname, "litedb_demo3.exe"))
       const args = [
         path.join(__dirname, "CJNCitationService", "parser.db"),
         someParameter,
