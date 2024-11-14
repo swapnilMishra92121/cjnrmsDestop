@@ -1,15 +1,12 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const sudo = require('sudo-prompt');
-const { exec } = require('child_process');
+const sudo = require("sudo-prompt");
+const {  exec } = require("child_process");
 
 
-
-// const isDev = process.env.NODE_ENV !== 'production' && !app.isPackaged;
 const isDev = false;
-
-let appWindow; // Corrected to ensure a single global appWindow instance
+let appWindow; 
 
 
 function runAdminScript() {
@@ -52,10 +49,10 @@ function createWindow() {
   });
 }
 
-app.on('ready', () => {
+app.on('ready', async () => {
   runAdminScript();
   createWindow();
-  registerIPCHandlers(); // Register IPC handlers once the app is ready
+  registerIPCHandlers();
 });
 
 app.on('window-all-closed', () => {
@@ -97,6 +94,9 @@ function registerIPCHandlers() {
 
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
+
+      console.log(path.join(__dirname, "CJNCitationService", "parser.db"))
+      console.log(path.join(__dirname, "litedb_demo3.exe"))
       const args = [
         path.join(__dirname, "CJNCitationService", "parser.db"),
         someParameter,
@@ -121,22 +121,30 @@ function registerIPCHandlers() {
   });
 
   ipcMain.handle('create-output-json-file', async (event, someParameter = {}) => {
-    const filePath = path.join(__dirname, 'Vehicle', 'data.json');
+    if (!someParameter.plate) {
+      throw new Error("Plate number is required in someParameter to create the file.");
+    }
+
+    const filePath = path.join(__dirname, 'Vehicle', `${someParameter.plate}.json`);
+
     try {
+      // Check if file exists. If not, initialize with an empty array.
       const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
       let jsonData = [];
 
+      // Parse the existing file content or initialize as an empty array if parsing fails.
       try {
         jsonData = JSON.parse(fileContent);
       } catch {
         console.warn('Invalid JSON format. Initializing empty array.');
       }
 
+      // Add new data with a unique id based on current array length.
       jsonData.push({ ...someParameter, id: jsonData.length });
       fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
-      console.log('Data added successfully to JSON file!');
 
-      return 'Data added successfully';
+      console.log(`Data added successfully to ${someParameter.plate}.json!`);
+      return `Data added successfully to ${someParameter.plate}.json`;
     } catch (error) {
       console.error('Error writing to JSON file:', error);
       throw error;

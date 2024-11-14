@@ -54,7 +54,10 @@
       "backend/**",
       "pages/**",
       "node_modules/**",
+      "CJNCitationService/**",
+      "Vehicle/**",
       "package.json",
+      "litedb_demo3.exe",
       "out/**"
     ],
     "extraResources": [

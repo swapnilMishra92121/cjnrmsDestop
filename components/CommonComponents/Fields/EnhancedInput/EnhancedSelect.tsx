@@ -32,7 +32,7 @@ const EnhancedSelect: FC<EnhancedSelectProps> = ({
   showTooltip = true,
   ...rest
 }) => {
-  const { values, handleChange, ...restProps } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext();
 
   const ref = React.useRef(null);
 
@@ -44,9 +44,8 @@ const EnhancedSelect: FC<EnhancedSelectProps> = ({
         ref={ref}
         options={options}
         value={(values as Record<string, any>)[name]}
-        onChange={(e) => {
-          const selected = options.find((option) => option.value === e);
-          handleChange({ target: { name, value: selected ?? e } });
+        onChange={(value) => {
+          setFieldValue(name, value);
         }}
         showSearch
         allowClear
@@ -67,7 +66,6 @@ const EnhancedSelect: FC<EnhancedSelectProps> = ({
             }
           }
         }}
-        {...restProps}
         {...rest}
       />
     </Flex>
