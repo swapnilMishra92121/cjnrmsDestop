@@ -6,6 +6,7 @@ interface ElectronAPI {
 	createOutputJSONFile: (data: {}) => Promise<string>;
 	getJSONData: () => Promise<any>; // Adjust the type based on expected data
 	updateJSONData: (updatedData: {}) => Promise<string>;
+	createSubjectOutputJsonFile:(data: {}) => Promise<string>;
   }
   
   declare global {

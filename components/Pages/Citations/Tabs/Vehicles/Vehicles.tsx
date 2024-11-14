@@ -56,8 +56,6 @@ const Vehicles: FC<VehicleProps> = ({
       is16PlusPass: false,
     },
     onSubmit: (values: FieldData) => {
-      
-
       window.electronAPI.createOutputJSONFile(values);
       openNotificationWithIcon("success", successAddedMessage);
     },

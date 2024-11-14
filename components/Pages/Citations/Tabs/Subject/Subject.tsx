@@ -14,6 +14,9 @@ import EnhancedSelect from "../../../../CommonComponents/Fields/EnhancedInput/En
 import Button from "antd/lib/button";
 import { parserVehicleDetailsResponce, PlateData } from "../Vehicles/VehiclesI";
 import { perticulardataI } from "./Subjectsl";
+import { formatDateFromString } from "@/utils/Helper";
+import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
+import { successAddedMessage } from "@/utils/const";
 
 type SubjectProps = {
   customWidth?: string;
@@ -48,7 +51,7 @@ const Subject: FC<SubjectProps> = ({
 
   const subjectForm = useFormik({
     initialValues: {
-      plate:"",
+      plate: "",
       identificationType: "1",
       subjectType: "1",
       dlState: "",
@@ -80,6 +83,8 @@ const Subject: FC<SubjectProps> = ({
     },
     onSubmit: (values) => {
       console.log(values);
+      window.electronAPI.createSubjectOutputJsonFile(values);
+      openNotificationWithIcon("success", successAddedMessage);
     },
   });
 
@@ -111,36 +116,36 @@ const Subject: FC<SubjectProps> = ({
   const isJuvenileDetailsRequired =
     juvenileSubjectForm.values.juvenileInfoRequired;
 
-    const initialRender = () => {
-      window.electronAPI
-        .readXMLFiles("driver_details")
-        .then((e: string) => {
-          const ParserSubjectDetailsResponce: any = e
-            .trim()
-            .split("\n")
-            .map((line: string) => JSON.parse(line));
-            console.log("Hello world",ParserSubjectDetailsResponce);
+  const initialRender = () => {
+    window.electronAPI
+      .readXMLFiles("driver_details")
+      .then((e: string) => {
+        const ParserSubjectDetailsResponce: any = e
+          .trim()
+          .split("\n")
+          .map((line: string) => JSON.parse(line));
+        console.log("Hello world", ParserSubjectDetailsResponce);
 
-            const arr: PlateData[] = ParserSubjectDetailsResponce?.map((val:any) => ({
-              lable: val?.DriverName ? val.DriverName : "",
-              value: String(val._id),
-            }));
+        const arr: PlateData[] = ParserSubjectDetailsResponce?.map((val: any) => ({
+          lable: val?.DriverName ? val.DriverName : "",
+          value: String(val._id),
+        }));
 
-            setAllData(ParserSubjectDetailsResponce);
-            setPlate(arr);
+        setAllData(ParserSubjectDetailsResponce);
+        setPlate(arr);
 
-        });
-    };
+      });
+  };
 
-useEffect(()=>{
-  initialRender();
-},[]);
+  useEffect(() => {
+    initialRender();
+  }, []);
 
   return (
     <StyledFormContainer $customPadding={customPadding}>
       <Flex gap="large" vertical wrap>
         <FormikProvider value={subjectForm}>
-          <Form>
+          <Form onSubmit={subjectForm?.handleSubmit}>
             <Flex gap="middle" vertical wrap>
               <Flex gap="middle" align="flex-end" justify="space-between" wrap>
                 <EnhancedRadioGroup
@@ -158,7 +163,7 @@ useEffect(()=>{
               </Flex>
 
               <Flex gap="middle" align="flex-end" wrap>
-             
+
                 <EnhancedInput name="dl" label="DL" width="20%" />
                 <EnhancedInput name="dlState" label="DL State" width="10%" />
                 <EnhancedCheckbox name="cdl">CDL</EnhancedCheckbox>
@@ -180,41 +185,41 @@ useEffect(()=>{
 
                     const perticulardata: perticulardataI = JSON.parse(
                       allData.find((item) => item._id === Number(e))?.Fields ||
-                        "{}"
+                      "{}"
                     );
-                    console.log("perticular data",perticulardata);
+                    console.log("perticular data", perticulardata);
 
                     subjectForm.setValues({
                       ...subjectForm.values,
-                      plate: perticulardata?.plate ,
-                      identificationType: perticulardata?.identificationType ,
-                      subjectType: perticulardata?.subjectType,
-                      dlState: perticulardata?.dlState,
-                      cdl: perticulardata?.cdl,
-                      parked: perticulardata?.parked,
-                      lastName: perticulardata?.lastName,
-                      firstName: perticulardata?.firstName,
-                      middleName: perticulardata?.middleName,
-                      suffix: perticulardata?.suffix,
-                      address: perticulardata?.Address,
-                      apt: perticulardata?.apt,
-                      city: perticulardata?.City,
-                      state: perticulardata?.State,
-                      zip: perticulardata?.Zip,
-                      race: perticulardata?.race,
-                      gender: perticulardata?.gender,
-                      dob: perticulardata?.DOB,
-                      age: perticulardata?.age,
-                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense,
-                      juvenileOffenseType: perticulardata?.juvenileOffenseType,
-                      height: perticulardata?.Height,
-                      weight: perticulardata?.Weight,
-                      hair: perticulardata?.hair,
-                      eyes: perticulardata?.Eye,
-                      driver: perticulardata?.driver,
-                      owner: perticulardata?.owner,
-                      citee: perticulardata?.citee,
-                      passenger: perticulardata?.passenger,
+                      plate: perticulardata?.plate ? perticulardata?.plate :"",
+                      identificationType: perticulardata?.identificationType  ?perticulardata?.identificationType :"-",
+                      subjectType: perticulardata?.subjectType ? perticulardata?.subjectType :"",
+                      dlState: perticulardata?.dlState ? perticulardata?.dlState :"",
+                      cdl: perticulardata?.cdl ? perticulardata?.cdl :false,
+                      parked: perticulardata?.parked  ?perticulardata?.parked  :false,
+                      lastName: perticulardata?.lastName ? perticulardata?.lastName :"" ,
+                      firstName: perticulardata?.firstName ? perticulardata?.firstName :"",
+                      middleName: perticulardata?.middleName ? perticulardata?.middleName :"",
+                      suffix: perticulardata?.suffix ? perticulardata?.suffix :"",
+                      address: perticulardata?.Address ? perticulardata?.Address :"",
+                      apt: perticulardata?.apt ?  perticulardata?.apt :"",
+                      city: perticulardata?.City ? perticulardata?.City :"",
+                      state: perticulardata?.State ? perticulardata?.State :"",
+                      zip: perticulardata?.Zip ?  perticulardata?.Zip :"",
+                      race: perticulardata?.race ? perticulardata?.race :"",
+                      gender: perticulardata?.gender ? perticulardata?.gender : "",
+                      dob:perticulardata?.DOB ? formatDateFromString(perticulardata?.DOB) :"",
+                      age: perticulardata?.age ? perticulardata?.age :"",
+                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense  ? perticulardata?.isJuvenileCourtOffense :false,
+                      juvenileOffenseType: perticulardata?.juvenileOffenseType ? perticulardata?.juvenileOffenseType :"",
+                      height: perticulardata?.Height ? perticulardata?.Height :"",
+                      weight: perticulardata?.Weight ? perticulardata?.Weight :"",
+                      hair: perticulardata?.hair ? perticulardata?.hair :"",
+                      eyes: perticulardata?.Eye ? perticulardata?.Eye :"",
+                      driver: perticulardata?.driver ? perticulardata?.driver :false,
+                      owner: perticulardata?.owner ? perticulardata?.owner : false,
+                      citee: perticulardata?.citee ? perticulardata?.citee :false,
+                      passenger: perticulardata?.passenger ? perticulardata?.passenger : false,
                     });
                   }}
                   value={subjectForm.values.firstName}
