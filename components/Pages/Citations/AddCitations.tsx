@@ -14,12 +14,12 @@ import GlanceView from "./GlanceView";
 import images from "../../../assets";
 import Image from "next/image";
 import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsComponents";
-const { SplitView, GridView } = images;
+const { SplitView, GridView,Setting } = images;
 
 export const AddCitations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
-  const [showLoader,setShowLoader] = useState<boolean>(false);
+
   return (
     <>
 
@@ -58,6 +58,22 @@ export const AddCitations: React.FC = () => {
                   icon={
                     <Image
                       src={GridView}
+                      alt="grid view"
+                      height={16}
+                      width={16}
+                    />
+                  }
+                  style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
+                  title="Grid View"
+                />
+              </Tooltip>
+
+              <Tooltip title="Setting" placement="bottom">
+                <Button
+                  onClick={() => {}}
+                  icon={
+                    <Image
+                      src={Setting}
                       alt="grid view"
                       height={16}
                       width={16}
