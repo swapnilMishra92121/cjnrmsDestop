@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "set NODE_OPTIONS=--openssl-legacy-provider && next dev",
     "build": "set NODE_OPTIONS=--openssl-legacy-provider && next build",
-    "start": "next start",
+    "start": "start start-all.bat",
     "type-check": "tsc --noEmit",
     "backend": "node backend/server.js",
     "electron": "electron .",
@@ -54,7 +54,10 @@
       "backend/**",
       "pages/**",
       "node_modules/**",
+      "CJNCitationService/**",
+      "Vehicle/**",
       "package.json",
+      "litedb_demo3.exe",
       "out/**"
     ],
     "extraResources": [

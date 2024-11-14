@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Subject from "./Tabs/Subject/Subject";
 import Vehicles from "./Tabs/Vehicles/Vehicles";
 import { Location } from "./Tabs/Location/Location";
@@ -19,6 +19,9 @@ const { SplitView, GridView,Setting } = images;
 export const AddCitations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
+
+
+  
 
   return (
     <>

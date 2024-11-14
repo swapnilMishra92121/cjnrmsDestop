@@ -58,11 +58,11 @@ const Subject: FC<SubjectProps> = ({
       state: "",
       zip: "",
       race: "",
-      gender: "2",
+      gender: "",
       dob: "",
       age: "",
       isJuvenileCourtOffense: true,
-      juvenileOffenseType: "1",
+      juvenileOffenseType: "",
       height: "",
       weight: "",
       hair: "",
@@ -118,7 +118,6 @@ const Subject: FC<SubjectProps> = ({
                   name="identificationType"
                   items={identificationTypeOptions}
                 />
-
                 <EnhancedRadioGroup
                   label="Subject Type"
                   dir="row"
@@ -129,17 +128,7 @@ const Subject: FC<SubjectProps> = ({
 
               <Flex gap="middle" align="flex-end" wrap>
                 <EnhancedInput name="dl" label="DL" width="20%" />
-                <EnhancedSelect
-                  name="dlState"
-                  label="DL State"
-                  options={[
-                    { value: "CA", label: "CA" },
-                    { value: "TX", label: "TX" },
-                    { value: "NY", label: "NY" },
-                  ]}
-                  containerStyles={{ width: customWidth ?? "10%" }}
-                />
-
+                <EnhancedInput name="dlState" label="DL State" width="10%" />
                 <EnhancedCheckbox name="cdl">CDL</EnhancedCheckbox>
                 <EnhancedCheckbox name="parked">Parked</EnhancedCheckbox>
               </Flex>
@@ -156,49 +145,20 @@ const Subject: FC<SubjectProps> = ({
                   label="Middle Name"
                   width="20%"
                 />
-                <EnhancedSelect
-                  name="suffix"
-                  label="Suffix"
-                  containerStyles={{ width: customWidth ?? "10%" }}
-                  options={[
-                    { label: "--", value: "1" },
-                    { label: "Jr", value: "2" },
-                    { label: "Sr", value: "3" },
-                    { label: "Ms", value: "4" },
-                    { label: "Mrs", value: "5" },
-                    { label: "Mr", value: "6" },
-                  ]}
-                />
+                <EnhancedInput name="suffix" label="Suffix" width="10%" />
               </Flex>
 
               <Flex gap="middle" align="flex-end" wrap>
                 <EnhancedInput name="address" label="Address" width="20%" />
                 <EnhancedInput name="apt" label="Apt" width="5%" />
                 <EnhancedInput name="city" label="City" width="15%" />
-                <EnhancedSelect
-                  name="state"
-                  label="State"
-                  containerStyles={{ width: customWidth ?? "5%" }}
-                  options={[
-                    { label: "CA", value: "ca" },
-                    { label: "TX", value: "tx" },
-                    { label: "NY", value: "ny" },
-                  ]}
-                />
+                <EnhancedInput name="state" label="State" width="5%" />
                 <EnhancedInput name="zip" label="ZIP" width="10%" />
               </Flex>
 
               <Flex gap="middle" align="flex-end" wrap>
                 <EnhancedInput name="race" label="Race" width="15%" />
-                <EnhancedSelect
-                  label="Gender"
-                  name="gender"
-                  containerStyles={{ width: customWidth ?? "10%" }}
-                  options={[
-                    { label: "Male", value: "1" },
-                    { label: "Female", value: "2" },
-                  ]}
-                />
+                <EnhancedInput name="gender" label="Gender" width="10%" />
                 <EnhancedPicker
                   type="date"
                   name="dob"
@@ -210,7 +170,6 @@ const Subject: FC<SubjectProps> = ({
                   <EnhancedCheckbox name="isJuvenileCourtOffense">
                     Juvenile Court Offenses
                   </EnhancedCheckbox>
-
                   <EnhancedRadioGroup
                     name="juvenileOffenseType"
                     dir="row"
@@ -226,26 +185,8 @@ const Subject: FC<SubjectProps> = ({
               <Flex gap="middle" align="flex-end" wrap>
                 <EnhancedInput name="height" label="Height" width="20%" />
                 <EnhancedInput name="weight" label="Weight" width="10%" />
-                <EnhancedSelect
-                  name="hair"
-                  label="Hair"
-                  containerStyles={{ width: customWidth ?? "5%" }}
-                  options={[
-                    { label: "BL", value: "1" },
-                    { label: "BR", value: "2" },
-                    { label: "GR", value: "3" },
-                  ]}
-                />
-                <EnhancedSelect
-                  name="eyes"
-                  label="Eyes"
-                  containerStyles={{ width: customWidth ?? "5%" }}
-                  options={[
-                    { label: "BL", value: "1" },
-                    { label: "BR", value: "2" },
-                    { label: "GR", value: "3" },
-                  ]}
-                />
+                <EnhancedInput name="hair" label="Hair" width="5%" />
+                <EnhancedInput name="eyes" label="Eyes" width="5%" />
               </Flex>
 
               <Flex gap="middle" align="flex-end" justify="space-between" wrap>
@@ -261,6 +202,13 @@ const Subject: FC<SubjectProps> = ({
                 {!isGlanceView && (
                   <Flex gap="middle">
                     <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ marginLeft: "8px" }}
+                    >
+                      Submit
+                    </Button>
+                    <Button
                       onClick={(): void => {
                         subjectForm.resetForm();
                       }}
@@ -273,7 +221,6 @@ const Subject: FC<SubjectProps> = ({
             </Flex>
           </Form>
         </FormikProvider>
-
         {!isGlanceView && (
           <FormikProvider value={juvenileSubjectForm}>
             <Form>
