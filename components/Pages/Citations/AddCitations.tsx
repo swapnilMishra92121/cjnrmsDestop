@@ -19,7 +19,7 @@ const { SplitView, GridView } = images;
 export const AddCitations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
-
+  const [showLoader,setShowLoader] = useState<boolean>(false);
   return (
     <>
 
