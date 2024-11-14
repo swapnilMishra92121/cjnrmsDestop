@@ -24,6 +24,11 @@ type SubjectProps = {
   isGlanceView?: boolean;
 };
 
+interface dummy {
+  value: string,
+  label: string
+}
+
 const identificationTypeOptions = [
   { label: "DL", value: "1" },
   { label: "DVS web", value: "2" },
@@ -80,6 +85,7 @@ const Subject: FC<SubjectProps> = ({
       owner: true,
       citee: false,
       passenger: false,
+      LicenseNumber:""
     },
     onSubmit: (values) => {
       console.log(values);
@@ -124,22 +130,19 @@ const Subject: FC<SubjectProps> = ({
           .trim()
           .split("\n")
           .map((line: string) => JSON.parse(line));
-        console.log("Hello world", ParserSubjectDetailsResponce);
-
         const arr: PlateData[] = ParserSubjectDetailsResponce?.map((val: any) => ({
-          lable: val?.DriverName ? val.DriverName : "",
-          value: String(val._id),
+          lable: JSON.parse(val?.Fields)?.LicenseNumber ? JSON.parse(val?.Fields)?.LicenseNumber : "",
+          value: val?.DriverName,
         }));
-
         setAllData(ParserSubjectDetailsResponce);
         setPlate(arr);
-
       });
   };
 
   useEffect(() => {
     initialRender();
   }, []);
+
 
   return (
     <StyledFormContainer $customPadding={customPadding}>
@@ -164,7 +167,71 @@ const Subject: FC<SubjectProps> = ({
 
               <Flex gap="middle" align="flex-end" wrap>
 
-                <EnhancedInput name="dl" label="DL" width="20%" />
+                {/* <EnhancedInput name="dl" label="DL" width="20%" /> */}
+
+                {/* =============Dl= */}
+
+                <EnhancedSelect
+                  name="LicenseNumber"
+                  label=" DL"
+                  containerStyles={{ width: "20%" }}
+                  options={Plate.map((val) => ({
+                    value: val.value,
+                    label: val.lable,
+                  })).filter((val) => val?.label !== "")}
+                  onChange={(e, val) => {
+                    subjectForm.setFieldValue("LicenseNumber", e);
+                    console.log("e", e);
+                    console.log("val", val);
+                    const perticulardata: any = JSON.parse(
+                      allData.find((item) => item.DriverName === e)?.Fields ||
+                      "{}"
+                    );
+                    console.log("perticular data", perticulardata);
+
+                    subjectForm.setValues({
+                      ...subjectForm.values,
+                      plate: perticulardata?.plate ? perticulardata?.plate : "",
+                      identificationType: perticulardata?.identificationType ? perticulardata?.identificationType : "-",
+                      subjectType: perticulardata?.subjectType ? perticulardata?.subjectType : "",
+                      dlState: perticulardata?.dlState ? perticulardata?.dlState : "",
+                      cdl: perticulardata?.cdl ? perticulardata?.cdl : false,
+                      parked: perticulardata?.parked ? perticulardata?.parked : false,
+                      lastName: perticulardata?.lastName ? perticulardata?.lastName : "",
+                      firstName: perticulardata?.Name,
+                      middleName: perticulardata?.middleName ? perticulardata?.middleName : "",
+                      suffix: perticulardata?.suffix ? perticulardata?.suffix : "",
+                      address: perticulardata?.Address ? perticulardata?.Address : "",
+                      apt: perticulardata?.apt ? perticulardata?.apt : "",
+                      city: perticulardata?.City ? perticulardata?.City : "",
+                      state: perticulardata?.State ? perticulardata?.State : "",
+                      zip: perticulardata?.Zip ? perticulardata?.Zip : "",
+                      race: perticulardata?.race ? perticulardata?.race : "",
+                      gender: perticulardata?.gender ? perticulardata?.gender : "",
+                      dob: perticulardata?.DOB ? formatDateFromString(perticulardata?.DOB) : "",
+                      age: perticulardata?.age ? perticulardata?.age : "",
+                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense ? perticulardata?.isJuvenileCourtOffense : false,
+                      juvenileOffenseType: perticulardata?.juvenileOffenseType ? perticulardata?.juvenileOffenseType : "",
+                      height: perticulardata?.Height ? perticulardata?.Height : "",
+                      weight: perticulardata?.Weight ? perticulardata?.Weight : "",
+                      hair: perticulardata?.hair ? perticulardata?.hair : "",
+                      eyes: perticulardata?.Eye ? perticulardata?.Eye : "",
+                      driver: perticulardata?.driver ? perticulardata?.driver : false,
+                      owner: perticulardata?.owner ? perticulardata?.owner : false,
+                      citee: perticulardata?.citee ? perticulardata?.citee : false,
+                      passenger: perticulardata?.passenger ? perticulardata?.passenger : false,
+                      LicenseNumber:perticulardata?.LicenseNumber ? perticulardata?.LicenseNumber :""
+                    });
+                  }}
+                  value={subjectForm.values.LicenseNumber}
+                />
+
+
+
+
+
+
+
                 <EnhancedInput name="dlState" label="DL State" width="10%" />
                 <EnhancedCheckbox name="cdl">CDL</EnhancedCheckbox>
                 <EnhancedCheckbox name="parked">Parked</EnhancedCheckbox>
@@ -172,8 +239,9 @@ const Subject: FC<SubjectProps> = ({
 
               <Flex gap="middle" align="flex-end" wrap>
                 <EnhancedInput name="lastName" label="Last Name" width="20%" />
-                <EnhancedSelect
-                  name="firstname"
+                <EnhancedInput name="firstName" label="First Name" width="20%" />
+                {/* <EnhancedSelect
+                  name="firstName"
                   label="First Name"
                   containerStyles={{ width: "20%" }}
                   options={Plate.map((val) => ({
@@ -181,7 +249,7 @@ const Subject: FC<SubjectProps> = ({
                     label: val.lable,
                   })).filter((val) => val.label)}
                   onChange={(e) => {
-                    subjectForm.setFieldValue("plate", e);
+                    subjectForm.setFieldValue("firstName", e);
 
                     const perticulardata: perticulardataI = JSON.parse(
                       allData.find((item) => item._id === Number(e))?.Fields ||
@@ -191,39 +259,39 @@ const Subject: FC<SubjectProps> = ({
 
                     subjectForm.setValues({
                       ...subjectForm.values,
-                      plate: perticulardata?.plate ? perticulardata?.plate :"",
-                      identificationType: perticulardata?.identificationType  ?perticulardata?.identificationType :"-",
-                      subjectType: perticulardata?.subjectType ? perticulardata?.subjectType :"",
-                      dlState: perticulardata?.dlState ? perticulardata?.dlState :"",
-                      cdl: perticulardata?.cdl ? perticulardata?.cdl :false,
-                      parked: perticulardata?.parked  ?perticulardata?.parked  :false,
-                      lastName: perticulardata?.lastName ? perticulardata?.lastName :"" ,
-                      firstName: perticulardata?.firstName ? perticulardata?.firstName :"",
-                      middleName: perticulardata?.middleName ? perticulardata?.middleName :"",
-                      suffix: perticulardata?.suffix ? perticulardata?.suffix :"",
-                      address: perticulardata?.Address ? perticulardata?.Address :"",
-                      apt: perticulardata?.apt ?  perticulardata?.apt :"",
-                      city: perticulardata?.City ? perticulardata?.City :"",
-                      state: perticulardata?.State ? perticulardata?.State :"",
-                      zip: perticulardata?.Zip ?  perticulardata?.Zip :"",
-                      race: perticulardata?.race ? perticulardata?.race :"",
+                      plate: perticulardata?.plate ? perticulardata?.plate : "",
+                      identificationType: perticulardata?.identificationType ? perticulardata?.identificationType : "-",
+                      subjectType: perticulardata?.subjectType ? perticulardata?.subjectType : "",
+                      dlState: perticulardata?.dlState ? perticulardata?.dlState : "",
+                      cdl: perticulardata?.cdl ? perticulardata?.cdl : false,
+                      parked: perticulardata?.parked ? perticulardata?.parked : false,
+                      lastName: perticulardata?.lastName ? perticulardata?.lastName : "",
+                      firstName: e,
+                      middleName: perticulardata?.middleName ? perticulardata?.middleName : "",
+                      suffix: perticulardata?.suffix ? perticulardata?.suffix : "",
+                      address: perticulardata?.Address ? perticulardata?.Address : "",
+                      apt: perticulardata?.apt ? perticulardata?.apt : "",
+                      city: perticulardata?.City ? perticulardata?.City : "",
+                      state: perticulardata?.State ? perticulardata?.State : "",
+                      zip: perticulardata?.Zip ? perticulardata?.Zip : "",
+                      race: perticulardata?.race ? perticulardata?.race : "",
                       gender: perticulardata?.gender ? perticulardata?.gender : "",
-                      dob:perticulardata?.DOB ? formatDateFromString(perticulardata?.DOB) :"",
-                      age: perticulardata?.age ? perticulardata?.age :"",
-                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense  ? perticulardata?.isJuvenileCourtOffense :false,
-                      juvenileOffenseType: perticulardata?.juvenileOffenseType ? perticulardata?.juvenileOffenseType :"",
-                      height: perticulardata?.Height ? perticulardata?.Height :"",
-                      weight: perticulardata?.Weight ? perticulardata?.Weight :"",
-                      hair: perticulardata?.hair ? perticulardata?.hair :"",
-                      eyes: perticulardata?.Eye ? perticulardata?.Eye :"",
-                      driver: perticulardata?.driver ? perticulardata?.driver :false,
+                      dob: perticulardata?.DOB ? formatDateFromString(perticulardata?.DOB) : "",
+                      age: perticulardata?.age ? perticulardata?.age : "",
+                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense ? perticulardata?.isJuvenileCourtOffense : false,
+                      juvenileOffenseType: perticulardata?.juvenileOffenseType ? perticulardata?.juvenileOffenseType : "",
+                      height: perticulardata?.Height ? perticulardata?.Height : "",
+                      weight: perticulardata?.Weight ? perticulardata?.Weight : "",
+                      hair: perticulardata?.hair ? perticulardata?.hair : "",
+                      eyes: perticulardata?.Eye ? perticulardata?.Eye : "",
+                      driver: perticulardata?.driver ? perticulardata?.driver : false,
                       owner: perticulardata?.owner ? perticulardata?.owner : false,
-                      citee: perticulardata?.citee ? perticulardata?.citee :false,
+                      citee: perticulardata?.citee ? perticulardata?.citee : false,
                       passenger: perticulardata?.passenger ? perticulardata?.passenger : false,
                     });
                   }}
                   value={subjectForm.values.firstName}
-                />
+                /> */}
                 <EnhancedInput
                   name="middleName"
                   label="Middle Name"

@@ -7,7 +7,6 @@
     "cdl": false,
     "parked": false,
     "lastName": "",
-    "firstName": "",
     "middleName": "",
     "suffix": "",
     "address": "970 7TH AVE NW",
@@ -29,6 +28,7 @@
     "owner": false,
     "citee": false,
     "passenger": false,
+    "LicenseNumber": "T620244420508",
     "id": 0
   }
 ]
