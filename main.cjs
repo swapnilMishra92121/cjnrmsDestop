@@ -126,9 +126,7 @@ function registerIPCHandlers() {
   });
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
-    
-
-    const filePath = path.join(__dirname, 'Subject', `${someParameter.zip}.json`);
+    const filePath = path.join(__dirname, 'Subject', `${someParameter.firstName}.json`);
 
     try {
       // Check if file exists. If not, initialize with an empty array.

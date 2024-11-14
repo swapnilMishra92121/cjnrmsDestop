@@ -88,7 +88,10 @@ const Subject: FC<SubjectProps> = ({
       LicenseNumber:""
     },
     onSubmit: (values) => {
-      console.log(values);
+      if(values?.firstName?.trim()===""){
+        openNotificationWithIcon("error", "First name is a required field" )
+        return;
+      }
       window.electronAPI.createSubjectOutputJsonFile(values);
       openNotificationWithIcon("success", successAddedMessage);
     },
