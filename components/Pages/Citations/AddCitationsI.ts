@@ -1,4 +1,5 @@
 import { LocationI } from "./Tabs/Location/components/LocationFormI";
+import { NotesI } from "./Tabs/Notes/Components/NotesStateI";
 import {  ViolationDetailsI } from "./Tabs/Violations/Components/Violationl";
 
 export interface VehicleData {
@@ -62,4 +63,5 @@ export interface FormData {
   Subject: SubjectData;
   Location:LocationI;
   Violation:ViolationDetailsI;
+  Notes:NotesI;
 }
