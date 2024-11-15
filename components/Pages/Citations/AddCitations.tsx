@@ -18,15 +18,6 @@ import { LocationI } from "./Tabs/Location/components/LocationFormI";
 import { FormData } from "./AddCitationsI";
 const { SplitView, GridView, Setting } = images;
 
-
-
-
-
-
-
-
-
-
 export const AddCitations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
@@ -50,12 +41,8 @@ export const AddCitations: React.FC = () => {
     stopLocationZip: "",
   });
 
-
-
-
-
-  const [formData,setformData]=useState<FormData>({
-    Vehicles:{
+  const [formData, setformData] = useState<FormData>({
+    Vehicles: {
       plate: "",
       state: "",
       expiration: "",
@@ -77,7 +64,7 @@ export const AddCitations: React.FC = () => {
       hasTrailer: false,
       is16PlusPass: false,
     },
-    Subject:{
+    Subject: {
       plate: "",
       identificationType: "1",
       subjectType: "1",
@@ -107,10 +94,33 @@ export const AddCitations: React.FC = () => {
       owner: true,
       citee: false,
       passenger: false,
-      LicenseNumber:""
-    }
-
-  })
+      LicenseNumber: "",
+    },
+    CitationInformation: {
+      citationType: "",
+      deliveryMethod: "",
+      offenseDate: "",
+      offenseTime: "",
+      officer: "",
+      badge: "",
+      caseOrICRNumber: "",
+      county: "",
+      prosecutingCourt: "",
+      prosecutingEntity: "",
+      mandatoryCourt: true,
+    },
+    Notes: {
+      comments: "",
+      incidentSummary: "",
+      mode: "none",
+      otherMethod: "none",
+      lock: "none",
+      pbtNumber: "",
+      squadNumber: "",
+      isInDashVideoAvailable: true,
+      observations: "audioClear",
+    },
+  });
 
   return (
     <>
@@ -190,8 +200,12 @@ export const AddCitations: React.FC = () => {
                 handleTabChange={setActiveTab}
               />
 
-              {activeTab === 0 && <Subject setformData={setformData} formData={formData} />}
-              {activeTab === 1 && <Vehicles setformData={setformData} formData={formData} />}
+              {activeTab === 0 && (
+                <Subject setformData={setformData} formData={formData} />
+              )}
+              {activeTab === 1 && (
+                <Vehicles setformData={setformData} formData={formData} />
+              )}
               {activeTab === 2 && (
                 <Location
                   locationFormFields={locationFormFields}
@@ -199,12 +213,14 @@ export const AddCitations: React.FC = () => {
                 />
               )}
               {activeTab === 3 && <Violations />}
-              {activeTab === 4 && <CitationInformation />}
-              {activeTab === 5 && <Notes />}
+              {activeTab === 4 && <CitationInformation setformData={setformData} formData={formData} />}
+              {activeTab === 5 && <Notes setformData={setformData} formData={formData} />}
             </Flex>
           )}
 
-          {glanceView && <GlanceView setformData={setformData} formData={formData} />}
+          {glanceView && (
+            <GlanceView setformData={setformData} formData={formData} />
+          )}
         </Flex>
       </div>
     </>

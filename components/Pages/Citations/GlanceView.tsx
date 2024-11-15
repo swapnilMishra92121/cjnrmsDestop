@@ -93,6 +93,7 @@ const GlanceView:React.FC<GlanceViewIPrams> = ({setformData, formData}) => {
                 customWidth="40%"
                 customPadding="0px"
                 isGlanceView
+                setformData={setformData} formData={formData}
               />
             </Card>
 

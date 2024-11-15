@@ -10,11 +10,14 @@ import {
 } from "../../../../CommonComponents/Fields/EnhancedInput";
 import EnhancedSelect from "../../../../CommonComponents/Fields/EnhancedInput/EnhancedSelect";
 import Button from "antd/lib/button";
+import { FormData } from "../../AddCitationsI";
 
 type NotesProps = {
   isGlanceView?: boolean;
   customWidth?: string;
   customPadding?: string;
+  setformData: (data: FormData) => void;
+  formData: FormData;
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -49,6 +52,8 @@ const observationsOptions = [
 ];
 
 const Notes: FC<NotesProps> = ({
+  formData,
+  setformData,
   customWidth,
   customPadding,
   isGlanceView,

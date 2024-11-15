@@ -54,7 +54,37 @@ export interface SubjectData {
   LicenseNumber: string;
 }
 
+export interface CitationInformation {
+  citationType: string;
+  deliveryMethod: string;
+  offenseDate: string;
+  offenseTime: string;
+  officer: string;
+  badge: string;
+  caseOrICRNumber: string;
+  county: string;
+  prosecutingCourt: string;
+  prosecutingEntity: string;
+  mandatoryCourt: boolean;
+}
+
+
+
+export interface Notes {
+  comments: string;
+  incidentSummary: string;
+  mode: string;
+  otherMethod: string;
+  lock: string;
+  pbtNumber: string;
+  squadNumber: string;
+  isInDashVideoAvailable: boolean;
+  observations: string;
+}
+
 export interface FormData {
   Vehicles: VehicleData;
   Subject: SubjectData;
+  CitationInformation: CitationInformation;
+  Notes: Notes;
 }

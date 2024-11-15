@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Form, FormikProvider, useFormik } from "formik";
 import styled from "styled-components";
 import Flex from "antd/lib/flex";
@@ -11,11 +11,14 @@ import {
 } from "../../../../CommonComponents/Fields/EnhancedInput";
 import EnhancedTextInput from "../../../../CommonComponents/Fields/EnhancedInput/EnhancedInput";
 import Button from "antd/lib/button";
+import { FormData } from "../../AddCitationsI";
 
 type CitationInformationProps = {
   isGlanceView?: boolean;
   customWidth?: string;
   customPadding?: string;
+  setformData: (data: FormData) => void;
+  formData: FormData;
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -68,6 +71,8 @@ const CitationInformation: FC<CitationInformationProps> = ({
   isGlanceView = false,
   customWidth,
   customPadding,
+  formData,
+  setformData,
 }) => {
   const initialValues = {
     citationType: "",
@@ -91,6 +96,14 @@ const CitationInformation: FC<CitationInformationProps> = ({
     initialValues,
     onSubmit,
   });
+
+  useEffect(() => {
+    setformData({
+      ...formData,
+      CitationInformation:citationInfoForm.initialValues
+
+    });
+  }, [citationInfoForm.initialValues]);
 
   return (
     <FormikProvider value={citationInfoForm}>
@@ -171,6 +184,13 @@ const CitationInformation: FC<CitationInformationProps> = ({
                 justify="flex-end"
                 style={{ padding: "12px" }}
               >
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ marginLeft: "8px" }}
+                >
+                  Submit
+                </Button>
                 <Button
                   onClick={(): void => {
                     citationInfoForm.resetForm();
