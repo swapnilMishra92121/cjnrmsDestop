@@ -36,35 +36,41 @@ const Vehicles: FC<VehicleProps> = ({
 
   const vehicleForm = useFormik({
     initialValues: {
-      plate: "",
-      state: "",
-      expiration: "",
-      noPlate: false,
-      twentyOneDayPlate: false,
-      make: "",
-      model: "",
-      year: "",
-      color: "",
-      style: "",
-      type: "",
-      vin: "",
-      isCommercialVehicle: true,
-      hasHazardousMaterial: false,
-      dotNumber: "",
-      poundsOverWeight: "",
-      occupants: "",
-      hasMotorcycle: false,
-      hasTrailer: false,
-      is16PlusPass: false,
+      plate: formData?.Vehicles?.plate,
+      state: formData?.Vehicles?.state,
+      expiration: formData?.Vehicles?.expiration,
+      noPlate: formData?.Vehicles?.noPlate,
+      twentyOneDayPlate: formData?.Vehicles?.twentyOneDayPlate,
+      make: formData?.Vehicles?.make,
+      model: formData?.Vehicles?.model,
+      year: formData?.Vehicles?.year,
+      color: formData?.Vehicles?.color,
+      style: formData?.Vehicles?.style,
+      type: formData?.Vehicles?.type,
+      vin: formData?.Vehicles?.vin,
+      isCommercialVehicle: formData?.Vehicles?.isCommercialVehicle,
+      hasHazardousMaterial: formData?.Vehicles?.hasHazardousMaterial,
+      dotNumber: formData?.Vehicles?.dotNumber,
+      poundsOverWeight: formData?.Vehicles?.poundsOverWeight,
+      occupants: formData?.Vehicles?.occupants,
+      hasMotorcycle: formData?.Vehicles?.hasMotorcycle,
+      hasTrailer: formData?.Vehicles?.hasTrailer,
+      is16PlusPass: formData?.Vehicles?.is16PlusPass,
     },
     onSubmit: (values: FieldData) => {
-      window.electronAPI.createOutputJSONFile(values);
-      openNotificationWithIcon("success", successAddedMessage);
+      // window.electronAPI.createOutputJSONFile(values);
+      // openNotificationWithIcon("success", successAddedMessage);
     },
   });
 
 
+  useEffect(()=>{
+    setformData({
+      ...formData,
+      Vehicles:vehicleForm.values
+    })
 
+  },[vehicleForm.values])
 
   const initialRender = () => {
     window.electronAPI

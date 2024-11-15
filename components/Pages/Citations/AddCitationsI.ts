@@ -1,3 +1,6 @@
+import { LocationI } from "./Tabs/Location/components/LocationFormI";
+import {  ViolationDetailsI } from "./Tabs/Violations/Components/Violationl";
+
 export interface VehicleData {
   plate: string;
   state: string;
@@ -85,6 +88,6 @@ export interface Notes {
 export interface FormData {
   Vehicles: VehicleData;
   Subject: SubjectData;
-  CitationInformation: CitationInformation;
-  Notes: Notes;
+  Location:LocationI;
+  Violation:ViolationDetailsI;
 }

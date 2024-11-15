@@ -21,7 +21,7 @@ export interface FieldData {
   style: string;
   type: string;
   vin: string;
-  isCommercialVehicle: true;
+  isCommercialVehicle: boolean;
   hasHazardousMaterial: boolean;
   dotNumber: string;
   poundsOverWeight: string;

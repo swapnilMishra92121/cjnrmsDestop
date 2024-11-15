@@ -56,54 +56,51 @@ const Subject: FC<SubjectProps> = ({
 
   const subjectForm = useFormik({
     initialValues: {
-      plate: "",
-      identificationType: "1",
-      subjectType: "1",
-      dlState: "",
-      cdl: true,
-      parked: false,
-      lastName: "",
-      firstName: "",
-      middleName: "",
-      suffix: "1",
-      address: "",
-      apt: "",
-      city: "",
-      state: "",
-      zip: "",
-      race: "",
-      gender: "",
-      dob: "",
-      age: "",
-      isJuvenileCourtOffense: true,
-      juvenileOffenseType: "",
-      height: "",
-      weight: "",
-      hair: "",
-      eyes: "",
-      driver: true,
-      owner: true,
-      citee: false,
-      passenger: false,
-      LicenseNumber: "",
+      plate: formData?.Subject?.plate,
+      identificationType: formData?.Subject?.identificationType,
+      subjectType: formData?.Subject?.subjectType,
+      dlState: formData?.Subject?.dlState,
+      cdl: formData?.Subject?.cdl,
+      parked: formData?.Subject?.parked,
+      lastName: formData?.Subject?.lastName,
+      firstName: formData?.Subject?.firstName,
+      middleName: formData?.Subject?.middleName,
+      suffix: formData?.Subject?.suffix,
+      address: formData?.Subject?.address,
+      apt: formData?.Subject?.apt,
+      city: formData?.Subject?.city,
+      state: formData?.Subject?.state,
+      zip: formData?.Subject?.zip,
+      race: formData?.Subject?.race,
+      gender: formData?.Subject?.gender,
+      dob: formData?.Subject?.dob,
+      age: formData?.Subject?.age,
+      isJuvenileCourtOffense: formData?.Subject?.isJuvenileCourtOffense,
+      juvenileOffenseType: formData?.Subject?.juvenileOffenseType,
+      height: formData?.Subject?.height,
+      weight: formData?.Subject?.weight,
+      hair: formData?.Subject?.hair,
+      eyes: formData?.Subject?.eyes,
+      driver: formData?.Subject?.driver,
+      owner: formData?.Subject?.owner,
+      citee: formData?.Subject?.citee,
+      passenger: formData?.Subject?.passenger,
+      LicenseNumber: formData?.Subject?.LicenseNumber,
     },
     onSubmit: (values) => {
-      if (values?.firstName?.trim() === "") {
-        openNotificationWithIcon("error", "First name is a required field");
-        return;
-      }
-      window.electronAPI.createSubjectOutputJsonFile(values);
-      openNotificationWithIcon("success", successAddedMessage);
+      // window.electronAPI.createSubjectOutputJsonFile(values);
+      // openNotificationWithIcon("success", successAddedMessage);
     },
+    
   });
 
   useEffect(()=>{
+    
     setformData({
       ...formData,
-      Subject:subjectForm.initialValues
+      Subject:subjectForm.values
     })
-
-  },[subjectForm.initialValues])
+  },[subjectForm.values])
 
 
   const juvenileSubjectForm = useFormik({
@@ -315,7 +312,7 @@ const Subject: FC<SubjectProps> = ({
                   label="DOB"
                   width="20%"
                 />
-                <EnhancedInput name="age" label="Age" width="5%" />
+                {/* <EnhancedInput name="age" label="Age" width="5%" /> */}
                 <Flex gap="small" wrap vertical>
                   <EnhancedCheckbox name="isJuvenileCourtOffense">
                     Juvenile Court Offenses
