@@ -224,8 +224,6 @@ const Notes: FC<NotesProps> = ({
           </div>
         }
       </Flex>
-
-
     </FormikProvider>
   );
 };

@@ -130,6 +130,19 @@ export const AddCitations: React.FC = () => {
       squadNumber: "",
       isInDashVideoAvailable: true,
       observations: "audioClear",
+    },
+    CitationInfo:{
+      citationType: "",
+      deliveryMethod: "",
+      offenseDate: "",
+      offenseTime: "",
+      officer: "",
+      badge: "",
+      caseOrICRNumber: "",
+      county: "",
+      prosecutingCourt: "",
+      prosecutingEntity: "",
+      mandatoryCourt: true,
     }
   })
   
@@ -220,7 +233,7 @@ export const AddCitations: React.FC = () => {
                 />
               )}
               {activeTab === 3 && <Violations setformData={setformData} formData={formData}/>}
-              {activeTab === 4 && <CitationInformation />}
+              {activeTab === 4 && <CitationInformation setformData={setformData} formData={formData}/>}
               {activeTab === 5 && <Notes setformData={setformData} formData={formData}/>}
             </Flex>
           )}
