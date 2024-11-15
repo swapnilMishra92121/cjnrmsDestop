@@ -1,3 +1,5 @@
+import { LocationI } from "./Tabs/Location/components/LocationFormI";
+
 export interface VehicleData {
   plate: string;
   state: string;
@@ -57,4 +59,5 @@ export interface SubjectData {
 export interface FormData {
   Vehicles: VehicleData;
   Subject: SubjectData;
+  Location:LocationI
 }

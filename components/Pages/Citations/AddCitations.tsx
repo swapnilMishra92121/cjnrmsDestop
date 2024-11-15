@@ -16,46 +16,16 @@ import Image from "next/image";
 import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsComponents";
 import { LocationI } from "./Tabs/Location/components/LocationFormI";
 import { FormData } from "./AddCitationsI";
+import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
+import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
+import { successAddedMessage } from "@/utils/const";
 const { SplitView, GridView, Setting } = images;
-
-
-
-
-
-
-
-
-
 
 export const AddCitations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
-  const [locationFormFields, setLocationFormFields] = useState<LocationI>({
-    type: "Location",
-    address: "",
-    apt: "",
-    city: "",
-    state: "",
-    zip: "",
-    weather: "",
-    direction: "",
-    parkingMeterNumber: "",
-    meterType: "",
-    zoneType: "",
-    hasStopLocation: "",
-    stopLocationAddress: "",
-    stopLocationApt: "",
-    stopLocationCity: "",
-    stopLocationState: "",
-    stopLocationZip: "",
-  });
-
-
-
-
-
-  const [formData,setformData]=useState<FormData>({
-    Vehicles:{
+  const [formData, setformData] = useState<FormData>({
+    Vehicles: {
       plate: "",
       state: "",
       expiration: "",
@@ -77,7 +47,7 @@ export const AddCitations: React.FC = () => {
       hasTrailer: false,
       is16PlusPass: false,
     },
-    Subject:{
+    Subject: {
       plate: "",
       identificationType: "1",
       subjectType: "1",
@@ -107,11 +77,31 @@ export const AddCitations: React.FC = () => {
       owner: true,
       citee: false,
       passenger: false,
-      LicenseNumber:""
+      LicenseNumber: ""
+    },
+    Location: {
+      address: "",
+      apt: "",
+      city: "",
+      state: "",
+      zip: "",
+      weather: "",
+      direction: "",
+      parkingMeterNumber: "",
+      meterType: "",
+      zoneType: "",
+      hasStopLocation: "",
+      stopLocationAddress: "",
+      stopLocationApt: "",
+      stopLocationCity: "",
+      stopLocationState: "",
+      stopLocationZip: "",
     }
-
   })
-
+   const handleSubmit=()=>{
+    window.electronAPI.createSubjectOutputJsonFile(formData);
+    openNotificationWithIcon("success", successAddedMessage);
+   }
   return (
     <>
       <div
@@ -124,7 +114,13 @@ export const AddCitations: React.FC = () => {
         <Flex gap="small" vertical wrap>
           <Flex gap="middle" justify="space-between">
             <h4 style={{ display: "flex" }}>Add Citation</h4>
-
+            <ButtonComponents
+              showBackgroundColor={true}
+              name="Save Data"
+              textColor="#fff"
+              color="#3672b3"
+              handleClick={()=>handleSubmit()}
+            />
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
                 <Button
@@ -159,7 +155,7 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="Setting" placement="bottom">
                 <Button
-                  onClick={() => {}}
+                  onClick={() => { }}
                   icon={
                     <Image
                       src={Setting}
@@ -194,8 +190,8 @@ export const AddCitations: React.FC = () => {
               {activeTab === 1 && <Vehicles setformData={setformData} formData={formData} />}
               {activeTab === 2 && (
                 <Location
-                  locationFormFields={locationFormFields}
-                  setLocationFormFields={setLocationFormFields}
+                formData={formData}
+                setformData={setformData}
                 />
               )}
               {activeTab === 3 && <Violations />}

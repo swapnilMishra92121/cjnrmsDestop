@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import styled from "styled-components";
 import { Form, FormikProvider, useFormik } from "formik";
 
@@ -14,13 +14,14 @@ import {
 } from "../../../../CommonComponents/Fields/EnhancedInput";
 import { Button } from "antd/lib";
 import { LocationI } from "./components/LocationFormI";
+import { FormData } from "../../AddCitationsI";
 
 type LocationProps = {
   customWidth?: string;
   customPadding?: string;
   isGlanceView?: boolean;
-  locationFormFields: LocationI
-  setLocationFormFields: (data: LocationI) => void
+  formData: FormData
+  setformData: (data: FormData) => void
 };
 
 const addressTypeOptions = [
@@ -38,17 +39,39 @@ export const Location: FC<LocationProps> = ({
   customWidth,
   customPadding,
   isGlanceView = false,
-  locationFormFields,
-  setLocationFormFields
+  formData,
+  setformData,
 }) => {
   const locationsForm = useFormik({
-    initialValues: locationFormFields,
+    initialValues: {
+      address: "",
+      apt: "",
+      city: "",
+      state: "",
+      zip: "",
+      weather: "",
+      direction: "",
+      parkingMeterNumber: "",
+      meterType: "",
+      zoneType: "",
+      hasStopLocation: "",
+      stopLocationAddress: "",
+      stopLocationApt: "",
+      stopLocationCity: "",
+      stopLocationState: "",
+      stopLocationZip: "",
+    },
     onSubmit: (values) => {
       console.log(values);
     },
   });
 
-  const stopLocationDisabled = locationsForm.values.hasStopLocation;
+  useEffect(() => {
+    setformData({
+      ...formData,
+      Location: locationsForm?.values
+    })
+  },[locationsForm?.values]);
 
   return (
     <StyledFormContainer $customPadding={customPadding}>

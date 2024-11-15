@@ -1,5 +1,5 @@
 export interface LocationI{
-    type: string,
+    
     address: string,
     apt: string,
     city: string,

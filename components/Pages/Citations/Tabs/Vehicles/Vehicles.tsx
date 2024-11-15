@@ -68,10 +68,10 @@ const Vehicles: FC<VehicleProps> = ({
   useEffect(()=>{
     setformData({
       ...formData,
-      Vehicles:vehicleForm.initialValues
+      Vehicles:vehicleForm.values
     })
 
-  },[vehicleForm.initialValues])
+  },[vehicleForm.values])
 
   const initialRender = () => {
     window.electronAPI
