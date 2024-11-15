@@ -26,6 +26,9 @@ export function validatePassword(password :  string) {
     throw new Error("Invalid date format. Expected yyyymmdd or yyyy-mm-dd.");
 }
 
-
+export function generateRandomFourDigitNumber() {
+    return Math.floor(1000 + Math.random() * 9000);
+  }
+  
   
   

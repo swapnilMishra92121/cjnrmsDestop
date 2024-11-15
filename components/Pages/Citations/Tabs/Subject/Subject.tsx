@@ -312,7 +312,7 @@ const Subject: FC<SubjectProps> = ({
                   label="DOB"
                   width="20%"
                 />
-                <EnhancedInput name="age" label="Age" width="5%" />
+                {/* <EnhancedInput name="age" label="Age" width="5%" /> */}
                 <Flex gap="small" wrap vertical>
                   <EnhancedCheckbox name="isJuvenileCourtOffense">
                     Juvenile Court Offenses
