@@ -66,7 +66,7 @@ const GlanceView = () => {
         <Col span={12}>
           <Space size="middle" direction="vertical">
             <Card title="Location" bordered={false} extra={ExtraButtonsLayout}>
-              <Location customWidth="40%" customPadding="0px" isGlanceView />
+              {/* <Location customWidth="40%" customPadding="0px" isGlanceView /> */}
             </Card>
 
             <Card

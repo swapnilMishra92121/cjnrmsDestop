@@ -14,12 +14,31 @@ import GlanceView from "./GlanceView";
 import images from "../../../assets";
 import Image from "next/image";
 import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsComponents";
+import { LocationI } from "./Tabs/Location/components/LocationFormI";
 const { SplitView, GridView,Setting } = images;
 
 export const AddCitations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
-
+  const [locationFormFields,setLocationFormFields]= useState<LocationI>({
+    type: "Location",
+    address: "",
+    apt: "",
+    city: "",
+    state: "",
+    zip: "",
+    weather: "",
+    direction: "",
+    parkingMeterNumber: "",
+    meterType: "",
+    zoneType: "",
+    hasStopLocation: "",
+    stopLocationAddress: "",
+    stopLocationApt: "",
+    stopLocationCity: "",
+    stopLocationState: "",
+    stopLocationZip: "",
+  })
 
   
 
@@ -106,7 +125,11 @@ export const AddCitations: React.FC = () => {
 
               {activeTab === 0 && <Subject />}
               {activeTab === 1 && <Vehicles />}
-              {activeTab === 2 && <Location />}
+              {activeTab === 2 && 
+              <Location 
+              locationFormFields={locationFormFields}
+              setLocationFormFields={setLocationFormFields}
+              />}
               {activeTab === 3 && <Violations />}
               {activeTab === 4 && <CitationInformation />}
               {activeTab === 5 && <Notes />}

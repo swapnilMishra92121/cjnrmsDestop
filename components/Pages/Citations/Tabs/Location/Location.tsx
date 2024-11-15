@@ -13,11 +13,14 @@ import {
   EnhancedSelect,
 } from "../../../../CommonComponents/Fields/EnhancedInput";
 import { Button } from "antd/lib";
+import { LocationI } from "./components/LocationFormI";
 
 type LocationProps = {
   customWidth?: string;
   customPadding?: string;
   isGlanceView?: boolean;
+  locationFormFields: LocationI
+  setLocationFormFields: (data: LocationI) => void
 };
 
 const addressTypeOptions = [
@@ -35,27 +38,11 @@ export const Location: FC<LocationProps> = ({
   customWidth,
   customPadding,
   isGlanceView = false,
+  locationFormFields,
+  setLocationFormFields
 }) => {
   const locationsForm = useFormik({
-    initialValues: {
-      type: "street",
-      address: "",
-      apt: "",
-      city: "",
-      state: "",
-      zip: "",
-      weather: "",
-      direction: "",
-      parkingMeterNumber: "",
-      meterType: "",
-      zoneType: "",
-      hasStopLocation: true,
-      stopLocationAddress: "",
-      stopLocationApt: "",
-      stopLocationCity: "",
-      stopLocationState: "",
-      stopLocationZip: "",
-    },
+    initialValues: locationFormFields,
     onSubmit: (values) => {
       console.log(values);
     },
@@ -80,7 +67,7 @@ export const Location: FC<LocationProps> = ({
               <EnhancedInput name="address" label="Address" width="20%" />
               <EnhancedInput name="apt" label="Apt" width="10%" />
               <EnhancedInput name="city" label="City" width="20%" />
-              <EnhancedSelect
+              {/* <EnhancedSelect
                 name="state"
                 label="State"
                 containerStyles={{ width: customWidth ?? "5%" }}
@@ -89,12 +76,19 @@ export const Location: FC<LocationProps> = ({
                   { label: "TX", value: "tx" },
                   { label: "NY", value: "ny" },
                 ]}
+              /> */}
+
+              <EnhancedInput
+                name="state"
+                label="State"
+                width="20%"
+
               />
               <EnhancedInput name="zip" label="ZIP" width="20%" />
             </Flex>
 
             <Flex gap="middle" align="flex-end" wrap>
-              <EnhancedSelect
+              {/* <EnhancedSelect
                 name="weather"
                 label="Weather"
                 containerStyles={{ width: customWidth ?? "10%" }}
@@ -104,8 +98,15 @@ export const Location: FC<LocationProps> = ({
                   { label: "Misty", value: "misty" },
                   { label: "Rainy", value: "rainy" },
                 ]}
+              /> */}
+
+              <EnhancedInput
+                name="weather"
+                label="Weather"
+                width="20%"
+
               />
-              <EnhancedSelect
+              {/* <EnhancedSelect
                 name="direction"
                 label="Direction of Travel"
                 containerStyles={{ width: customWidth ?? "10%" }}
@@ -115,13 +116,27 @@ export const Location: FC<LocationProps> = ({
                   { label: "West", value: "west" },
                   { label: "East", value: "east" },
                 ]}
+              /> */}
+
+              <EnhancedInput
+                name="direction"
+                label="Direction of Travel"
+                width="20%"
+
               />
               <EnhancedInput
                 name="parkingMeterNumber"
                 label="Parking Meter#"
                 width="20%"
               />
-              <EnhancedSelect
+
+              <EnhancedInput
+                name="meterType"
+                label="Meter Type"
+                width="20%"
+
+              />
+              {/* <EnhancedSelect
                 name="meterType"
                 label="Meter Type"
                 containerStyles={{ width: customWidth ?? "10%" }}
@@ -131,7 +146,7 @@ export const Location: FC<LocationProps> = ({
                   { label: "Meter Type 3", value: "type 3" },
                   { label: "Meter Type 4", value: "type 4" },
                 ]}
-              />
+              /> */}
             </Flex>
 
             <Flex gap="middle" align="flex-end" justify="space-between" wrap>
@@ -161,21 +176,26 @@ export const Location: FC<LocationProps> = ({
                   name="stopLocationAddress"
                   label="Address"
                   width="20%"
-                  disabled={stopLocationDisabled}
                 />
                 <EnhancedInput
                   name="stopLocationApt"
                   label="Apt"
                   width="10%"
-                  disabled={stopLocationDisabled}
                 />
                 <EnhancedInput
                   name="stopLocationCity"
                   label="City"
                   width="20%"
-                  disabled={stopLocationDisabled}
+
                 />
-                <EnhancedSelect
+
+                <EnhancedInput
+                  name="stopLocationState"
+                  label="State"
+                  width="20%"
+
+                />
+                {/* <EnhancedSelect
                   name="stopLocationState"
                   label="State"
                   containerStyles={{ width: customWidth ?? "10%" }}
@@ -184,27 +204,37 @@ export const Location: FC<LocationProps> = ({
                     { label: "TX", value: "tx" },
                     { label: "NY", value: "ny" },
                   ]}
-                  disabled={stopLocationDisabled}
-                />
+
+                /> */}
                 <EnhancedInput
                   name="stopLocationZip"
                   label="ZIP"
                   width="10%"
-                  disabled={stopLocationDisabled}
+
                 />
               </Flex>
             </Flex>
           )}
 
           {!isGlanceView && (
-            <Flex align="center" justify="flex-end" style={{ padding: "12px" }}>
-              <Button
-                onClick={(): void => {
-                  locationsForm.resetForm();
-                }}
-              >
-                Clear all Fields
-              </Button>
+            <Flex gap="middle" align="flex-end" wrap>
+
+              <Flex gap="middle">
+                <Button
+                >
+                  Add Location
+                </Button>
+              </Flex>
+
+              <Flex align="center" justify="flex-end" style={{ padding: "12px" }}>
+                <Button
+                  onClick={(): void => {
+                    locationsForm.resetForm();
+                  }}
+                >
+                  Clear all Fields
+                </Button>
+              </Flex>
             </Flex>
           )}
         </Form>

@@ -2,3 +2,6 @@
 /.next
 /dist
 /out
+
+/run_as_admin
+/CJNCitationService
