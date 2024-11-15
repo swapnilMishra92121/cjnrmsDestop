@@ -25,9 +25,12 @@ const StyledFormContainer = styled.div<{ $customPadding?: string }>`
 `;
 
 const Vehicles: FC<VehicleProps> = ({
+  formData, 
+  setformData,
   customWidth,
   customPadding,
   isGlanceView,
+  
 }) => {
   const [Plate, setPlate] = useState<PlateData[]>([]);
   const [allData, setAllData] = useState<parserVehicleDetailsResponce[]>([]);
@@ -60,6 +63,15 @@ const Vehicles: FC<VehicleProps> = ({
       openNotificationWithIcon("success", successAddedMessage);
     },
   });
+
+
+  useEffect(()=>{
+    setformData({
+      ...formData,
+      Vehicles:vehicleForm.initialValues
+    })
+
+  },[vehicleForm.initialValues])
 
   const initialRender = () => {
     window.electronAPI

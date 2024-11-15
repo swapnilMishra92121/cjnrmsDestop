@@ -13,6 +13,13 @@ import Subject from "./Tabs/Subject/Subject";
 import { Location } from "./Tabs/Location/Location";
 import Violations from "./Tabs/Violations/Violations";
 import { Col, Row } from "antd/lib";
+import { FormData } from "./AddCitationsI";
+
+
+export interface GlanceViewIPrams{
+  setformData: (data: FormData) => void;
+  formData: FormData;
+}
 
 const { Enlarge } = images;
 
@@ -39,7 +46,7 @@ const ExtraButtonsLayout = (
   </Flex>
 );
 
-const GlanceView = () => {
+const GlanceView:React.FC<GlanceViewIPrams> = ({setformData, formData}) => {
   return (
     <StyledContainer>
       <Row gutter={16}>
@@ -51,7 +58,7 @@ const GlanceView = () => {
               extra={ExtraButtonsLayout}
               style={{ padding: "12px" }}
             >
-              <Subject customWidth="40%" customPadding="0px" isGlanceView />
+              <Subject customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} />
             </Card>
 
             <Card
@@ -59,14 +66,14 @@ const GlanceView = () => {
               bordered={false}
               extra={ExtraButtonsLayout}
             >
-              <Vehicles customWidth="40%" customPadding="0px" isGlanceView />
+              <Vehicles customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} />
             </Card>
           </Space>
         </Col>
         <Col span={12}>
           <Space size="middle" direction="vertical">
             <Card title="Location" bordered={false} extra={ExtraButtonsLayout}>
-              {/* <Location customWidth="40%" customPadding="0px" isGlanceView /> */}
+              {/* <Location customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} /> */}
             </Card>
 
             <Card

@@ -17,17 +17,15 @@ import { perticulardataI } from "./Subjectsl";
 import { formatDateFromString } from "@/utils/Helper";
 import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
 import { successAddedMessage } from "@/utils/const";
+import { FormData } from "../../AddCitationsI";
 
 type SubjectProps = {
   customWidth?: string;
   customPadding?: string;
   isGlanceView?: boolean;
+  setformData: (data: FormData) => void;
+  formData: FormData;
 };
-
-interface dummy {
-  value: string,
-  label: string
-}
 
 const identificationTypeOptions = [
   { label: "DL", value: "1" },
@@ -50,6 +48,8 @@ const Subject: FC<SubjectProps> = ({
   customWidth,
   customPadding,
   isGlanceView = false,
+  setformData,
+  formData,
 }) => {
   const [allData, setAllData] = useState<parserVehicleDetailsResponce[]>([]);
   const [Plate, setPlate] = useState<PlateData[]>([]);
@@ -85,17 +85,26 @@ const Subject: FC<SubjectProps> = ({
       owner: true,
       citee: false,
       passenger: false,
-      LicenseNumber:""
+      LicenseNumber: "",
     },
     onSubmit: (values) => {
-      if(values?.firstName?.trim()===""){
-        openNotificationWithIcon("error", "First name is a required field" )
+      if (values?.firstName?.trim() === "") {
+        openNotificationWithIcon("error", "First name is a required field");
         return;
       }
       window.electronAPI.createSubjectOutputJsonFile(values);
       openNotificationWithIcon("success", successAddedMessage);
     },
   });
+
+  useEffect(()=>{
+    setformData({
+      ...formData,
+      Subject:subjectForm.initialValues
+    })
+
+  },[subjectForm.initialValues])
+
 
   const juvenileSubjectForm = useFormik({
     initialValues: {
@@ -126,26 +135,27 @@ const Subject: FC<SubjectProps> = ({
     juvenileSubjectForm.values.juvenileInfoRequired;
 
   const initialRender = () => {
-    window.electronAPI
-      .readXMLFiles("driver_details")
-      .then((e: string) => {
-        const ParserSubjectDetailsResponce: any = e
-          .trim()
-          .split("\n")
-          .map((line: string) => JSON.parse(line));
-        const arr: PlateData[] = ParserSubjectDetailsResponce?.map((val: any) => ({
-          lable: JSON.parse(val?.Fields)?.LicenseNumber ? JSON.parse(val?.Fields)?.LicenseNumber : "",
+    window.electronAPI.readXMLFiles("driver_details").then((e: string) => {
+      const ParserSubjectDetailsResponce: any = e
+        .trim()
+        .split("\n")
+        .map((line: string) => JSON.parse(line));
+      const arr: PlateData[] = ParserSubjectDetailsResponce?.map(
+        (val: any) => ({
+          lable: JSON.parse(val?.Fields)?.LicenseNumber
+            ? JSON.parse(val?.Fields)?.LicenseNumber
+            : "",
           value: val?.DriverName,
-        }));
-        setAllData(ParserSubjectDetailsResponce);
-        setPlate(arr);
-      });
+        })
+      );
+      setAllData(ParserSubjectDetailsResponce);
+      setPlate(arr);
+    });
   };
 
   useEffect(() => {
     initialRender();
   }, []);
-
 
   return (
     <StyledFormContainer $customPadding={customPadding}>
@@ -169,7 +179,6 @@ const Subject: FC<SubjectProps> = ({
               </Flex>
 
               <Flex gap="middle" align="flex-end" wrap>
-
                 {/* <EnhancedInput name="dl" label="DL" width="20%" /> */}
 
                 {/* =============Dl= */}
@@ -188,52 +197,85 @@ const Subject: FC<SubjectProps> = ({
                     console.log("val", val);
                     const perticulardata: any = JSON.parse(
                       allData.find((item) => item.DriverName === e)?.Fields ||
-                      "{}"
+                        "{}"
                     );
                     console.log("perticular data", perticulardata);
 
                     subjectForm.setValues({
                       ...subjectForm.values,
                       plate: perticulardata?.plate ? perticulardata?.plate : "",
-                      identificationType: perticulardata?.identificationType ? perticulardata?.identificationType : "-",
-                      subjectType: perticulardata?.subjectType ? perticulardata?.subjectType : "",
-                      dlState: perticulardata?.dlState ? perticulardata?.dlState : "",
+                      identificationType: perticulardata?.identificationType
+                        ? perticulardata?.identificationType
+                        : "-",
+                      subjectType: perticulardata?.subjectType
+                        ? perticulardata?.subjectType
+                        : "",
+                      dlState: perticulardata?.dlState
+                        ? perticulardata?.dlState
+                        : "",
                       cdl: perticulardata?.cdl ? perticulardata?.cdl : false,
-                      parked: perticulardata?.parked ? perticulardata?.parked : false,
-                      lastName: perticulardata?.lastName ? perticulardata?.lastName : "",
+                      parked: perticulardata?.parked
+                        ? perticulardata?.parked
+                        : false,
+                      lastName: perticulardata?.lastName
+                        ? perticulardata?.lastName
+                        : "",
                       firstName: perticulardata?.Name,
-                      middleName: perticulardata?.middleName ? perticulardata?.middleName : "",
-                      suffix: perticulardata?.suffix ? perticulardata?.suffix : "",
-                      address: perticulardata?.Address ? perticulardata?.Address : "",
+                      middleName: perticulardata?.middleName
+                        ? perticulardata?.middleName
+                        : "",
+                      suffix: perticulardata?.suffix
+                        ? perticulardata?.suffix
+                        : "",
+                      address: perticulardata?.Address
+                        ? perticulardata?.Address
+                        : "",
                       apt: perticulardata?.apt ? perticulardata?.apt : "",
                       city: perticulardata?.City ? perticulardata?.City : "",
                       state: perticulardata?.State ? perticulardata?.State : "",
                       zip: perticulardata?.Zip ? perticulardata?.Zip : "",
                       race: perticulardata?.race ? perticulardata?.race : "",
-                      gender: perticulardata?.gender ? perticulardata?.gender : "",
-                      dob: perticulardata?.DOB ? formatDateFromString(perticulardata?.DOB) : "",
+                      gender: perticulardata?.gender
+                        ? perticulardata?.gender
+                        : "",
+                      dob: perticulardata?.DOB
+                        ? formatDateFromString(perticulardata?.DOB)
+                        : "",
                       age: perticulardata?.age ? perticulardata?.age : "",
-                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense ? perticulardata?.isJuvenileCourtOffense : false,
-                      juvenileOffenseType: perticulardata?.juvenileOffenseType ? perticulardata?.juvenileOffenseType : "",
-                      height: perticulardata?.Height ? perticulardata?.Height : "",
-                      weight: perticulardata?.Weight ? perticulardata?.Weight : "",
+                      isJuvenileCourtOffense:
+                        perticulardata?.isJuvenileCourtOffense
+                          ? perticulardata?.isJuvenileCourtOffense
+                          : false,
+                      juvenileOffenseType: perticulardata?.juvenileOffenseType
+                        ? perticulardata?.juvenileOffenseType
+                        : "",
+                      height: perticulardata?.Height
+                        ? perticulardata?.Height
+                        : "",
+                      weight: perticulardata?.Weight
+                        ? perticulardata?.Weight
+                        : "",
                       hair: perticulardata?.hair ? perticulardata?.hair : "",
                       eyes: perticulardata?.Eye ? perticulardata?.Eye : "",
-                      driver: perticulardata?.driver ? perticulardata?.driver : false,
-                      owner: perticulardata?.owner ? perticulardata?.owner : false,
-                      citee: perticulardata?.citee ? perticulardata?.citee : false,
-                      passenger: perticulardata?.passenger ? perticulardata?.passenger : false,
-                      LicenseNumber:perticulardata?.LicenseNumber ? perticulardata?.LicenseNumber :""
+                      driver: perticulardata?.driver
+                        ? perticulardata?.driver
+                        : false,
+                      owner: perticulardata?.owner
+                        ? perticulardata?.owner
+                        : false,
+                      citee: perticulardata?.citee
+                        ? perticulardata?.citee
+                        : false,
+                      passenger: perticulardata?.passenger
+                        ? perticulardata?.passenger
+                        : false,
+                      LicenseNumber: perticulardata?.LicenseNumber
+                        ? perticulardata?.LicenseNumber
+                        : "",
                     });
                   }}
                   value={subjectForm.values.LicenseNumber}
                 />
-
-
-
-
-
-
 
                 <EnhancedInput name="dlState" label="DL State" width="10%" />
                 <EnhancedCheckbox name="cdl">CDL</EnhancedCheckbox>
@@ -242,59 +284,12 @@ const Subject: FC<SubjectProps> = ({
 
               <Flex gap="middle" align="flex-end" wrap>
                 <EnhancedInput name="lastName" label="Last Name" width="20%" />
-                <EnhancedInput name="firstName" label="First Name" width="20%" />
-                {/* <EnhancedSelect
+                <EnhancedInput
                   name="firstName"
                   label="First Name"
-                  containerStyles={{ width: "20%" }}
-                  options={Plate.map((val) => ({
-                    value: val.value,
-                    label: val.lable,
-                  })).filter((val) => val.label)}
-                  onChange={(e) => {
-                    subjectForm.setFieldValue("firstName", e);
-
-                    const perticulardata: perticulardataI = JSON.parse(
-                      allData.find((item) => item._id === Number(e))?.Fields ||
-                      "{}"
-                    );
-                    console.log("perticular data", perticulardata);
-
-                    subjectForm.setValues({
-                      ...subjectForm.values,
-                      plate: perticulardata?.plate ? perticulardata?.plate : "",
-                      identificationType: perticulardata?.identificationType ? perticulardata?.identificationType : "-",
-                      subjectType: perticulardata?.subjectType ? perticulardata?.subjectType : "",
-                      dlState: perticulardata?.dlState ? perticulardata?.dlState : "",
-                      cdl: perticulardata?.cdl ? perticulardata?.cdl : false,
-                      parked: perticulardata?.parked ? perticulardata?.parked : false,
-                      lastName: perticulardata?.lastName ? perticulardata?.lastName : "",
-                      firstName: e,
-                      middleName: perticulardata?.middleName ? perticulardata?.middleName : "",
-                      suffix: perticulardata?.suffix ? perticulardata?.suffix : "",
-                      address: perticulardata?.Address ? perticulardata?.Address : "",
-                      apt: perticulardata?.apt ? perticulardata?.apt : "",
-                      city: perticulardata?.City ? perticulardata?.City : "",
-                      state: perticulardata?.State ? perticulardata?.State : "",
-                      zip: perticulardata?.Zip ? perticulardata?.Zip : "",
-                      race: perticulardata?.race ? perticulardata?.race : "",
-                      gender: perticulardata?.gender ? perticulardata?.gender : "",
-                      dob: perticulardata?.DOB ? formatDateFromString(perticulardata?.DOB) : "",
-                      age: perticulardata?.age ? perticulardata?.age : "",
-                      isJuvenileCourtOffense: perticulardata?.isJuvenileCourtOffense ? perticulardata?.isJuvenileCourtOffense : false,
-                      juvenileOffenseType: perticulardata?.juvenileOffenseType ? perticulardata?.juvenileOffenseType : "",
-                      height: perticulardata?.Height ? perticulardata?.Height : "",
-                      weight: perticulardata?.Weight ? perticulardata?.Weight : "",
-                      hair: perticulardata?.hair ? perticulardata?.hair : "",
-                      eyes: perticulardata?.Eye ? perticulardata?.Eye : "",
-                      driver: perticulardata?.driver ? perticulardata?.driver : false,
-                      owner: perticulardata?.owner ? perticulardata?.owner : false,
-                      citee: perticulardata?.citee ? perticulardata?.citee : false,
-                      passenger: perticulardata?.passenger ? perticulardata?.passenger : false,
-                    });
-                  }}
-                  value={subjectForm.values.firstName}
-                /> */}
+                  width="20%"
+                />
+               
                 <EnhancedInput
                   name="middleName"
                   label="Middle Name"
