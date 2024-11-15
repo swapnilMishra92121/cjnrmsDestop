@@ -73,7 +73,7 @@ const GlanceView:React.FC<GlanceViewIPrams> = ({setformData, formData}) => {
         <Col span={12}>
           <Space size="middle" direction="vertical">
             <Card title="Location" bordered={false} extra={ExtraButtonsLayout}>
-              {/* <Location customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} /> */}
+              <Location customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} />
             </Card>
 
             <Card
@@ -81,7 +81,7 @@ const GlanceView:React.FC<GlanceViewIPrams> = ({setformData, formData}) => {
               bordered={false}
               extra={ExtraButtonsLayout}
             >
-              <Violations customWidth="40%" customPadding="0px" isGlanceView />
+              <Violations customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData}/>
             </Card>
 
             <Card

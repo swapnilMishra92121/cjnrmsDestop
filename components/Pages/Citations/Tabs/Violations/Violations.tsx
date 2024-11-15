@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Form, FormikProvider, useFormik } from "formik";
 import Flex from "antd/lib/flex";
@@ -9,11 +9,15 @@ import EnhancedTextInput from "../../../../CommonComponents/Fields/EnhancedInput
 import EnhancedRadioGroup from "../../../../CommonComponents/Fields/EnhancedInput/EnhancedRadioGroup";
 import Button from "antd/lib/button";
 import Modal from "antd/lib/modal";
+import { ViolationDetailsI } from "./Components/Violationl";
+import { FormData } from "../../AddCitationsI";
 
 type ViolationProps = {
   isGlanceView?: boolean;
   customWidth?: string;
   customPadding?: string;
+  setformData: (data: FormData) => void;
+  formData: FormData
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -24,6 +28,9 @@ const Violations: FC<ViolationProps> = ({
   customWidth,
   customPadding,
   isGlanceView,
+  setformData,
+  formData
+
 }) => {
   const [showViolationModal, setShowViolationModal] = useState<boolean>(false);
 
@@ -67,6 +74,14 @@ const Violations: FC<ViolationProps> = ({
   const onOk = (): void => toggleViolationModal(false);
 
   const onCancel = (): void => toggleViolationModal(false);
+
+
+  useEffect(() => {
+    setformData({
+      ...formData,
+      Violation: violationsForm?.values
+    })
+  }, [violationsForm?.values])
 
   return (
     <StyledFormContainer $customPadding={customPadding}>
@@ -165,7 +180,7 @@ const Violations: FC<ViolationProps> = ({
             </Flex>
 
             <Flex gap="middle" align="center" wrap vertical={false}>
-              <Flex gap="middle" align="center" wrap vertical>
+              <Flex align="center" wrap vertical style={{ width: "fit-content" }}>
                 <Flex
                   gap="middle"
                   align="center"
@@ -283,7 +298,7 @@ const Violations: FC<ViolationProps> = ({
                   justify="flex-end"
                   style={{ padding: "12px" }}
                 >
-                  <Button onClick={(): void => {}} style={{ marginLeft: 12 }}>
+                  <Button onClick={(): void => { }} style={{ marginLeft: 12 }}>
                     Clear all Fields
                   </Button>
                 </Flex>

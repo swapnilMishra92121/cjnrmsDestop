@@ -96,6 +96,29 @@ export const AddCitations: React.FC = () => {
       stopLocationCity: "",
       stopLocationState: "",
       stopLocationZip: "",
+    },
+    Violation:{
+      endangerLifeOrProperty: true,
+      category: "",
+      statusType: "",
+      searchStatueOrOrdinance: "",
+      searchDescription: "",
+      nibrsCode: "",
+      level: "",
+      addThirdViolation: true,
+      statueOrOrdinance: "",
+      description: "",
+      thirdViolation: true,
+      speed: "",
+      zone: "",
+      disobey: "",
+      acTaken: "",
+      acTesType: "",
+      acReading: "",
+      status: "refused",
+      speciesNumber: true,
+      speciesNumberValue: "",
+      wildlifeRestitution: true,
     }
   })
    const handleSubmit=()=>{
@@ -194,7 +217,7 @@ export const AddCitations: React.FC = () => {
                 setformData={setformData}
                 />
               )}
-              {activeTab === 3 && <Violations />}
+              {activeTab === 3 && <Violations setformData={setformData} formData={formData}/>}
               {activeTab === 4 && <CitationInformation />}
               {activeTab === 5 && <Notes />}
             </Flex>

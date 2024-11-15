@@ -126,7 +126,8 @@ function registerIPCHandlers() {
   });
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
-    const filePath = path.join(__dirname, 'SavedData', `citation-${generateRandomFourDigitNumber()}.json`);
+    const randomNumber= Math.floor(1000 + Math.random() * 9000);
+    const filePath = path.join(__dirname, 'SavedData', `citation-${randomNumber}.json`);
     try {
       // Check if file exists. If not, initialize with an empty array.
       const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
