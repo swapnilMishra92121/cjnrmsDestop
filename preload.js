@@ -3,7 +3,7 @@ const  { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getPrinters: () => ipcRenderer.invoke('get-printers'),
-  printPDF: (printerName, pdfPath) => ipcRenderer.invoke('print-pdf', printerName, pdfPath),
+  printPDF: (printerName, content) => ipcRenderer.invoke('print-pdf', printerName, content),
   readXMLFiles: (parameter) => ipcRenderer.invoke('read-xml-files', parameter),
   createOutputJSONFile: (data) => ipcRenderer.invoke('create-output-json-file', data),
   getJSONData: () => ipcRenderer.invoke('get-json-data'),

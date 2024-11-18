@@ -1,7 +1,7 @@
 // global.d.ts
 interface ElectronAPI {
 	getPrinters: () => Promise<any[]>;
-	printPDF: (printerName: string, pdfPath: string) => Promise<void>;
+	printPDF: (printerName: string, content: any) => Promise<void>; 
 	readXMLFiles: (parameter: string) => Promise<any>;
 	createOutputJSONFile: (data: {}) => Promise<string>;
 	getJSONData: () => Promise<any>; // Adjust the type based on expected data

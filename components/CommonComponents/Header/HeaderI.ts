@@ -1,3 +1,5 @@
 export interface HeaderIProps {
-	handleDownload: () => void
+  handleDownload: () => void;
+  selectedPrinter: string;
+  setSelectedPrinter: (data: string) => void;
 }

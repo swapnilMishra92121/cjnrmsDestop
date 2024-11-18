@@ -78,26 +78,78 @@ app.on('activate', () => {
 function registerIPCHandlers() {
   ipcMain.handle('get-printers', async () => {
     if (appWindow && appWindow.webContents) {
-      const printers = await appWindow.webContents.getPrintersAsync();
+      const printers = await appWindow.webContents.getPrinters();
+      console.log(printers)
       return printers;
     }
     return [];
   });
 
-  ipcMain.handle('print-pdf', (event, printerName, pdfPath) => {
-    if (!appWindow || !appWindow.webContents) {
-      console.error('Window or webContents not available for printing.');
-      return;
+  ipcMain.handle('print-pdf', async (event, printerName, content) => {
+    try {
+      const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
+  
+      // Create a hidden window for rendering the content
+      const printWindow = new BrowserWindow({
+        show: false,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+        },
+      });
+  
+      // Load JSON content as HTML
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Print Content</title>
+          <meta charset="UTF-8">
+        </head>
+        <body>
+          <h1>${content.title}</h1>
+          <p>${content.body}</p>
+        </body>
+        </html>
+      `;
+      await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+  
+      // Generate the PDF
+      const pdfBuffer = await printWindow.webContents.printToPDF({});
+  
+      // Save the PDF to a temporary file
+      fs.writeFileSync(pdfPath, pdfBuffer);
+  
+      // Print the PDF silently to the selected printer
+      const printResult = await new Promise((resolve) => {
+        printWindow.webContents.print(
+          {
+            silent: true,
+            deviceName: printerName,
+          },
+          (success, errorType) => {
+            if (!success) {
+              console.error('Print failed:', errorType);
+              resolve({ success: false, error: errorType });
+            } else {
+              resolve({ success: true });
+            }
+          }
+        );
+      });
+  
+      // Close the window after the operation
+      printWindow.close();
+  
+      if (!printResult.success) {
+        throw new Error(printResult.error || 'Unknown print error');
+      }
+  
+      return { success: true };
+    } catch (error) {
+      console.error('Error in print-pdf handler:', error);
+      return { success: false, error: error.message };
     }
-
-    const options = {
-      silent: true,
-      deviceName: printerName,
-    };
-
-    appWindow.webContents.print(options, (success, failureReason) => {
-      if (!success) console.error(`Failed to print: ${failureReason}`);
-    });
   });
 
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
@@ -126,7 +178,7 @@ function registerIPCHandlers() {
   });
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
-    const randomNumber= Math.floor(1000 + Math.random() * 9000);
+    const randomNumber = Math.floor(1000 + Math.random() * 9000);
     const filePath = path.join(__dirname, 'SavedData', `citation-${randomNumber}.json`);
     try {
       // Check if file exists. If not, initialize with an empty array.

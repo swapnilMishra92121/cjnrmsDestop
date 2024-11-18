@@ -19,6 +19,7 @@ import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
 import { successAddedMessage } from "@/utils/const";
+import { Header } from "@/components/CommonComponents/Header/Header";
 const { SplitView, GridView, Setting } = images;
 
 export const AddCitations: React.FC = () => {
@@ -77,7 +78,7 @@ export const AddCitations: React.FC = () => {
       owner: true,
       citee: false,
       passenger: false,
-      LicenseNumber: ""
+      LicenseNumber: "",
     },
     Location: {
       address: "",
@@ -97,7 +98,7 @@ export const AddCitations: React.FC = () => {
       stopLocationState: "",
       stopLocationZip: "",
     },
-    Violation:{
+    Violation: {
       endangerLifeOrProperty: true,
       category: "",
       statusType: "",
@@ -120,7 +121,7 @@ export const AddCitations: React.FC = () => {
       speciesNumberValue: "",
       wildlifeRestitution: true,
     },
-    Notes:{
+    Notes: {
       comments: "",
       incidentSummary: "",
       mode: "none",
@@ -131,7 +132,7 @@ export const AddCitations: React.FC = () => {
       isInDashVideoAvailable: true,
       observations: "audioClear",
     },
-    CitationInfo:{
+    CitationInfo: {
       citationType: "",
       deliveryMethod: "",
       offenseDate: "",
@@ -143,9 +144,11 @@ export const AddCitations: React.FC = () => {
       prosecutingCourt: "",
       prosecutingEntity: "",
       mandatoryCourt: true,
-    }
-  })
-  
+    },
+  });
+
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+
   return (
     <>
       <div
@@ -155,10 +158,38 @@ export const AddCitations: React.FC = () => {
           overflow: "hidden",
         }}
       >
+        <Header
+          selectedPrinter={selectedPrinter}
+          setSelectedPrinter={setSelectedPrinter}
+          handleDownload={() => {
+            if (!selectedPrinter) {
+              console.error("No printer selected!");
+              alert("Please select a printer before downloading.");
+              return;
+            }
+
+            const content = {
+              title: "Example PDF",
+              body: "This PDF is generated from JSON content!",
+            };
+
+            // Trigger the printPDF method
+            window.electronAPI
+              .printPDF(selectedPrinter, content)
+              .then((response) => {
+               console.log('done')
+              })
+              .catch((error) => {
+                console.error("Error while printing PDF:", error);
+                alert("An unexpected error occurred while printing the PDF.");
+              });
+          }}
+        />
+
         <Flex gap="small" vertical wrap>
           <Flex gap="middle" justify="space-between">
             <h4 style={{ display: "flex" }}>Add Citation</h4>
-           
+
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
                 <Button
@@ -193,7 +224,7 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="Setting" placement="bottom">
                 <Button
-                  onClick={() => { }}
+                  onClick={() => {}}
                   icon={
                     <Image
                       src={Setting}
@@ -231,14 +262,20 @@ export const AddCitations: React.FC = () => {
                 <Vehicles setformData={setformData} formData={formData} />
               )}
               {activeTab === 2 && (
-                <Location
-                formData={formData}
-                setformData={setformData}
+                <Location formData={formData} setformData={setformData} />
+              )}
+              {activeTab === 3 && (
+                <Violations setformData={setformData} formData={formData} />
+              )}
+              {activeTab === 4 && (
+                <CitationInformation
+                  setformData={setformData}
+                  formData={formData}
                 />
               )}
-              {activeTab === 3 && <Violations setformData={setformData} formData={formData}/>}
-              {activeTab === 4 && <CitationInformation setformData={setformData} formData={formData}/>}
-              {activeTab === 5 && <Notes setformData={setformData} formData={formData}/>}
+              {activeTab === 5 && (
+                <Notes setformData={setformData} formData={formData} />
+              )}
             </Flex>
           )}
 
