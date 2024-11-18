@@ -18,7 +18,7 @@ type CitationInformationProps = {
   customWidth?: string;
   customPadding?: string;
   setformData: (data: FormData) => void;
-  formData: FormData;
+  formData: FormData
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -71,8 +71,8 @@ const CitationInformation: FC<CitationInformationProps> = ({
   isGlanceView = false,
   customWidth,
   customPadding,
-  formData,
   setformData,
+  formData
 }) => {
   const initialValues = {
     citationType: "",
@@ -100,11 +100,10 @@ const CitationInformation: FC<CitationInformationProps> = ({
   useEffect(() => {
     setformData({
       ...formData,
-      CitationInformation:citationInfoForm.initialValues
-
-    });
-  }, [citationInfoForm.initialValues]);
-
+      CitationInfo: citationInfoForm?.values
+    })
+  }, [citationInfoForm?.values]);
+  
   return (
     <FormikProvider value={citationInfoForm}>
       <Form>

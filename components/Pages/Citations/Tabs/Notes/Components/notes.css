@@ -1,0 +1,15 @@
+.preview_pdf_container {
+    margin-top: 5px;
+    min-height: 540px;
+    min-width: 400px;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+    max-width: 450px;
+}
+
+.button_container {
+    margin-top: 10px;
+    display: flex;
+    gap: 4px;
+}

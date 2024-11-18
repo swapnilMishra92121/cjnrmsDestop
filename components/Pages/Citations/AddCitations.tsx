@@ -119,12 +119,33 @@ export const AddCitations: React.FC = () => {
       speciesNumber: true,
       speciesNumberValue: "",
       wildlifeRestitution: true,
+    },
+    Notes:{
+      comments: "",
+      incidentSummary: "",
+      mode: "none",
+      otherMethod: "none",
+      lock: "none",
+      pbtNumber: "",
+      squadNumber: "",
+      isInDashVideoAvailable: true,
+      observations: "audioClear",
+    },
+    CitationInfo:{
+      citationType: "",
+      deliveryMethod: "",
+      offenseDate: "",
+      offenseTime: "",
+      officer: "",
+      badge: "",
+      caseOrICRNumber: "",
+      county: "",
+      prosecutingCourt: "",
+      prosecutingEntity: "",
+      mandatoryCourt: true,
     }
   })
-   const handleSubmit=()=>{
-    window.electronAPI.createSubjectOutputJsonFile(formData);
-    openNotificationWithIcon("success", successAddedMessage);
-   }
+  
   return (
     <>
       <div
@@ -137,13 +158,7 @@ export const AddCitations: React.FC = () => {
         <Flex gap="small" vertical wrap>
           <Flex gap="middle" justify="space-between">
             <h4 style={{ display: "flex" }}>Add Citation</h4>
-            <ButtonComponents
-              showBackgroundColor={true}
-              name="Save Data"
-              textColor="#fff"
-              color="#3672b3"
-              handleClick={()=>handleSubmit()}
-            />
+           
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
                 <Button
@@ -222,8 +237,8 @@ export const AddCitations: React.FC = () => {
                 />
               )}
               {activeTab === 3 && <Violations setformData={setformData} formData={formData}/>}
-              {activeTab === 4 && <CitationInformation />}
-              {activeTab === 5 && <Notes />}
+              {activeTab === 4 && <CitationInformation setformData={setformData} formData={formData}/>}
+              {activeTab === 5 && <Notes setformData={setformData} formData={formData}/>}
             </Flex>
           )}
 
