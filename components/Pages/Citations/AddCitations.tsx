@@ -19,9 +19,13 @@ import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
 import { successAddedMessage } from "@/utils/const";
-const { SplitView, GridView, Setting } = images;
+
+
+
+const { SplitView, GridView, Setting, newLogo, theme } = images;
 
 export const AddCitations: React.FC = () => {
+  const [activeBtn, setActiveBtn] = useState<number | null>(null)
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
   const [formData, setformData] = useState<FormData>({
@@ -97,7 +101,7 @@ export const AddCitations: React.FC = () => {
       stopLocationState: "",
       stopLocationZip: "",
     },
-    Violation:{
+    Violation: {
       endangerLifeOrProperty: true,
       category: "",
       statusType: "",
@@ -120,7 +124,7 @@ export const AddCitations: React.FC = () => {
       speciesNumberValue: "",
       wildlifeRestitution: true,
     },
-    Notes:{
+    Notes: {
       comments: "",
       incidentSummary: "",
       mode: "none",
@@ -131,7 +135,7 @@ export const AddCitations: React.FC = () => {
       isInDashVideoAvailable: true,
       observations: "audioClear",
     },
-    CitationInfo:{
+    CitationInfo: {
       citationType: "",
       deliveryMethod: "",
       offenseDate: "",
@@ -145,7 +149,7 @@ export const AddCitations: React.FC = () => {
       mandatoryCourt: true,
     }
   })
-  
+
   return (
     <>
       <div
@@ -156,9 +160,42 @@ export const AddCitations: React.FC = () => {
         }}
       >
         <Flex gap="small" vertical wrap>
-          <Flex gap="middle" justify="space-between">
-            <h4 style={{ display: "flex" }}>Add Citation</h4>
-           
+          <Flex gap="middle" justify="space-between" align="center">
+            {/* <h4 style={{ display: "flex" }}>Add Citation</h4> */}
+            <Image
+              alt="Logo"
+              src={newLogo}
+              height={100}
+              width={150}
+            />
+            <Flex gap="small">
+              <ButtonComponents
+                name="Impound"
+                showBackgroundColor={activeBtn === 1 ? true : false}
+                color={activeBtn === 1 ? "#00FFFF" : "gray"}
+                textColor={activeBtn === 1 ? "#fff" : "gray"}
+                borderColor={activeBtn===1 ? "gray" : "gray"}
+                handleClick={() => { setActiveBtn(1) }}
+              />
+
+              <ButtonComponents
+                name="New Ticket"
+                showBackgroundColor={activeBtn === 2 ? true : false}
+                color={activeBtn === 2 ? "#00FFFF" : "gray"}
+                textColor={activeBtn === 2 ? "#fff" : "gray"}
+                borderColor={activeBtn===2 ? "gray" : "gray"}
+                handleClick={() => { setActiveBtn(2) }}
+              />
+
+              <ButtonComponents
+                name="Print Ticket"
+                showBackgroundColor={activeBtn === 3 ? true : false}
+                color={activeBtn === 3 ? "#00FFFF" : "gray"}
+                textColor={activeBtn === 3 ? "#fff" : "gray"}
+                borderColor={activeBtn===3 ? "gray" : "gray"}
+                handleClick={() => { setActiveBtn(3) }}
+              />
+            </Flex>
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
                 <Button
@@ -191,15 +228,15 @@ export const AddCitations: React.FC = () => {
                 />
               </Tooltip>
 
-              <Tooltip title="Setting" placement="bottom">
+              <Tooltip title="theme" placement="bottom">
                 <Button
                   onClick={() => { }}
                   icon={
                     <Image
-                      src={Setting}
+                      src={theme}
                       alt="grid view"
-                      height={16}
-                      width={16}
+                      height={20}
+                      width={20}
                     />
                   }
                   style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
@@ -210,7 +247,7 @@ export const AddCitations: React.FC = () => {
           </Flex>
 
           {!glanceView && (
-            <Flex gap="middle" vertical wrap>
+            <Flex gap="middle" vertical wrap >
               <TabsComponents
                 activeTab={activeTab}
                 tabList={[
@@ -228,13 +265,13 @@ export const AddCitations: React.FC = () => {
               {activeTab === 1 && <Vehicles setformData={setformData} formData={formData} />}
               {activeTab === 2 && (
                 <Location
-                formData={formData}
-                setformData={setformData}
+                  formData={formData}
+                  setformData={setformData}
                 />
               )}
-              {activeTab === 3 && <Violations setformData={setformData} formData={formData}/>}
-              {activeTab === 4 && <CitationInformation setformData={setformData} formData={formData}/>}
-              {activeTab === 5 && <Notes setformData={setformData} formData={formData}/>}
+              {activeTab === 3 && <Violations setformData={setformData} formData={formData} />}
+              {activeTab === 4 && <CitationInformation setformData={setformData} formData={formData} />}
+              {activeTab === 5 && <Notes setformData={setformData} formData={formData} />}
             </Flex>
           )}
 

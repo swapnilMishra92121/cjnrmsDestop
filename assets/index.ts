@@ -35,6 +35,9 @@ import ArrowIcon from "./icons/ArrowIcon.svg";
 import SplitView from "./icons/split-view.svg";
 import GridView from "./icons/grid.svg";
 import Logo from "./icons/mini.png"
+import newLogo from "./icons/LogoI.svg"
+import theme from "./icons/theme.svg"
+
 const images = {
   Menu,
   Car,
@@ -71,6 +74,8 @@ const images = {
   ArrowIcon,
   SplitView,
   GridView,
-  Logo
+  Logo,
+  newLogo,
+  theme
 };
 export default images;
