@@ -22,7 +22,7 @@ import { successAddedMessage } from "@/utils/const";
 
 
 
-const { SplitView, GridView, Setting, newLogo, theme } = images;
+const { SplitView, GridView, Setting, newLogo, theme ,account} = images;
 
 export const AddCitations: React.FC = () => {
   const [activeBtn, setActiveBtn] = useState<number | null>(null)
@@ -239,7 +239,23 @@ export const AddCitations: React.FC = () => {
                       width={20}
                     />
                   }
-                  style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
+                  // style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
+                  title="Grid View"
+                />
+              </Tooltip>
+
+              <Tooltip title="account" placement="bottom">
+                <Button
+                  onClick={() => { }}
+                  icon={
+                    <Image
+                      src={account}
+                      alt="grid view"
+                      height={20}
+                      width={20}
+                    />
+                  }
+                  // style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
                   title="Grid View"
                 />
               </Tooltip>

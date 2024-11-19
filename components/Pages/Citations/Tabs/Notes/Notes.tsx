@@ -81,9 +81,9 @@ const Notes: FC<NotesProps> = ({
     },
   });
 
-  const previewHandler = () => {
-    setShowPreview(!showPreview);
-  }
+ 
+   
+    
   const handleSubmit = () => {
     window.electronAPI.createSubjectOutputJsonFile(formData);
     openNotificationWithIcon("success", successAddedMessage);
@@ -95,6 +95,7 @@ const Notes: FC<NotesProps> = ({
       Notes: notesForm?.values
     })
   }, [notesForm?.values]);
+  
   return (
     <FormikProvider value={notesForm} >
       <Flex style={{ display: "flex", gap: "20px" }}>
@@ -183,13 +184,16 @@ const Notes: FC<NotesProps> = ({
                         justify="flex-end"
                         style={{ padding: "12px" }}
                       >
-                        <Button
-                          onClick={(): void => {
-                            previewHandler()
+                        <ButtonComponents
+                          showBackgroundColor={true}
+                          name="Submit Ticket"
+                          textColor="#fff"
+                          color="#3672b3"
+                          handleClick={(): void => {
+                            handleSubmit();
                           }}
-                        >
-                          Preview
-                        </Button>
+                        />
+                         
                       </Flex>
                     </Flex>
                   </Flex>
@@ -198,7 +202,7 @@ const Notes: FC<NotesProps> = ({
             </StyledFormContainer>
           </Form>
         </Flex>
-        {
+        {/* {
           showPreview &&
           <div>
             <div className="preview_pdf_container"></div>
@@ -222,7 +226,7 @@ const Notes: FC<NotesProps> = ({
 
             </div>
           </div>
-        }
+        } */}
       </Flex>
     </FormikProvider>
   );
