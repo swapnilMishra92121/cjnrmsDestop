@@ -37,7 +37,7 @@ import GridView from "./icons/grid.svg";
 import Logo from "./icons/mini.png"
 import newLogo from "./icons/LogoI.svg"
 import theme from "./icons/theme.svg"
-
+import account from "./icons/accountCircle.svg"
 const images = {
   Menu,
   Car,
@@ -76,6 +76,7 @@ const images = {
   GridView,
   Logo,
   newLogo,
-  theme
+  theme,
+  account
 };
 export default images;

@@ -3,6 +3,7 @@ import { Form, FormikProvider, useFormik } from "formik";
 import styled from "styled-components";
 import Flex from "antd/lib/flex";
 import {
+  EnhancedCheckbox,
   EnhancedInput,
   EnhancedRadio,
   EnhancedRadioGroup,
@@ -81,9 +82,9 @@ const Notes: FC<NotesProps> = ({
     },
   });
 
-  const previewHandler = () => {
-    setShowPreview(!showPreview);
-  }
+
+
+
   const handleSubmit = () => {
     window.electronAPI.createSubjectOutputJsonFile(formData);
     openNotificationWithIcon("success", successAddedMessage);
@@ -95,6 +96,7 @@ const Notes: FC<NotesProps> = ({
       Notes: notesForm?.values
     })
   }, [notesForm?.values]);
+
   return (
     <FormikProvider value={notesForm} >
       <Flex style={{ display: "flex", gap: "20px" }}>
@@ -160,6 +162,284 @@ const Notes: FC<NotesProps> = ({
                     items={observationsOptions}
                   />
                 </Flex>
+                <h3 className="meta_title_notes">Road Type</h3>
+                <Flex gap="middle" align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="Residential"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Residential
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="Rural"
+                    checked={false}
+                  // onChange={vehicl}
+                  >
+                    Rural
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="Rural"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Rural
+                  </EnhancedCheckbox>
+
+                  <EnhancedCheckbox
+                    name="Divided"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Divided
+                  </EnhancedCheckbox>
+
+                  <EnhancedCheckbox
+                    name="Other"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Other
+                  </EnhancedCheckbox>
+                </Flex>
+
+
+                <h3 className="meta_title_notes">Unsafe Conditions</h3>
+                <Flex gap="middle" align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="ImpairedVisibility"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Impaired Visibility
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="TrafficPresent"
+                    checked={false}
+                  // onChange={vehicl}
+                  >
+                    Traffic Present
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="Freeway"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Freeway
+                  </EnhancedCheckbox>
+
+                  <EnhancedCheckbox
+                    name="Slippery"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Slippery
+                  </EnhancedCheckbox>
+
+                  <EnhancedCheckbox
+                    name="CauseToDodge"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Cause to Dodge
+                  </EnhancedCheckbox>
+                </Flex>
+
+                <Flex gap="middle" align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="Rain"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Rain
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="Snow"
+                    checked={false}
+                  // onChange={vehicl}
+                  >
+                    Snow
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="Fog"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Fog
+                  </EnhancedCheckbox>
+
+                  <EnhancedCheckbox
+                    name="ConditionOther"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Other
+                  </EnhancedCheckbox>
+
+
+                </Flex>
+
+
+                <Flex gap="middle" align="flex-end" wrap>
+                  <EnhancedInput name="ViolatorDirection" label="Violator Direction" width="20%" />
+                  <EnhancedInput name="Lane" label="Lane" width="10%" />
+                  <EnhancedInput name="Method" label="Method" width="20%" />
+                  {/* <EnhancedSelect
+                name="state"
+                label="State"
+                containerStyles={{ width: customWidth ?? "5%" }}
+                options={[
+                  { label: "CA", value: "ca" },
+                  { label: "TX", value: "tx" },
+                  { label: "NY", value: "ny" },
+                ]}
+              /> */}
+
+                  <Flex gap="middle" align="flex-end" wrap>
+                    <EnhancedInput
+                      name="SquadDirection"
+                      label="Squad Direction"
+                      width="20%"
+
+                    />
+                    <EnhancedInput name="Squad Number" label="Squad Number" width="20%" />
+                    <Flex gap="middle" align="flex-end" wrap vertical>
+
+                      <EnhancedCheckbox
+                        name="audio"
+                        checked={false}
+                      // onChange={vehicleForm.handleChange}
+                      >
+                        Audio Recorded
+                      </EnhancedCheckbox>
+                      <EnhancedCheckbox
+                        name="Video"
+                        checked={false}
+                      // onChange={vehicl}
+                      >
+                        Video Recorded
+                      </EnhancedCheckbox>
+                    </Flex>
+                  </Flex>
+
+
+                </Flex>
+
+                <h3 className="meta_title_notes">Observation</h3>
+                <Flex gap="middle" align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="ObservationVehicleOverPosted"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Observation Vehicle Over Posted
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="AudoClear"
+                    checked={false}
+                  // onChange={vehicl}
+                  >
+                    Audo Clear/Strong/Steady
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="AlwaysInSight"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Always In Sight
+                  </EnhancedCheckbox>
+                </Flex>
+
+
+                <h3 className="meta_title_notes">Traffic Survey</h3>
+                <Flex gap={"70px"} align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="ObservationVehicleOverPosted"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    No Other Traffic
+                  </EnhancedCheckbox>
+                  <EnhancedInput name="OtherTraffic" label="Other Traffic" width="40%" />
+                </Flex>
+
+
+                <h3 className="meta_title_notes">Doppler Audio</h3>
+                <Flex gap={"88px"} align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="SingleTarget"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Single Target
+                  </EnhancedCheckbox>
+                  <Flex gap={"10px"}>
+                    <EnhancedInput name="otherTarget" label="Other Target" width="35%" />
+                    <EnhancedInput name="Terrain" label="Terrain" width="35%" />
+
+                  </Flex>
+                </Flex>
+
+
+
+                <h3 className="meta_title_notes">Warning Issued</h3>
+                <Flex gap="large" align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="SeatBelt"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Seat Belt
+                  </EnhancedCheckbox>
+
+                  <EnhancedCheckbox
+                    name="WarningOther"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Other
+                  </EnhancedCheckbox>
+                  <Flex  gap="small">
+                    <EnhancedInput name="otherTarget" label="Other Warning" width="35%" />
+                    <EnhancedInput name="Insurance" label="Insuranve" width="35%" />
+                  </Flex>
+                </Flex>
+
+                <h3 className="meta_title_notes">No Seat Belt Use Observed When.</h3>
+                <Flex gap="middle" align="flex-end" wrap>
+                  <EnhancedCheckbox
+                    name="meeting"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Meeting
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="Following"
+                    checked={false}
+                  // onChange={vehicl}
+                  >
+                    Following
+                  </EnhancedCheckbox>
+                  <EnhancedCheckbox
+                    name="AtStop"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    At Stop
+                  </EnhancedCheckbox>
+
+                  <EnhancedCheckbox
+                    name="Admitted"
+                    checked={false}
+                  // onChange={vehicleForm.handleChange}
+                  >
+                    Admitted
+                  </EnhancedCheckbox>
+
+
+                </Flex>
+
 
                 {!isGlanceView && (
                   <Flex style={{ display: "flex", justifyContent: "space-between" }}>
@@ -183,13 +463,15 @@ const Notes: FC<NotesProps> = ({
                         justify="flex-end"
                         style={{ padding: "12px" }}
                       >
-                        <Button
-                          onClick={(): void => {
-                            previewHandler()
+                        <ButtonComponents
+                          showBackgroundColor={true}
+                          name="Submit Ticket"
+                          textColor="#fff"
+                          color="#3672b3"
+                          handleClick={(): void => {
+                            handleSubmit();
                           }}
-                        >
-                          Preview
-                        </Button>
+                        />
                       </Flex>
                     </Flex>
                   </Flex>
@@ -198,7 +480,7 @@ const Notes: FC<NotesProps> = ({
             </StyledFormContainer>
           </Form>
         </Flex>
-        {
+        {/* {
           showPreview &&
           <div>
             <div className="preview_pdf_container"></div>
@@ -222,7 +504,7 @@ const Notes: FC<NotesProps> = ({
 
             </div>
           </div>
-        }
+        } */}
       </Flex>
     </FormikProvider>
   );
