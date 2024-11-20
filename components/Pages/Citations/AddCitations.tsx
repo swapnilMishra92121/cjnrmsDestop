@@ -14,18 +14,14 @@ import GlanceView from "./GlanceView";
 import images from "../../../assets";
 import Image from "next/image";
 import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsComponents";
-import { LocationI } from "./Tabs/Location/components/LocationFormI";
 import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
-import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
-import { successAddedMessage } from "@/utils/const";
-
-import { Header } from "@/components/CommonComponents/Header/Header";
+import PrintersAndScanners from "./setting/PrintersAndScanners";
 
 const { SplitView, GridView, Setting, newLogo, theme } = images;
 
 export const AddCitations: React.FC = () => {
-  const [activeBtn, setActiveBtn] = useState<number | null>(null)
+  const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
   const [formData, setformData] = useState<FormData>({
@@ -149,6 +145,7 @@ export const AddCitations: React.FC = () => {
       mandatoryCourt: true,
     },
   });
+  const [settingTab, setsettingTab] = useState<boolean>(false);
 
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
 
@@ -161,51 +158,19 @@ export const AddCitations: React.FC = () => {
           overflow: "hidden",
         }}
       >
-        <Header
-          selectedPrinter={selectedPrinter}
-          setSelectedPrinter={setSelectedPrinter}
-          handleDownload={() => {
-            if (!selectedPrinter) {
-              console.error("No printer selected!");
-              alert("Please select a printer before downloading.");
-              return;
-            }
-
-            const content = {
-              title: "Example PDF",
-              body: "This PDF is generated from JSON content!",
-            };
-
-            // Trigger the printPDF method
-            window.electronAPI
-              .printPDF(selectedPrinter, content)
-              .then((response) => {
-               console.log('done')
-              })
-              .catch((error) => {
-                console.error("Error while printing PDF:", error);
-                alert("An unexpected error occurred while printing the PDF.");
-              });
-          }}
-        />
-
         <Flex gap="small" vertical wrap>
           <Flex gap="middle" justify="space-between" align="center">
-            {/* <h4 style={{ display: "flex" }}>Add Citation</h4> */}
-            <Image
-              alt="Logo"
-              src={newLogo}
-              height={100}
-              width={150}
-            />
+            <Image alt="Logo" src={newLogo} height={100} width={150} />
             <Flex gap="small">
               <ButtonComponents
                 name="Impound"
                 showBackgroundColor={activeBtn === 1 ? true : false}
                 color={activeBtn === 1 ? "#00FFFF" : "gray"}
                 textColor={activeBtn === 1 ? "#fff" : "gray"}
-                borderColor={activeBtn===1 ? "gray" : "gray"}
-                handleClick={() => { setActiveBtn(1) }}
+                borderColor={activeBtn === 1 ? "gray" : "gray"}
+                handleClick={() => {
+                  setActiveBtn(1);
+                }}
               />
 
               <ButtonComponents
@@ -213,8 +178,10 @@ export const AddCitations: React.FC = () => {
                 showBackgroundColor={activeBtn === 2 ? true : false}
                 color={activeBtn === 2 ? "#00FFFF" : "gray"}
                 textColor={activeBtn === 2 ? "#fff" : "gray"}
-                borderColor={activeBtn===2 ? "gray" : "gray"}
-                handleClick={() => { setActiveBtn(2) }}
+                borderColor={activeBtn === 2 ? "gray" : "gray"}
+                handleClick={() => {
+                  setActiveBtn(2);
+                }}
               />
 
               <ButtonComponents
@@ -222,8 +189,33 @@ export const AddCitations: React.FC = () => {
                 showBackgroundColor={activeBtn === 3 ? true : false}
                 color={activeBtn === 3 ? "#00FFFF" : "gray"}
                 textColor={activeBtn === 3 ? "#fff" : "gray"}
-                borderColor={activeBtn===3 ? "gray" : "gray"}
-                handleClick={() => { setActiveBtn(3) }}
+                borderColor={activeBtn === 3 ? "gray" : "gray"}
+                handleClick={() => {
+                  if (!selectedPrinter) {
+                    console.error("No printer selected!");
+                    alert("Please select a printer before downloading.");
+                    return;
+                  }
+
+                  const content = {
+                    title: "Example PDF",
+                    body: "This PDF is generated from JSON content!",
+                  };
+
+                  // Trigger the printPDF method
+                  window.electronAPI
+                    .printPDF(selectedPrinter, content)
+                    .then((response) => {
+                      console.log("done");
+                    })
+                    .catch((error) => {
+                      console.error("Error while printing PDF:", error);
+                      alert(
+                        "An unexpected error occurred while printing the PDF."
+                      );
+                    });
+                  setActiveBtn(3);
+                }}
               />
             </Flex>
             <Flex gap="small" align="center">
@@ -262,8 +254,21 @@ export const AddCitations: React.FC = () => {
                 <Button
                   onClick={() => {}}
                   icon={
+                    <Image src={theme} alt="grid view" height={20} width={20} />
+                  }
+                  style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
+                  title="Grid View"
+                />
+              </Tooltip>
+
+              <Tooltip title="Setting" placement="bottom">
+                <Button
+                  onClick={() => {
+                    setsettingTab(true);
+                  }}
+                  icon={
                     <Image
-                      src={theme}
+                      src={Setting}
                       alt="grid view"
                       height={20}
                       width={20}
@@ -276,41 +281,53 @@ export const AddCitations: React.FC = () => {
             </Flex>
           </Flex>
 
-          {!glanceView && (
-            <Flex gap="middle" vertical wrap >
-              <TabsComponents
-                activeTab={activeTab}
-                tabList={[
-                  { name: "Subject", id: 1 },
-                  { name: "Vehicles", id: 2 },
-                  { name: "Location", id: 3 },
-                  { name: "Violations", id: 4 },
-                  { name: "Citation Information", id: 5 },
-                  { name: "Notes", id: 5 },
-                ]}
-                handleTabChange={setActiveTab}
-              />
+          {settingTab ? (
+            <PrintersAndScanners selectedPrinter={selectedPrinter} setSelectedPrinter={setSelectedPrinter} />
+          ) : (
+            <>
+              {!glanceView && (
+                <Flex gap="middle" vertical wrap>
+                  <TabsComponents
+                    activeTab={activeTab}
+                    tabList={[
+                      { name: "Subject", id: 1 },
+                      { name: "Vehicles", id: 2 },
+                      { name: "Location", id: 3 },
+                      { name: "Violations", id: 4 },
+                      { name: "Citation Information", id: 5 },
+                      { name: "Notes", id: 5 },
+                    ]}
+                    handleTabChange={setActiveTab}
+                  />
 
-              {activeTab === 0 && (
-                <Subject setformData={setformData} formData={formData} />
+                  {activeTab === 0 && (
+                    <Subject setformData={setformData} formData={formData} />
+                  )}
+                  {activeTab === 1 && (
+                    <Vehicles setformData={setformData} formData={formData} />
+                  )}
+                  {activeTab === 2 && (
+                    <Location formData={formData} setformData={setformData} />
+                  )}
+                  {activeTab === 3 && (
+                    <Violations setformData={setformData} formData={formData} />
+                  )}
+                  {activeTab === 4 && (
+                    <CitationInformation
+                      setformData={setformData}
+                      formData={formData}
+                    />
+                  )}
+                  {activeTab === 5 && (
+                    <Notes setformData={setformData} formData={formData} />
+                  )}
+                </Flex>
               )}
-              {activeTab === 1 && (
-                <Vehicles setformData={setformData} formData={formData} />
-              )}
-              {activeTab === 2 && (
-                <Location
-                  formData={formData}
-                  setformData={setformData}
-                />
-              )}
-              {activeTab === 3 && <Violations setformData={setformData} formData={formData} />}
-              {activeTab === 4 && <CitationInformation setformData={setformData} formData={formData} />}
-              {activeTab === 5 && <Notes setformData={setformData} formData={formData} />}
-            </Flex>
-          )}
 
-          {glanceView && (
-            <GlanceView setformData={setformData} formData={formData} />
+              {glanceView && (
+                <GlanceView setformData={setformData} formData={formData} />
+              )}
+            </>
           )}
         </Flex>
       </div>
