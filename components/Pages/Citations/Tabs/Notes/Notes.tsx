@@ -472,7 +472,6 @@ const Notes: FC<NotesProps> = ({
                             handleSubmit();
                           }}
                         />
-
                       </Flex>
                     </Flex>
                   </Flex>

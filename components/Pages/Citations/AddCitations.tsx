@@ -109,10 +109,14 @@ export const AddCitations: React.FC = () => {
       searchDescription: "",
       nibrsCode: "",
       level: "",
+      violations: [
+        {
+          thirdViolation: true,
+          statueOrOrdinance: "",
+          description: "",
+        },
+      ], // Initialize as an array of objects
       addThirdViolation: true,
-      statueOrOrdinance: "",
-      description: "",
-      thirdViolation: true,
       speed: "",
       zone: "",
       disobey: "",
