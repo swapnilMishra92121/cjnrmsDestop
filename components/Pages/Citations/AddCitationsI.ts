@@ -4,59 +4,59 @@ import { NotesI } from "./Tabs/Notes/Components/NotesStateI";
 import {  ViolationDetailsI } from "./Tabs/Violations/Components/Violationl";
 
 export interface VehicleData {
-  plate: string;
-  state: string;
-  expiration: string;
-  noPlate: boolean;
+  plate: string | null;
+  state: string | null;
+  expiration: string | null;
+  noPlate: boolean | null;
   twentyOneDayPlate: boolean;
-  make: string;
-  model: string;
-  year: string;
-  color: string;
-  style: string;
-  type: string;
-  vin: string;
+  make: string | null;
+  model: string | null;
+  year: string | null;
+  color: string | null;
+  style: string | null;
+  type: string | null;
+  vin: string | null;
   isCommercialVehicle: boolean;
   hasHazardousMaterial: boolean;
-  dotNumber: string;
-  poundsOverWeight: string;
-  occupants: string;
+  dotNumber: string | null; 
+  poundsOverWeight: string | null;
+  occupants: string | null;
   hasMotorcycle: boolean;
   hasTrailer: boolean;
   is16PlusPass: boolean;
 }
 
 export interface SubjectData {
-  plate: string;
-  identificationType: string; // Assuming it's an ID type as string
-  subjectType: string; // Assuming it's a type as string
-  dlState: string;
+  plate: string | null;
+  identificationType: string | null; // Assuming it's an ID type as string
+  subjectType: string | null; // Assuming it's a type as string
+  dlState: string | null;
   cdl: boolean;
   parked: boolean;
-  lastName: string;
-  firstName: string;
-  middleName: string;
-  suffix: string; // Assuming suffix is a string
-  address: string;
-  apt: string;
-  city: string;
-  state: string;
-  zip: string;
-  race: string;
-  gender: string;
-  dob: string; // Use `Date | string` if date formats vary
-  age: string; // Use `number | string` if age can be numerical
+  lastName: string | null;
+  firstName: string | null;
+  middleName: string | null;
+  suffix: string | null; // Assuming suffix is a string
+  address: string | null;
+  apt: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  race: string | null;
+  gender: string | null;
+  dob: string | null; // Use `Date | string` if date formats vary
+  age: string | null; // Use `number | string` if age can be numerical
   isJuvenileCourtOffense: boolean;
-  juvenileOffenseType: string;
-  height: string;
-  weight: string;
-  hair: string;
-  eyes: string;
+  juvenileOffenseType: string | null;
+  height: string | null;
+  weight: string | null;
+  hair: string | null;
+  eyes: string | null;
   driver: boolean;
   owner: boolean;
   citee: boolean;
   passenger: boolean;
-  LicenseNumber: string;
+  LicenseNumber: string | null;
 }
 
 export interface CitationInformation {
