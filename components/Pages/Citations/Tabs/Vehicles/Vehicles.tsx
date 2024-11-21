@@ -162,7 +162,7 @@ const Vehicles: FC<VehicleProps> = ({
                   name="state"
                   label="State"
                   width="30%"
-                  value={vehicleForm.values.state}
+                  value={vehicleForm.values.state || ""}
                   onChange={vehicleForm.handleChange}
                 />
 
@@ -179,7 +179,7 @@ const Vehicles: FC<VehicleProps> = ({
               <Flex gap="small" vertical wrap>
                 <EnhancedCheckbox
                   name="noPlate"
-                  checked={vehicleForm.values.noPlate}
+                  checked={vehicleForm.values.noPlate || false}
                   onChange={vehicleForm.handleChange}
                 >
                   No Plate
@@ -199,28 +199,28 @@ const Vehicles: FC<VehicleProps> = ({
                 name="make"
                 label="Make"
                 width="20%"
-                value={vehicleForm.values.make}
+                value={vehicleForm.values.make || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="model"
                 label="Model"
                 width="20%"
-                value={vehicleForm.values.model}
+                value={vehicleForm.values.model || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="year"
                 label="Year"
                 width="20%"
-                value={vehicleForm.values.year}
+                value={vehicleForm.values.year || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="color"
                 label="Color"
                 width="20%"
-                value={vehicleForm.values.color}
+                value={vehicleForm.values.color || ""}
                 onChange={vehicleForm.handleChange}
               />
             </Flex>
@@ -255,7 +255,7 @@ const Vehicles: FC<VehicleProps> = ({
                 name="vin"
                 label="VIN"
                 width="30%"
-                value={vehicleForm.values.vin}
+                value={vehicleForm.values.vin || ""}
                 onChange={vehicleForm.handleChange}
               />
             </Flex>
@@ -282,14 +282,14 @@ const Vehicles: FC<VehicleProps> = ({
                 name="dotNumber"
                 label="DOT#"
                 width="20%"
-                value={vehicleForm.values.dotNumber}
+                value={vehicleForm.values.dotNumber || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="poundsOverWeight"
                 label="Pounds Overweight"
                 width="20%"
-                value={vehicleForm.values.poundsOverWeight}
+                value={vehicleForm.values.poundsOverWeight || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedSelect
