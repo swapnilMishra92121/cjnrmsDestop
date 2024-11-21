@@ -1,21 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import Flex from "antd/lib/flex";
-import Card from "antd/lib/card";
-import { Grid, Space } from "antd";
+import { Card, Col, Row, Space, Button, Grid } from "antd";
 import CitationInformation from "./Tabs/CitationInformation/CitationInformation";
 import images from "../../../assets";
 import Image from "next/image";
-import Button from "antd/lib/button";
-// import Notes from "./Tabs/Notes/Notes";
 import Vehicles from "./Tabs/Vehicles/Vehicles";
 import Subject from "./Tabs/Subject/Subject";
 import { Location } from "./Tabs/Location/Location";
 import Violations from "./Tabs/Violations/Violations";
-import { Col, Row } from "antd/lib";
-import { FormData } from "./AddCitationsI";
 import Notes from "./Tabs/Notes/Notes";
-
+import { FormData } from "./AddCitationsI";
 
 export interface GlanceViewIPrams {
   setformData: (data: FormData) => void;
@@ -24,12 +18,26 @@ export interface GlanceViewIPrams {
 
 const { Enlarge } = images;
 
-const StyledContainer = styled(Flex)`
-  padding: 8px;
+// Styled container to ensure no scrollbars
+const StyledContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+`;
+
+
+const StyledCard = styled(Card)`
+  .ant-card-body {
+    padding: 0px 24px 8px 24px;
+  }
 `;
 
 const ExtraButtonsLayout = (
-  <Flex gap="small">
+  <Space>
     <Button
       onClick={(): void => {
         // juvenileSubjectForm.resetForm();
@@ -37,55 +45,74 @@ const ExtraButtonsLayout = (
     >
       Clear all Fields
     </Button>
-
     <Button
       icon={
         <Image src={Enlarge} alt="maximize section" height={16} width={16} />
       }
       style={{ border: "none" }}
     />
-  </Flex>
+  </Space>
 );
 
 const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData }) => {
   return (
     <StyledContainer>
-      <Row gutter={16}>
+      <Row gutter={16} style={{ width: "100%", transform: "scaleY(0.75)", marginTop:"-180px" }}>
         <Col span={12}>
-          <Space size="middle" direction="vertical">
-            <Card
+          <Space size="middle" direction="vertical" style={{ width: "100%" }}>
+            <StyledCard
               title="Subject"
               bordered={false}
               extra={ExtraButtonsLayout}
-              style={{ padding: "12px" }}
+              // style={{ padding: "12px" }}
             >
-              <Subject customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} />
-            </Card>
+              <Subject
+                customWidth="40%"
+                customPadding="0px"
+                isGlanceView
+                setformData={setformData}
+                formData={formData}
+              />
+            </StyledCard>
 
-            <Card
+            <StyledCard
               title="Vehicle Information"
               bordered={false}
               extra={ExtraButtonsLayout}
             >
-              <Vehicles customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} />
-            </Card>
+              <Vehicles
+                customWidth="40%"
+                customPadding="0px"
+                isGlanceView
+                setformData={setformData}
+                formData={formData}
+              />
+            </StyledCard>
           </Space>
         </Col>
         <Col span={12}>
-          <Space size="middle" direction="vertical">
-            <Card title="Location" bordered={false} extra={ExtraButtonsLayout}>
-              <Location customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} />
-            </Card>
+          <Space size="middle" direction="vertical" style={{ width: "100%" }}>
+            <StyledCard title="Location" bordered={false} extra={ExtraButtonsLayout}>
+              <Location
+                customWidth="40%"
+                customPadding="0px"
+                isGlanceView
+                setformData={setformData}
+                formData={formData}
+              />
+            </StyledCard>
 
-            <Card
-              title="Violations"
-              bordered={false}
-              extra={ExtraButtonsLayout}
-            >
-              <Violations customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} />
-            </Card>
+            <StyledCard title="Violations" bordered={false} extra={ExtraButtonsLayout}>
+              <Violations
+                customWidth="40%"
+                customPadding="0px"
+                isGlanceView
+                setformData={setformData}
+                formData={formData}
+              />
+            </StyledCard>
 
-            <Card
+            <StyledCard
               title="Citation Information"
               bordered={false}
               extra={ExtraButtonsLayout}
@@ -94,14 +121,20 @@ const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData }) => {
                 customWidth="40%"
                 customPadding="0px"
                 isGlanceView
-                setformData={setformData} 
+                setformData={setformData}
                 formData={formData}
               />
-            </Card>
+            </StyledCard>
 
-            <Card title="Notes" bordered={false} extra={ExtraButtonsLayout}>
-              <Notes customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData}/>
-            </Card>
+            {/* <StyledCard title="Notes" bordered={false} extra={ExtraButtonsLayout}>
+              <Notes
+                customWidth="40%"
+                customPadding="0px"
+                isGlanceView
+                setformData={setformData}
+                formData={formData}
+              />
+            </StyledCard> */}
           </Space>
         </Col>
       </Row>

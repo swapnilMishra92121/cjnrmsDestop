@@ -80,15 +80,15 @@ const Violations: FC<ViolationProps> = ({
     <StyledFormContainer $customPadding={customPadding}>
       <FormikProvider value={violationsForm}>
         <Form>
-          <div style={{ padding: "12px" }}>
-            {!isGlanceView && (
-              <>
+          {!isGlanceView && (
+            <>
+              <div style={{ padding: "12px" }}>
                 <EnhancedRadio name="endangerLifeOrProperty">
                   Endanger Life or Property
                 </EnhancedRadio>
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
 
           <FieldArray
             name="violations"
@@ -134,7 +134,7 @@ const Violations: FC<ViolationProps> = ({
                       />
                     </Button>}
                     {
-                      index === (violationsForm?.values?.violations?.length - 1) && 
+                      index === (violationsForm?.values?.violations?.length - 1) &&
                       <ButtonComponents
                         name="Add"
                         showBackgroundColor={false}
@@ -148,8 +148,6 @@ const Violations: FC<ViolationProps> = ({
                     }
                   </Flex>
                 ))}
-
-
               </Flex>
             )}
           />

@@ -258,9 +258,7 @@ const Vehicles: FC<VehicleProps> = ({
                 value={vehicleForm.values.vin || ""}
                 onChange={vehicleForm.handleChange}
               />
-            </Flex>
-
-            <Flex gap="middle" align="flex-end" wrap>
+              <Flex gap="middle" align="flex-end" wrap>
               <EnhancedCheckbox
                 name="isCommercialVehicle"
                 checked={vehicleForm.values.isCommercialVehicle}
@@ -276,26 +274,29 @@ const Vehicles: FC<VehicleProps> = ({
                 Hazardous Material (DOT)
               </EnhancedCheckbox>
             </Flex>
+            </Flex>
+
+            
 
             <Flex gap="middle" align="flex-end" wrap>
               <EnhancedInput
                 name="dotNumber"
                 label="DOT#"
-                width="20%"
+                width="18%"
                 value={vehicleForm.values.dotNumber || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="poundsOverWeight"
                 label="Pounds Overweight"
-                width="20%"
+                width="18%"
                 value={vehicleForm.values.poundsOverWeight || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedSelect
                 name="occupants"
                 label="Occupants"
-                containerStyles={{ width: customWidth ?? "20%" }}
+                containerStyles={{ width:"20%" }}
                 options={[
                   { label: "2", value: "1" },
                   { label: "3", value: "2" },
@@ -305,9 +306,7 @@ const Vehicles: FC<VehicleProps> = ({
                 value={vehicleForm.values.occupants}
                 onChange={vehicleForm.handleChange}
               />
-            </Flex>
-
-            <Flex gap="middle" align="flex-end" wrap>
+                <Flex gap="middle" align="flex-end" wrap>
               <EnhancedCheckbox
                 name="hasMotorcycle"
                 checked={vehicleForm.values.hasMotorcycle}
@@ -330,6 +329,9 @@ const Vehicles: FC<VehicleProps> = ({
                 16+ Pass
               </EnhancedCheckbox>
             </Flex>
+            </Flex>
+
+          
 
             {!isGlanceView && (
               <Flex
