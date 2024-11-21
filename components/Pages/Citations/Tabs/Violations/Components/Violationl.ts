@@ -1,27 +1,27 @@
 export interface ViolationGroup {
   thirdViolation: boolean;
-  statueOrOrdinance: string;
-  description: string;
+  statueOrOrdinance: string | null;
+  description: string | null; 
 }
 
 export interface ViolationDetailsI {
   endangerLifeOrProperty: boolean;
-  category: string;
-  statusType: string;
-  searchStatueOrOrdinance: string;
-  searchDescription: string;
-  nibrsCode: string;
-  level: string;
+  category: string | null;
+  statusType: string | null;
+  searchStatueOrOrdinance: string | null;
+  searchDescription: string | null;
+  nibrsCode: string | null;
+  level: string | null;
   violations: ViolationGroup[]; // Change here to use an array of objects
-  addThirdViolation: boolean;
-  speed: string;
-  zone: string;
-  disobey: string;
-  acTaken: string;
-  acTesType: string;
-  acReading: string;
-  status: string;
+  addThirdViolation: boolean | null;
+  speed: string | null;
+  zone: string | null;
+  disobey: string | null;
+  acTaken: string | null;
+  acTesType: string | null;
+  acReading: string | null;
+  status: string | null;
   speciesNumber: boolean;
-  speciesNumberValue: string;
+  speciesNumberValue: string | null;
   wildlifeRestitution: boolean;
 }

@@ -83,13 +83,8 @@
       "violations": [
         {
           "thirdViolation": true,
-          "statueOrOrdinance": "Anuj Singh",
-          "description": "Test1"
-        },
-        {
-          "thirdViolation": true,
-          "statueOrOrdinance": "Ujjwal Singh",
-          "description": "test2"
+          "statueOrOrdinance": "",
+          "description": ""
         }
       ],
       "addThirdViolation": true,
@@ -113,7 +108,41 @@
       "pbtNumber": "",
       "squadNumber": "",
       "isInDashVideoAvailable": true,
-      "observations": "audioClear"
+      "observations": "audioClear",
+      "Residential": true,
+      "Rural": false,
+      "Divided": false,
+      "Other": false,
+      "ImpairedVisibility": false,
+      "TrafficPresent": true,
+      "Freeway": false,
+      "Slippery": false,
+      "CauseToDodge": false,
+      "Rain": true,
+      "Snow": false,
+      "Fog": false,
+      "ConditionOther": true,
+      "ViolatorDirection": "Violator Direction",
+      "Lane": "Lane",
+      "Method": "Method",
+      "SquadDirection": "Squad Direction",
+      "SquadNumber": "Squard Number",
+      "audio": false,
+      "Video": true,
+      "ObservationVehicleOverPosted": true,
+      "AudoClear": false,
+      "AlwaysInSight": false,
+      "OtherTraffic": "Traffic",
+      "SingleTarget": true,
+      "otherTarget": "other ",
+      "Terrain": "Terrain",
+      "SeatBelt": false,
+      "WarningOther": "",
+      "Insurance": "",
+      "meeting": true,
+      "Following": true,
+      "AtStop": false,
+      "Admitted": false
     },
     "CitationInfo": {
       "citationType": "",
