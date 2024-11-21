@@ -57,7 +57,7 @@ const ExtraButtonsLayout = (
 const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData }) => {
   return (
     <StyledContainer>
-      <Row gutter={16} style={{ width: "100%", transform: "scaleY(0.75)", marginTop:"-180px" }}>
+      <Row gutter={16} style={{ width: "100%", transform: "scaleY(0.75)", marginTop:"-9.9%",marginBottom:"-6.5%"}}>
         <Col span={12}>
           <Space size="middle" direction="vertical" style={{ width: "100%" }}>
             <StyledCard

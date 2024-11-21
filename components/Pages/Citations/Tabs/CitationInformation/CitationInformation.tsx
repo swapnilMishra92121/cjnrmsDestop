@@ -103,7 +103,7 @@ const CitationInformation: FC<CitationInformationProps> = ({
       CitationInfo: citationInfoForm?.values
     })
   }, [citationInfoForm?.values]);
-  
+
   return (
     <FormikProvider value={citationInfoForm}>
       <Form>
@@ -154,28 +154,29 @@ const CitationInformation: FC<CitationInformationProps> = ({
                 label="County"
                 name="county"
                 options={countyOptions}
-                containerStyles={{ width: customWidth ?? "10%" }}
+                containerStyles={{ width: "19%" }}
               />
               <EnhancedSelect
                 label="Prosecuting Court"
                 name="prosecutingCourt"
                 options={prosecutingCourtOptions}
-                containerStyles={{ width: customWidth ?? "10%" }}
+                containerStyles={{ width: "19%" }}
               />
+              
+                <EnhancedSelect
+                  label="Prosecuting Entity"
+                  name="prosecutingEntity"
+                  options={prosecutingEntityOptions}
+                  containerStyles={{ width: "19%" }}
+                />
+
+                <EnhancedRadio name="mandatoryCourt">
+                  Mandatory Court
+                </EnhancedRadio>
+              
             </Flex>
 
-            <Flex gap="middle" align="flex-end" wrap>
-              <EnhancedSelect
-                label="Prosecuting Entity"
-                name="prosecutingEntity"
-                options={prosecutingEntityOptions}
-                containerStyles={{ width: customWidth ?? "10%" }}
-              />
 
-              <EnhancedRadio name="mandatoryCourt">
-                Mandatory Court
-              </EnhancedRadio>
-            </Flex>
 
             {!isGlanceView && (
               <Flex
