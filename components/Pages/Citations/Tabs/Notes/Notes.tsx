@@ -73,42 +73,42 @@ const Notes: FC<NotesProps> = ({
     squadNumber: formData?.Notes?.squadNumber,
     isInDashVideoAvailable: formData?.Notes?.isInDashVideoAvailable,
     observations: formData?.Notes?.observations,
-    Residential  : formData?.Notes?.Residential,
-    Rural : formData?.Notes?.Rural,
-    Divided : formData?.Notes?.Divided,
-    Other : formData?.Notes?.Other,
-    ImpairedVisibility : formData?.Notes?.ImpairedVisibility,
-    TrafficPresent : formData?.Notes?.TrafficPresent,
-    Freeway : formData?.Notes?.Freeway,
-    Slippery : formData?.Notes?.Slippery,
-    CauseToDodge : formData?.Notes?.CauseToDodge,
-    Rain : formData?.Notes?.Rain,
-    Snow : formData?.Notes?.Snow,
-    Fog : formData?.Notes?.Fog,
-    ConditionOther : formData?.Notes?.ConditionOther,
-    ViolatorDirection : formData?.Notes?.ViolatorDirection,
-    Lane : formData?.Notes?.Lane,
-    Method : formData?.Notes?.Method,
-    SquadDirection : formData?.Notes?.SquadDirection,
-    SquadNumber : formData?.Notes?.squadNumber,
-    audio : formData?.Notes?.audio,
-    Video : formData?.Notes?.Video,
-    ObservationVehicleOverPosted : formData?.Notes?.ObservationVehicleOverPosted,
-    AudoClear : formData?.Notes?.AudoClear,
-    AlwaysInSight : formData?.Notes?.AlwaysInSight,
-    OtherTraffic : formData?.Notes?.OtherTraffic,
-    SingleTarget : formData?.Notes?.SingleTarget,
-    otherTarget : formData?.Notes?.otherTarget,
-    Terrain : formData?.Notes?.Terrain,
-    SeatBelt : formData?.Notes?.SeatBelt,
-    WarningOther : formData?.Notes?.WarningOther,
-    Insurance : formData?.Notes?.Insurance,
-    meeting : formData?.Notes?.meeting,
-    Following : formData?.Notes?.Following,
-    AtStop : formData?.Notes?.AtStop,
-    Admitted : formData?.Notes?.Admitted,
-    otherWarning : formData?.Notes?.otherWarning,
-    NoOtherTraffic : formData?.Notes?.NoOtherTraffic
+    Residential: formData?.Notes?.Residential,
+    Rural: formData?.Notes?.Rural,
+    Divided: formData?.Notes?.Divided,
+    Other: formData?.Notes?.Other,
+    ImpairedVisibility: formData?.Notes?.ImpairedVisibility,
+    TrafficPresent: formData?.Notes?.TrafficPresent,
+    Freeway: formData?.Notes?.Freeway,
+    Slippery: formData?.Notes?.Slippery,
+    CauseToDodge: formData?.Notes?.CauseToDodge,
+    Rain: formData?.Notes?.Rain,
+    Snow: formData?.Notes?.Snow,
+    Fog: formData?.Notes?.Fog,
+    ConditionOther: formData?.Notes?.ConditionOther,
+    ViolatorDirection: formData?.Notes?.ViolatorDirection,
+    Lane: formData?.Notes?.Lane,
+    Method: formData?.Notes?.Method,
+    SquadDirection: formData?.Notes?.SquadDirection,
+    SquadNumber: formData?.Notes?.squadNumber,
+    audio: formData?.Notes?.audio,
+    Video: formData?.Notes?.Video,
+    ObservationVehicleOverPosted: formData?.Notes?.ObservationVehicleOverPosted,
+    AudoClear: formData?.Notes?.AudoClear,
+    AlwaysInSight: formData?.Notes?.AlwaysInSight,
+    OtherTraffic: formData?.Notes?.OtherTraffic,
+    SingleTarget: formData?.Notes?.SingleTarget,
+    otherTarget: formData?.Notes?.otherTarget,
+    Terrain: formData?.Notes?.Terrain,
+    SeatBelt: formData?.Notes?.SeatBelt,
+    WarningOther: formData?.Notes?.WarningOther,
+    Insurance: formData?.Notes?.Insurance,
+    meeting: formData?.Notes?.meeting,
+    Following: formData?.Notes?.Following,
+    AtStop: formData?.Notes?.AtStop,
+    Admitted: formData?.Notes?.Admitted,
+    otherWarning: formData?.Notes?.otherWarning,
+    NoOtherTraffic: formData?.Notes?.NoOtherTraffic
 
 
   };
@@ -155,51 +155,55 @@ const Notes: FC<NotesProps> = ({
                     label="Incident Summary"
                   />
                 </Flex>
-
-                <Flex gap="middle" align="flex-end" wrap>
-                  {/* <EnhancedSelect
+              {!isGlanceView &&  <div>
+                  <Flex gap="middle" align="flex-end" wrap>
+                    {/* <EnhancedSelect
                     name="mode"
                     label="Mode"
                     options={modeOptions}
                     containerStyles={{ width: customWidth ?? "10%" }}
                   /> */}
-                  <EnhancedInput name="mode" label="Mode" width="20%" />
-                  <EnhancedInput name="lock" label="Lock" width="20%" />
-                  <EnhancedInput name="otherMethod" label="Other Method" width="20%" />
-                  {/* <EnhancedSelect
+                    <EnhancedInput name="mode" label="Mode" width="20%" />
+                    <EnhancedInput name="lock" label="Lock" width="20%" />
+                    <EnhancedInput name="otherMethod" label="Other Method" width="20%" />
+                    {/* <EnhancedSelect
                     name="lock"
                     label="Lock"
                     options={lockOptions}
                     containerStyles={{ width: customWidth ?? "10%" }}
                   /> */}
-                  {/* <EnhancedSelect
+                    {/* <EnhancedSelect
                     name="otherMethod"
                     label="Other Method"
                     options={otherMethodOptions}
                     containerStyles={{ width: customWidth ?? "10%" }}
                   /> */}
-                </Flex>
+                  </Flex>
 
-                <Flex gap="middle" align="flex-end" wrap>
-                  <EnhancedInput name="pbtNumber" label="PBT Number" width="20%" />
-                  <EnhancedInput
-                    name="squadNumber"
-                    label="Squad Number"
-                    width="20%"
-                  />
-                  <EnhancedRadio name="isInDashVideoAvailable">
-                    In-Dash Video Available
-                  </EnhancedRadio>
-                </Flex>
+                  <Flex gap="middle" align="flex-end" wrap>
+                    <EnhancedInput name="pbtNumber" label="PBT Number" width="20%" />
+                    <EnhancedInput
+                      name="squadNumber"
+                      label="Squad Number"
+                      width="20%"
+                    />
+                    <EnhancedRadio name="isInDashVideoAvailable">
+                      In-Dash Video Available
+                    </EnhancedRadio>
+                  </Flex>
 
-                <Flex gap="middle" align="flex-end" wrap>
-                  <EnhancedRadioGroup
-                    label="Observations"
-                    dir="row"
-                    name="observations"
-                    items={observationsOptions}
-                  />
-                </Flex>
+                  <Flex gap="middle" align="flex-end" wrap>
+                    <EnhancedRadioGroup
+                      label="Observations"
+                      dir="row"
+                      name="observations"
+                      items={observationsOptions}
+                    />
+                  </Flex>
+                </div>}
+
+
+
                 <h3 className="meta_title_notes">Road Type</h3>
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
@@ -325,14 +329,14 @@ const Notes: FC<NotesProps> = ({
 
                       <EnhancedCheckbox
                         name="audio"
-  
+
                       // onChange={vehicleForm.handleChange}
                       >
                         Audio Recorded
                       </EnhancedCheckbox>
                       <EnhancedCheckbox
                         name="Video"
-  
+
                       // onChange={vehicl}
                       >
                         Video Recorded
@@ -410,7 +414,7 @@ const Notes: FC<NotesProps> = ({
                   >
                     Other
                   </EnhancedCheckbox>
-                  <Flex  gap="small">
+                  <Flex gap="small">
                     <EnhancedInput name="otherWarning" label="Other Warning" width="35%" />
                     <EnhancedInput name="Insurance" label="Insuranve" width="35%" />
                   </Flex>

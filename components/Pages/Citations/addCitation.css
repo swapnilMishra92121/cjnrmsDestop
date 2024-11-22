@@ -1,0 +1,20 @@
+.citation {
+    padding: 8px;
+}
+
+._Update_modal_container {
+    height: fit-content;
+    width: 400px;
+    border: 1px solid #dfdfdf;
+    position: absolute;
+    bottom: 20px;
+    right: 0;
+    border-radius: 5px;
+    padding: 5px 20px;
+    background-color: #f4f4f4;
+}
+
+._button_container {
+    display: flex;
+    justify-content: space-between;
+}

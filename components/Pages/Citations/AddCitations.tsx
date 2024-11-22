@@ -1,5 +1,5 @@
 "use client";
-
+import "./addCitation.css"
 import { useEffect, useState } from "react";
 import Subject from "./Tabs/Subject/Subject";
 import Vehicles from "./Tabs/Vehicles/Vehicles";
@@ -18,12 +18,13 @@ import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import PrintersAndScanners from "./setting/PrintersAndScanners";
 
-const { SplitView, GridView, Setting, newLogo, theme ,account} = images;
+const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
+  const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
       plate: null,
@@ -133,43 +134,43 @@ export const AddCitations: React.FC = () => {
       pbtNumber: null,
       squadNumber: null,
       isInDashVideoAvailable: true,
-      observations:null,
-      Residential :false,
-      Rural:false,
+      observations: null,
+      Residential: false,
+      Rural: false,
       Divided: false,
       Other: false,
       ImpairedVisibility: false,
       TrafficPresent: false,
       Freeway: false,
-      Slippery:false,
-      CauseToDodge:false,
-      Rain:false,
-      Snow:false,
-      Fog:false,
-      ConditionOther:false,
-      ViolatorDirection : null,
-      Lane:null,
-      Method:null,
-      SquadDirection:null,
-      SquadNumber:null,
-      audio :false,     
+      Slippery: false,
+      CauseToDodge: false,
+      Rain: false,
+      Snow: false,
+      Fog: false,
+      ConditionOther: false,
+      ViolatorDirection: null,
+      Lane: null,
+      Method: null,
+      SquadDirection: null,
+      SquadNumber: null,
+      audio: false,
       Video: false,
-      ObservationVehicleOverPosted : false,
-      AudoClear :false,
-      AlwaysInSight : false,
-      OtherTraffic:null,
-      SingleTarget : false,
-      otherTarget :null, 
+      ObservationVehicleOverPosted: false,
+      AudoClear: false,
+      AlwaysInSight: false,
+      OtherTraffic: null,
+      SingleTarget: false,
+      otherTarget: null,
       Terrain: null,
-      SeatBelt : false,
+      SeatBelt: false,
       WarningOther: null,
-      Insurance : null,    
-      meeting:false,
-      Following:false,
-      AtStop:false,
-      Admitted:false,
+      Insurance: null,
+      meeting: false,
+      Following: false,
+      AtStop: false,
+      Admitted: false,
       otherWarning: null,
-      NoOtherTraffic:false,
+      NoOtherTraffic: false,
     },
     CitationInfo: {
       citationType: null,
@@ -190,6 +191,13 @@ export const AddCitations: React.FC = () => {
 
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowUpdatePopUp(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
       <div
@@ -199,7 +207,7 @@ export const AddCitations: React.FC = () => {
           overflow: "hidden",
         }}
       >
-        <Flex gap="small" vertical wrap>
+        <Flex gap="small" vertical wrap style={{ marginTop: "-20px" }}>
           <Flex gap="middle" justify="space-between" align="center">
             <Image alt="Logo" src={newLogo} height={100} width={150} />
             <Flex gap="small">
@@ -258,6 +266,16 @@ export const AddCitations: React.FC = () => {
                   setActiveBtn(3);
                 }}
               />
+              {glanceView && <ButtonComponents
+                name="Officer Notes"
+                showBackgroundColor={activeBtn === 4 ? true : false}
+                color={activeBtn === 4 ? "#00FFFF" : "gray"}
+                textColor={activeBtn === 4 ? "#fff" : "gray"}
+                borderColor={activeBtn === 4 ? "gray" : "gray"}
+                handleClick={() => {
+                  setActiveBtn(4);
+                }}
+              />}
             </Flex>
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
@@ -293,7 +311,7 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="theme" placement="bottom">
                 <Button
-                  onClick={() => {}}
+                  onClick={() => { }}
                   icon={
                     <Image src={theme} alt="grid view" height={20} width={20} />
                   }
@@ -382,11 +400,47 @@ export const AddCitations: React.FC = () => {
               )}
 
               {glanceView && (
-                <GlanceView setformData={setformData} formData={formData} />
+                <GlanceView 
+                 setformData={setformData} 
+                 formData={formData} 
+                 activeBtn={activeBtn}
+                 setActiveBtn = {setActiveBtn}
+                 />
               )}
             </>
           )}
         </Flex>
+
+
+        {showUpdatePopUp &&
+          <div className="_Update_modal_container">
+            <p className="update_title_container">
+              The CJN App has new version 13.2.5 available,
+              introducing enhanced features, improved performance,
+              and technical optimizations for a seamless user experience.
+            </p>
+
+            <div className="_button_container">
+              <div></div>
+              <Flex gap={"10px"}>
+                <ButtonComponents
+                  name="Remind me later"
+                  showBackgroundColor={false}
+                  handleClick={() => { setShowUpdatePopUp(false)}}
+                  textColor="gray"
+                  borderColor="gray"
+                />
+                <ButtonComponents
+                  name="Update"
+                  textColor="#fff"
+                  showBackgroundColor={true}
+                  color="#3672b3"
+                />
+
+              </Flex>
+            </div>
+          </div>
+        }
       </div>
     </>
   );

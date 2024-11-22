@@ -638,9 +638,7 @@ p.header1_ {
   cursor: pointer;
   font-weight: 600;
 }
-.citation {
-  padding: 8px;
-}
+
 .overview_emergency_container_fluid_{
   display: flex;
   align-items: flex-start;
@@ -753,4 +751,16 @@ p.header1_ {
 .article-delete-icon img {
   width: 17px;
   height: 17px;
+}
+.citation {
+  padding: 8px;
+}
+
+._Update_modal_container{
+  height: 200px;
+  width: 400px;
+  border: 1px solid black;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
