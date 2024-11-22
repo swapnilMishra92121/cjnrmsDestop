@@ -71,6 +71,7 @@ const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData, activeB
             isGlanceView
             setformData={setformData}
             formData={formData}
+            setActiveBtn={setActiveBtn}
           />
         </Card> :
           <StyledContainer>

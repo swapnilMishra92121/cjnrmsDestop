@@ -22,7 +22,8 @@ type NotesProps = {
   customWidth?: string;
   customPadding?: string;
   setformData: (data: FormData) => void;
-  formData: FormData
+  formData: FormData;
+  setActiveBtn?: (data: number | null) => void
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -61,7 +62,8 @@ const Notes: FC<NotesProps> = ({
   setformData,
   customWidth,
   customPadding,
-  isGlanceView
+  isGlanceView,
+  setActiveBtn
 }) => {
   const initialValues = {
     comments: formData?.Notes?.comments,
@@ -155,7 +157,7 @@ const Notes: FC<NotesProps> = ({
                     label="Incident Summary"
                   />
                 </Flex>
-              {!isGlanceView &&  <div>
+                {!isGlanceView && <div>
                   <Flex gap="middle" align="flex-end" wrap>
                     {/* <EnhancedSelect
                     name="mode"
@@ -491,8 +493,8 @@ const Notes: FC<NotesProps> = ({
             </StyledFormContainer>
           </Form>
         </Flex>
-        {/* {
-          showPreview &&
+        {
+          isGlanceView &&
           <div>
             <div className="preview_pdf_container"></div>
             <div className="button_container">
@@ -501,7 +503,12 @@ const Notes: FC<NotesProps> = ({
                 name="Cancel Ticket"
                 textColor="#808080"
                 color="#e8f2f8"
-                handleClick={() => setShowPreview(!showPreview)}
+                handleClick={() => {
+                  if (setActiveBtn) {
+                    setActiveBtn(null)
+                  }
+                }
+                }
               />
 
               <ButtonComponents
@@ -511,11 +518,9 @@ const Notes: FC<NotesProps> = ({
                 color="#3672b3"
                 handleClick={() => handleSubmit()}
               />
-
-
             </div>
           </div>
-        } */}
+        }
       </Flex>
     </FormikProvider>
   );
