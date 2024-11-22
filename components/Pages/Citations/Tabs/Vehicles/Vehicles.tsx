@@ -339,13 +339,13 @@ const Vehicles: FC<VehicleProps> = ({
                 justify="flex-end"
                 style={{ padding: "12px" }}
               >
-                 <Button
+                 {/* <Button
                   type="primary"
                   htmlType="submit"
                   style={{ marginLeft: "8px" }}
                 >
                   Submit
-                </Button>
+                </Button> */}
 
                 <Button
                   onClick={(): void => {

@@ -106,22 +106,22 @@ const Subject: FC<SubjectProps> = ({
   const juvenileSubjectForm = useFormik({
     initialValues: {
       juvenileInfoRequired: true,
-      relationshipToChild: "",
-      childGender: "",
+      relationshipToChild: null,
+      childGender: null,
       sameAddressAsJuvenile: false,
-      childLastName: "",
-      childFirstName: "",
-      childMiddleName: "",
-      childSuffix: "1",
-      childAddress: "",
-      childApt: "",
-      childCity: "",
-      childState: "",
-      childZip: "",
+      childLastName: null,
+      childFirstName: null,
+      childMiddleName: null,
+      childSuffix: null,
+      childAddress: null,
+      childApt: null,
+      childCity: null,
+      childState: null,
+      childZip: null,
       livesWith: false,
-      childPhoneType: "",
-      childSchool: "",
-      childGrade: "",
+      childPhoneType: null,
+      childSchool: null,
+      childGrade: null,
     },
     onSubmit: (values) => {
       console.log(values);
@@ -348,13 +348,13 @@ const Subject: FC<SubjectProps> = ({
 
                 {!isGlanceView && (
                   <Flex gap="middle">
-                    <Button
+                    {/* <Button
                       type="primary"
                       htmlType="submit"
                       style={{ marginLeft: "8px" }}
                     >
                       Submit
-                    </Button>
+                    </Button> */}
                     <Button
                       onClick={(): void => {
                         subjectForm.resetForm();
