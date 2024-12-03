@@ -19,6 +19,7 @@ import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/Bu
 import PrintersAndScanners from "./setting/PrintersAndScanners";
 import { ModalComponent } from "@/components/CommonComponents/Modal/ModalComponent";
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
+import { IpcRenderer } from "electron";
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
@@ -194,7 +195,8 @@ export const AddCitations: React.FC = () => {
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
 
   const loginHandler=()=>{
-     console.log("hello world...");
+    console.log("jjjjjjjjjjjjjjjjjjjjj");
+    window.electronAPI.sendLogin()
   }
   useEffect(() => {
     const timer = setTimeout(() => {

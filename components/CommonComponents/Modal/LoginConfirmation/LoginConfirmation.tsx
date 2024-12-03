@@ -17,7 +17,7 @@ export const LoginConfirmation: React.FC<LoginConfirmationIProps> = ({
           Login to CJNRMS to Continue.
           </p>
           <div className="modal-actions">
-            <button className="modal-button-confirm" onClick={onLogin}>
+            <button className="modal-button-confirm" onClick={onLogin} style={{cursor:"pointer"}}>
               Login
             </button>
           </div>
