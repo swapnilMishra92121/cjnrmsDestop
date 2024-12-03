@@ -1,0 +1,28 @@
+.loginConfirmation_container {
+    width: 350px;
+    min-height: 200px;
+}
+
+.modal-button-confirm {
+    background-color: #3672b3;
+    color: #fff;
+    padding: 5px 10px;
+    float: right;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+}
+.modal-message{
+    font-size: 20px;
+    font-weight: 500;
+}
+.ant-modal .ant-modal-close-x {
+    display: flex;
+    font-size: 16px;
+    font-style: normal;
+    line-height: 32px;
+    justify-content: center;
+    text-transform: none;
+    text-rendering: auto;
+    display: none !important;
+}

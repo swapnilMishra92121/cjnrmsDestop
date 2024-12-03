@@ -17,6 +17,8 @@ import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsCompon
 import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import PrintersAndScanners from "./setting/PrintersAndScanners";
+import { ModalComponent } from "@/components/CommonComponents/Modal/ModalComponent";
+import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
@@ -186,11 +188,14 @@ export const AddCitations: React.FC = () => {
       mandatoryCourt: false,
     }
   })
-
+  const [OpenLoginModal, setOpenLoginModal] = useState<boolean>(false);
   const [settingTab, setsettingTab] = useState<boolean>(false);
 
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
 
+  const loginHandler=()=>{
+     console.log("hello world...");
+  }
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowUpdatePopUp(true);
@@ -200,6 +205,13 @@ export const AddCitations: React.FC = () => {
 
   return (
     <>
+      <ModalComponent
+        open={true}
+        innerContant={<LoginConfirmation
+        onClose={()=>{}}
+        onLogin={loginHandler}
+        />}
+      />
       <div
         className="citation"
         style={{
@@ -400,12 +412,12 @@ export const AddCitations: React.FC = () => {
               )}
 
               {glanceView && (
-                <GlanceView 
-                 setformData={setformData} 
-                 formData={formData} 
-                 activeBtn={activeBtn}
-                 setActiveBtn = {setActiveBtn}
-                 />
+                <GlanceView
+                  setformData={setformData}
+                  formData={formData}
+                  activeBtn={activeBtn}
+                  setActiveBtn={setActiveBtn}
+                />
               )}
             </>
           )}
@@ -426,7 +438,7 @@ export const AddCitations: React.FC = () => {
                 <ButtonComponents
                   name="Remind me later"
                   showBackgroundColor={false}
-                  handleClick={() => { setShowUpdatePopUp(false)}}
+                  handleClick={() => { setShowUpdatePopUp(false) }}
                   textColor="gray"
                   borderColor="gray"
                 />
