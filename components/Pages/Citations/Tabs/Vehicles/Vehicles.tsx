@@ -24,35 +24,38 @@ const StyledFormContainer = styled.div<{ $customPadding?: string }>`
 `;
 
 const Vehicles: FC<VehicleProps> = ({
-  formData, 
+  formData,
   setformData,
   customWidth,
   customPadding,
   isGlanceView,
-  
 }) => {
   const [Plate, setPlate] = useState<PlateData[]>([]);
   const [allData, setAllData] = useState<parserVehicleDetailsResponce[]>([]);
 
   const vehicleForm = useFormik({
     initialValues: {
-      plate: formData?.Vehicles?.plate,
-      state: formData?.Vehicles?.state,
-      expiration: formData?.Vehicles?.expiration,
-      noPlate: formData?.Vehicles?.noPlate,
+      plate: formData?.Vehicles?.plate ? formData?.Vehicles?.plate : "",
+      state: formData?.Vehicles?.state ? formData?.Vehicles?.state : "",
+      expiration: formData?.Vehicles?.expiration
+        ? formData?.Vehicles?.expiration
+        : "",
+      noPlate: formData?.Vehicles?.noPlate
+        ? formData?.Vehicles?.noPlate
+        : false,
       twentyOneDayPlate: formData?.Vehicles?.twentyOneDayPlate,
-      make: formData?.Vehicles?.make,
-      model: formData?.Vehicles?.model,
-      year: formData?.Vehicles?.year,
-      color: formData?.Vehicles?.color,
-      style: formData?.Vehicles?.style,
-      type: formData?.Vehicles?.type,
-      vin: formData?.Vehicles?.vin,
+      make: formData?.Vehicles?.make ? formData?.Vehicles?.make : "",
+      model: formData?.Vehicles?.model ? formData?.Vehicles?.model : "",
+      year: formData?.Vehicles?.year ? formData?.Vehicles?.year : "",
+      color: formData?.Vehicles?.color ? formData?.Vehicles?.color : "",
+      style: formData?.Vehicles?.style ? formData?.Vehicles?.style : "",
+      type: formData?.Vehicles?.type ? formData?.Vehicles?.type : "",
+      vin: formData?.Vehicles?.vin ? formData?.Vehicles?.vin : "",
       isCommercialVehicle: formData?.Vehicles?.isCommercialVehicle,
       hasHazardousMaterial: formData?.Vehicles?.hasHazardousMaterial,
-      dotNumber: formData?.Vehicles?.dotNumber,
-      poundsOverWeight: formData?.Vehicles?.poundsOverWeight,
-      occupants: formData?.Vehicles?.occupants,
+      dotNumber: formData?.Vehicles?.dotNumber?formData?.Vehicles?.dotNumber:"",
+      poundsOverWeight: formData?.Vehicles?.poundsOverWeight?formData?.Vehicles?.poundsOverWeight:"",
+      occupants: formData?.Vehicles?.occupants?formData?.Vehicles?.occupants:"",
       hasMotorcycle: formData?.Vehicles?.hasMotorcycle,
       hasTrailer: formData?.Vehicles?.hasTrailer,
       is16PlusPass: formData?.Vehicles?.is16PlusPass,
@@ -63,14 +66,12 @@ const Vehicles: FC<VehicleProps> = ({
     },
   });
 
-
-  useEffect(()=>{
+  useEffect(() => {
     setformData({
       ...formData,
-      Vehicles:vehicleForm.values
-    })
-
-  },[vehicleForm.values])
+      Vehicles: vehicleForm.values,
+    });
+  }, [vehicleForm.values]);
 
   const initialRender = () => {
     window.electronAPI
@@ -80,8 +81,11 @@ const Vehicles: FC<VehicleProps> = ({
           .trim()
           .split("\n")
           .map((line: string) => JSON.parse(line));
-       
-          console.log("ParserVehicleDetailsResponce",ParserVehicleDetailsResponce);
+
+        console.log(
+          "ParserVehicleDetailsResponce",
+          ParserVehicleDetailsResponce
+        );
 
         const arr: PlateData[] = ParserVehicleDetailsResponce.map((val) => ({
           lable: val.Plate ? val.Plate : "",
@@ -97,14 +101,12 @@ const Vehicles: FC<VehicleProps> = ({
     initialRender();
   }, []);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     setformData({
       ...formData,
-      Vehicles:vehicleForm.initialValues
-    })
-
-  },[vehicleForm.initialValues])
+      Vehicles: vehicleForm.initialValues,
+    });
+  }, [vehicleForm.initialValues]);
 
   return (
     <StyledFormContainer $customPadding={customPadding}>
@@ -337,7 +339,7 @@ const Vehicles: FC<VehicleProps> = ({
                 justify="flex-end"
                 style={{ padding: "12px" }}
               >
-                 <Button
+                <Button
                   type="primary"
                   htmlType="submit"
                   style={{ marginLeft: "8px" }}

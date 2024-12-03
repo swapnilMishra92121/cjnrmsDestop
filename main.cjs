@@ -87,70 +87,254 @@ function registerIPCHandlers() {
 
   ipcMain.handle('print-pdf', async (event, printerName, content) => {
     try {
+      // const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
+      // const printWindow = new BrowserWindow({
+      //   show: false,
+      //   webPreferences: {
+      //     nodeIntegration: false,
+      //     contextIsolation: true,
+      //   },
+      // });
+      // const htmlContent = `
+      //   <!DOCTYPE html>
+      //   <html>
+      //   <head>
+      //     <title>Print Content</title>
+      //     <meta charset="UTF-8">
+      //   </head>
+      //   <body>
+      //     <h1>${content.title}</h1>
+      //     <p>${content.body}</p>
+      //   </body>
+      //   </html>
+      // `;
+      // await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+      // const pdfBuffer = await printWindow.webContents.printToPDF({});
+      // fs.writeFileSync(pdfPath, pdfBuffer);
+      // const printResult = await new Promise((resolve) => {
+      //   printWindow.webContents.print(
+      //     {
+      //       silent: true,
+      //       deviceName: printerName,
+      //     },
+      //     (success, errorType) => {
+      //       if (!success) {
+      //         console.error('Print failed:', errorType);
+      //         resolve({ success: false, error: errorType });
+      //       } else {
+      //         resolve({ success: true });
+      //       }
+      //     }
+      //   );
+      // });
+      // printWindow.close();
+      // if (!printResult.success) {
+      //   throw new Error(printResult.error || 'Unknown print error');
+      // }
+      // return { success: true };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
-  
+
       // Create a hidden window for rendering the content
-      const printWindow = new BrowserWindow({
+      const renderWindow = new BrowserWindow({
         show: false,
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
         },
       });
-  
-      // Load JSON content as HTML
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Print Content</title>
-          <meta charset="UTF-8">
-        </head>
-        <body>
-          <h1>${content.title}</h1>
-          <p>${content.body}</p>
-        </body>
-        </html>
-      `;
-      await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
-  
+
+      // Load the HTML template
+      const templatePath = path.join(__dirname, 'PDFTemplate', 'page3.html');
+      let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+
+
+      const filePath = path.join(__dirname, 'SavedData', `citation-${content.Vehicles.plate}.json`);
+
+      const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+      console.log(jsonData)
+
+      // Replace placeholders in the template with the provided data
+      htmlContent = bindDataToTemplate(htmlContent,jsonData);
+
+      // Load the HTML content into the hidden window
+      await renderWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+
       // Generate the PDF
-      const pdfBuffer = await printWindow.webContents.printToPDF({});
-  
+      const pdfBuffer = await renderWindow.webContents.printToPDF({});
+
       // Save the PDF to a temporary file
       fs.writeFileSync(pdfPath, pdfBuffer);
-  
-      // Print the PDF silently to the selected printer
-      const printResult = await new Promise((resolve) => {
-        printWindow.webContents.print(
-          {
-            silent: true,
-            deviceName: printerName,
-          },
-          (success, errorType) => {
-            if (!success) {
-              console.error('Print failed:', errorType);
-              resolve({ success: false, error: errorType });
-            } else {
-              resolve({ success: true });
-            }
-          }
-        );
+
+      // Close the rendering window
+      renderWindow.close();
+
+      // Create a new window for PDF preview
+      const previewWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        show: true,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+        },
       });
-  
-      // Close the window after the operation
-      printWindow.close();
-  
+
+      // Load the generated PDF in the preview window
+      previewWindow.loadURL(`file://${pdfPath}`);
+
+      // Print the PDF silently to the selected printer when confirmed
+      const printResult = await new Promise((resolve) => {
+        previewWindow.webContents.once('did-finish-load', () => {
+          // Add a confirmation button in the preview window
+          previewWindow.webContents.executeJavaScript(`
+              const button = document.createElement('button');
+              button.textContent = 'Print';
+              button.style.position = 'fixed';
+              button.style.bottom = '20px';
+              button.style.right = '20px';
+              button.style.padding = '10px 20px';
+              button.style.fontSize = '16px';
+              button.style.zIndex = '1000';
+              button.addEventListener('click', () => window.postMessage('print', '*'));
+              document.body.appendChild(button);
+            `);
+
+          // Wait for the user to click the "Print" button
+          const { ipcMain } = require('electron');
+          ipcMain.once('print-pdf', () => {
+            previewWindow.webContents.print(
+              {
+                silent: true,
+                deviceName: printerName,
+              },
+              (success, errorType) => {
+                if (!success) {
+                  console.error('Print failed:', errorType);
+                  resolve({ success: false, error: errorType });
+                } else {
+                  resolve({ success: true });
+                }
+              }
+            );
+          });
+        });
+      });
+
       if (!printResult.success) {
         throw new Error(printResult.error || 'Unknown print error');
       }
-  
+
+      // Close the preview window after printing
+      previewWindow.close();
+
       return { success: true };
+
+
+
+
+
     } catch (error) {
       console.error('Error in print-pdf handler:', error);
       return { success: false, error: error.message };
     }
   });
+
+
+
+
+  /**
+* Function to replace placeholders in the HTML template with dynamic data.
+* @param {string} template - The HTML template string.
+* @param {object} data - The data object to bind.
+* @returns {string} - The HTML content with data bound.
+*/
+  function bindDataToTemplate(template,dataa) {
+
+
+    let data =dataa[0]
+
+
+    const violationRows = data.Violation.violations
+    .map((violation) => {
+      return `
+        <tr>
+          <td colspan="4">
+            <table style="width: 100%">
+              <tr>
+                <td style="border: 0px; width: 65%">${violation.description || ''}</td>
+                <td style="border: 0px">${violation.statueOrOrdinance || ''}</td>
+              </tr>
+            </table>
+          </td>
+          <td>
+            <span class="checkbox" ${violation.thirdViolation ? 'checked' : ''}></span> 3rd violation
+          </td>
+          <td>PM, M, GM</td>
+        </tr>
+      `;
+    })
+    .join('');
+
+
+    return template
+    .replace(/{{ViolationRows}}/g, violationRows)
+    .replace(/{{Identification}}/g, data.Subject.identificationType || '')
+    .replace(/{{County Name}}/g, data.CitationInfo.county || '')
+    .replace(/{{DL Checked}}/g, data.Subject.cdl ? 'checked' : '')
+    .replace(/{{DVSWeb Checked}}/g, data.Subject.dvsWeb ? 'checked' : '')
+    .replace(/{{PhotoID Checked}}/g, data.Subject.photoID ? 'checked' : '')
+    .replace(/{{FP Checked}}/g, data.Subject.fp ? 'checked' : '')
+    .replace(/{{Other Checked}}/g, data.Subject.other ? 'checked' : '')
+    .replace(/{{DL Number}}/g, data.Vehicles.plate || '')
+    .replace(/{{State}}/g, data.Subject.state || '')
+    .replace(
+      /{{Name}}/g,
+      `${data.Subject.firstName || ''} ${data.Subject.middleName || ''} ${data.Subject.lastName || ''} ${data.Subject.suffix || ''}`.trim()
+    )
+    .replace(/{{Address}}/g, data.Subject.address || '')
+    .replace(/{{Street}}/g, data.Location.address || '')
+    .replace(/{{Apt}}/g, data.Location.apt || '')
+    .replace(/{{City}}/g, data.Subject.city || '')
+    .replace(/{{Zip}}/g, data.Subject.zip || '')
+    .replace(/{{DOB}}/g, data.Subject.dob || '')
+    .replace(/{{Height}}/g, data.Subject.height || '')
+    .replace(/{{Weight}}/g, data.Subject.weight || '')
+    .replace(/{{Eyes}}/g, data.Subject.eyes || '')
+    .replace(/{{Gender}}/g, data.Subject.gender || '')
+    .replace(/{{Color}}/g, data.Vehicles.color || '')
+    .replace(/{{Make}}/g, data.Vehicles.make || '')
+    .replace(/{{DateofOffense}}/g, data.CitationInfo.offenseDate?.$d?.toString().split('T')[0] || '')
+    .replace(/{{TimeofOffense}}/g, data.CitationInfo.offenseTime?.$d?.toString().split('T')[1]?.split('.')[0] || '')
+    .replace(/{{Citation #}}/g, `#${data.CitationInfo.caseOrICRNumber}` || '')
+    .replace(/{{SequentialNumber}}/g, data.CitationInfo.sequentialNumber || '___')
+    .replace(/{{TotalCitations}}/g, data.CitationInfo.totalCitations || '___');
+
+
+
+  }
+
+
 
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
@@ -178,8 +362,9 @@ function registerIPCHandlers() {
   });
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
+    
     const randomNumber = Math.floor(1000 + Math.random() * 9000);
-    const filePath = path.join(__dirname, 'SavedData', `citation-${randomNumber}.json`);
+    const filePath = path.join(__dirname, 'SavedData', `citation-${someParameter.Vehicles.plate}.json`);
     try {
       // Check if file exists. If not, initialize with an empty array.
       const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';

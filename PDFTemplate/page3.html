@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MN Citation Form</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .citation-form {
+      border-collapse: collapse;
+      border: 1px solid black;
+      margin: auto;
+    }
+
+    .citation-form th,
+    .citation-form td {
+      border: 1px solid black;
+      padding: 4px;
+      font-size: 9px;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .citation-form th {
+      background-color: #f2f2f2;
+    }
+
+    .section-header {
+      font-weight: bold;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+
+    .checkbox {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border: 1px solid black;
+      vertical-align: middle;
+    }
+
+    .checkbox.checked {
+      background-color: black;
+      /* Indicates the checked state */
+    }
+
+    .custom-checkbox {
+      background: url("images/checkbox.png") no-repeat center center;
+      background-size: contain;
+    }
+
+    p {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .right-table th,
+    .right-table td {
+      font-size: 12px;
+    }
+
+    @media print {
+      @page {
+        margin: 5mm 0 0 1mm;
+      }
+
+      body {
+        margin: 0;
+      }
+    }
+
+    .vertical-text-cell {
+      writing-mode: vertical-rl;
+      transform: rotate(360deg);
+      text-align: center;
+      vertical-align: middle;
+
+    }
+  </style>
+</head>
+
+<body>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse">
+    <tr>
+      <!-- Left Table -->
+      <td class="vertical-text" width="50%" valign="top">
+        <table class="citation-form" border="0" cellpadding="0" cellspacing="0" width="100%"
+          style="border-collapse: collapse">
+          <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+              ">
+            <p style="
+                  font-size: 9px;
+                  text-align: center;
+                  margin: 0;
+                  padding: 0;
+                  flex-grow: 1;
+                ">
+              <strong>CITITATION</strong>
+            </p>
+            <p style="font-size: 9px; text-align: right; margin: 0; padding: 0">
+              <strong>2.23.4.3</strong>
+            </p>
+          </div>
+
+          <tr>
+            <td colspan="3">
+              <strong>State of Minnesota</strong><br />
+              Citation #: <strong>{{Citation #}}</strong><br />
+            </td>
+
+            <td colspan="3" style="text-align: center">
+              <img src="images/bar.jpg" alt="Barcode" style="width: 30%" />
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="3">County Name:<br />{{County Name}}</td>
+            <td colspan="3">Sequential Citations {{SequentialNumber}} of {{TotalCitations}}</td>
+          </tr>
+
+          <tr>
+            <td colspan="6" style="padding: 0px">
+              <table style="width: 100%">
+                <tr>
+                  <td style="border: 0px">
+                    <strong>Identification:{{Identification}}</strong>
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox {{DL Checked}}"></span> DL
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox {{DVSWeb Checked}}"></span> DVS Web
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox {{PhotoID Checked}}"></span> Photo ID
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox {{FP Checked}}"></span> FP
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox {{Other Checked}}"></span> Other
+                  </td>
+
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="6" style="padding: 0px">
+              <table style="width: 100%">
+                <tr>
+                  <td style="border: 0px" colspan="3">
+                    <strong>DL Number {{DL Number}}</strong>
+                  </td>
+
+                  <td style="border: 0px; width: 19%">MN</td>
+                  <td style="border: 0px; width: 12%">
+                    <span class="checkbox"></span> CDL
+                  </td>
+                  <td style="border: 0px; width: 15%">
+                    <span class="checkbox"></span> State {{State}}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="6">Name: {{Name}}</td>
+          </tr>
+          <tr>
+            <td colspan="6" style="border-bottom: 0px">
+              {{Address}} – {{Street}}, {{Apt}}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="6" style="border: 0px"></td>
+          </tr>
+
+          <tr>
+            <td colspan="6" style="padding: 0px">
+              <table style="width: 100%">
+                <tr>
+                  <td style="border: 0px"><strong>City {{City}}</strong></td>
+                  <td style="border: 0px; width: 15%">State {{State}}</td>
+                  <td style="border: 0px; width: 15%">Zip {{Zip}}</td>
+                </tr>
+                <tr>
+                  <td style="border: 0px"></td>
+                  <td style="border: 0px; width: 15%"></td>
+                  <td style="border: 0px; width: 15%"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2" style="border: 0px">DOB {{DOB}}</td>
+            <td style="border: 0px">Height {{Height}}</td>
+            <td style="border: 0px">Weight {{Weight}}</td>
+            <td style="border: 0px">Eyes {{Eyes}}</td>
+            <td style="border: 0px">Gender {{Gender}}</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="border: 0px"></td>
+            <td style="border: 0px"></td>
+            <td style="border: 0px"></td>
+            <td style="border: 0px"></td>
+            <td style="border: 0px"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <span class="checkbox"></span>
+              <b>Juvenile Court Offense. Circle one: JTR, JPO, DEL</b>
+            </td>
+            <td colspan="4" style="width: 60%">
+              Parent or Guardian’s Name: <br />
+              Relationship to Child: <br />
+              Address:
+            </td>
+            <td><span class="checkbox"></span> Same address as Juvenile</td>
+          </tr>
+
+
+
+          <tr>
+            <td style="border-bottom: 0px">Veh.|Lic. No.</td>
+            <td style="border-bottom: 0px">Plate Year</td>
+            <td style="border-bottom: 0px">State</td>
+            <td colspan="3" style="color: #d13438" style="border-bottom: 0px; border-top: 0px">
+              <span class="checkbox" style="border-color: #d13438"></span> No
+              Plate
+              <span class="checkbox" style="border-color: #d13438"></span>
+              21-day temp
+            </td>
+          </tr>
+
+          <tr>
+            <td style="border-bottom: 0px; border-top: 0px"></td>
+            <td style="border-bottom: 0px; border-top: 0px"></td>
+            <td style="border-bottom: 0px; border-top: 0px"></td>
+            <td colspan="3" style="border-bottom: 0px; border-top: 0px"></td>
+          </tr>
+          <tr>
+            <td style="border-bottom: 0px">Make {{Make}}</td>
+            <td style="border-bottom: 0px">
+              <span class="checkbox"></span> Style 16+ pass.
+            </td>
+            <td style="border-bottom: 0px" colspan="4">Color {{Color}}</td>
+          </tr>
+
+          <tr>
+            <td style="border-bottom: 0px; border-top: 0px"></td>
+            <td style="border-bottom: 0px; border-top: 0px"></td>
+            <td colspan="4" style="border-bottom: 0px; border-top: 0px"></td>
+          </tr>
+
+          <tr>
+            <td colspan="3" style="border-bottom: 0px">Date of Offense {{DateofOffense}}</td>
+            <td colspan="3" style="border-bottom: 0px">Time of Offense {{TimeofOffense}}</td>
+          </tr>
+
+          <tr>
+            <td colspan="3" style="border-top: 0px"></td>
+            <td colspan="3" style="border-top: 0px"></td>
+          </tr>
+
+          <tr>
+            <td colspan="3" style="padding-top: 0px; padding-bottom: 0px">
+              <span class="checkbox"></span>
+              <b>Endangering Life or Property* *Court appearance required if
+                checked
+              </b>
+            </td>
+            <td colspan="3" style="padding-top: 0px; padding-bottom: 0px">
+              <span class="checkbox"></span> Commercial Vehicle
+              <span class="checkbox"></span> Hazardous Materials (DOT) <br />
+              DOT#_____________ #Pounds overweight:________
+            </td>
+          </tr>
+
+          <tr>
+            <td><span class="checkbox"></span> Driver</td>
+            <td><span class="checkbox"></span> Owner</td>
+            <td><span class="checkbox"></span> Owner</td>
+            <!-- <td><span class="checkbox"></span> Citee</td> -->
+            <td><span class="checkbox custom-checkbox"></span> Citee</td>
+
+            <td colspan="2"><span class="checkbox"></span> Parked</td>
+          </tr>
+
+          <tr>
+            <td colspan="3">Offense Location</td>
+            <td colspan="3">
+              Circle One: City/County/Township/Other Of:
+              ____________________________________
+            </td>
+          </tr>
+
+          {{ViolationRows}}
+
+          <!-- <tr>
+            <td colspan="4">
+              <table style="width: 100%">
+                <tr>
+                  <td style="
+                        border: 0px;
+                        width: 65%;
+                        color: #d13438;
+                        text-decoration: line-through;
+                      ">
+                    Offense Description
+                  </td>
+                  <td style="
+                        border: 0px;
+                        color: #d13438;
+                        text-decoration: line-through;
+                      ">
+                    Statute/Ordinance
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td style="color: #d13438; text-decoration: line-through">
+              <span class="checkbox"></span> 3rd violation
+            </td>
+            <td style="color: #d13438; text-decoration: line-through">
+              PM, M, GM
+            </td>
+          </tr> -->
+
+          <tr>
+            <td colspan="6" style="padding: 0px">
+              <table style="width: 100%">
+                <tr>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> AC Taken – AC:______
+                  </td>
+                  <td style="border: 0px">Test type:</td>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> Breath
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> Blood
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> Urine
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> Other Substance
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> Refused
+                  </td>
+                </tr>
+              </table>
+              14px 14px 14px
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2"><span class="checkbox"></span> Fingerprinted</td>
+            <td><span class="checkbox"></span> Defendant In Custody</td>
+            <td>
+              <span class="checkbox"></span>
+              Species/No.<br />_________________
+            </td>
+            <td colspan="2">
+              <span class="checkbox"></span> Wildlife Restitution <br />
+              $_______________
+            </td>
+          </tr>
+          <tr>
+            <td colspan="6" style="font-size: 14px; font-weight: bold">
+              If this is a payable citation, you must pay the amount owed or
+              schedule an appearance within 30 days from the date the citation
+              is filed with the court. See the back of this citation for more
+              information.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">Officer(s) Name(s)</td>
+            <td colspan="2">Officer No(s)</td>
+            <td colspan="2">Prosecutor</td>
+          </tr>
+
+          <tr>
+            <td colspan="2">Controlling Agency (CAG) <br />MN0000000</td>
+            <td colspan="2">
+              How Issued <br />
+              <table style="width: 100%">
+                <tr>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> In Person
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> Mailed
+                  </td>
+                  <td style="border: 0px">
+                    <span class="checkbox"></span> Left at the PM, M, GMScene
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td colspan="2">Date Issued</td>
+          </tr>
+
+          <tr>
+            <td colspan="6">
+              <table style="width: 100%">
+                <tr>
+                  <td style="border: 0px">Agency Name:</td>
+                  <td style="border: 0px">CN/ICR</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+
+      <!-- Middle -->
+      <td class="vertical-text-cell">
+        <p style="margin: 0;padding: 0;font-size: 9px;"><strong>
+            27 17 2024008019
+          </strong></p>
+      </td>
+
+      <!-- Right Table -->
+      <td width="50%" valign="top">
+        <table class="citation-form right-table" border="0" cellpadding="0" cellspacing="0" width="100%"
+          style="border-collapse: collapse; border: none">
+          <p style="
+                font-size: 9px;
+                text-align: center;
+                margin: 0;
+                padding: 0;
+                flex-grow: 1;
+              ">
+            <strong>OFFICER COPY-PAGE 2</strong>
+          </p>
+
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">Citation Number:</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">
+                Road Conditions:
+                <span style="text-decoration: underline">Dry</span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">
+                Visibility:
+                <span style="text-decoration: underline">Normal</span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">
+                Weather Conditions:
+                <span style="text-decoration: underline">Clear</span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">Additional Vehicle Info:</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px">
+              <p style="color: #000">Motorcycle:</p>
+            </td>
+            <td style="padding: 0px 8px; border: 0px">
+              <span style="text-decoration: underline">N</span>
+            </td>
+            <td style="padding: 0px 8px; border: 0px">
+              <p style="color: #000">Commercial:</p>
+            </td>
+            <td style="padding: 0px 8px; border: 0px">
+              <span style="text-decoration: underline">N</span>
+            </td>
+            <td style="padding: 0px 8px; border: 0px">
+              <p style="color: #000">Hazmat:</p>
+            </td>
+            <td style="padding: 0px 8px; border: 0px">
+              <span style="text-decoration: underline">N</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">Additional Violation Info:</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">
+                Disobey Device:
+                <span style="text-decoration: underline">N/A</span>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <br />
+              <br />
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">
+                ID Method: <span style="text-decoration: underline">DL</span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">
+                Number of Passengers:
+                <span style="text-decoration: underline">N/A</span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">Squad:</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">
+                Radar Info:
+                <span style="text-decoration: underline">N/A</span>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <br />
+              <br />
+              <br />
+              <br />
+              <br />
+
+              <br />
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">Officer Comments:</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000; text-decoration: underline">
+                NO DL IN POSSESSION, COMPANY VEHICLE, SHOWING 23 TABS, EXPIRED
+                24 SEP, WINDSHIELD BROKEN, LANGUAGE BARRIER
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <br />
+              <br />
+              <br />
+              <br />
+              <br />
+
+              <br />
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0px 8px; border: 0px" colspan="6">
+              <p style="color: #000">Summary:</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

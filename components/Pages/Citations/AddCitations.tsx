@@ -232,31 +232,23 @@ export const AddCitations: React.FC = () => {
                 textColor={activeBtn === 3 ? "#fff" : "gray"}
                 borderColor={activeBtn === 3 ? "gray" : "gray"}
                 handleClick={() => {
-                  if (!selectedPrinter) {
-                    console.error("No printer selected!");
-                    alert("Please select a printer before downloading.");
-                    return;
-                  }
+                 
 
                   const content = {
                     title: "Example PDF",
                     body: "This PDF is generated from JSON content!",
                   };
-
-                  // Trigger the printPDF method
                   window.electronAPI
                     .printPDF(selectedPrinter, content)
                     .then((response) => {
                       console.log("done");
                     })
-                    .catch((error) => {
-                      console.error("Error while printing PDF:", error);
-                      alert(
-                        "An unexpected error occurred while printing the PDF."
-                      );
-                    });
                   setActiveBtn(3);
                 }}
+
+
+
+                
               />
             </Flex>
             <Flex gap="small" align="center">
@@ -376,13 +368,13 @@ export const AddCitations: React.FC = () => {
                     />
                   )}
                   {activeTab === 5 && (
-                    <Notes setformData={setformData} formData={formData} />
+                    <Notes setformData={setformData} formData={formData} selectedPrinter={selectedPrinter}  />
                   )}
                 </Flex>
               )}
 
               {glanceView && (
-                <GlanceView setformData={setformData} formData={formData} />
+                <GlanceView setformData={setformData} formData={formData} selectedPrinter={selectedPrinter}/>
               )}
             </>
           )}
