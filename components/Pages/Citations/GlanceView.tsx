@@ -20,7 +20,6 @@ import Notes from "./Tabs/Notes/Notes";
 export interface GlanceViewIPrams {
   setformData: (data: FormData) => void;
   formData: FormData;
-  selectedPrinter:string
 }
 
 const { Enlarge } = images;
@@ -48,7 +47,7 @@ const ExtraButtonsLayout = (
   </Flex>
 );
 
-const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData,selectedPrinter }) => {
+const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData }) => {
   return (
     <StyledContainer>
       <Row gutter={16}>
@@ -101,7 +100,7 @@ const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData,selected
             </Card>
 
             <Card title="Notes" bordered={false} extra={ExtraButtonsLayout}>
-              <Notes customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData} selectedPrinter={selectedPrinter}/>
+              <Notes customWidth="40%" customPadding="0px" isGlanceView setformData={setformData} formData={formData}/>
             </Card>
           </Space>
         </Col>

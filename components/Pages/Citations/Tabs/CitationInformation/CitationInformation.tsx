@@ -184,13 +184,6 @@ const CitationInformation: FC<CitationInformationProps> = ({
                 style={{ padding: "12px" }}
               >
                 <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginLeft: "8px" }}
-                >
-                  Submit
-                </Button>
-                <Button
                   onClick={(): void => {
                     citationInfoForm.resetForm();
                   }}
