@@ -9,31 +9,31 @@ export interface VehicleProps {
 }
 
 export interface FieldData {
-  plate: string;
-  state: string;
-  expiration: string;
-  noPlate: boolean;
+  plate: string | null;
+  state: string | null;
+  expiration: string | null;
+  noPlate: boolean | null;
   twentyOneDayPlate: boolean;
-  make: string;
-  model: string;
-  year: string;
-  color: string;
-  style: string;
-  type: string;
-  vin: string;
+  make: string | null;
+  model: string | null;
+  year: string | null;
+  color: string | null;
+  style: string | null;
+  type: string | null;
+  vin: string | null;
   isCommercialVehicle: boolean;
   hasHazardousMaterial: boolean;
-  dotNumber: string;
-  poundsOverWeight: string;
-  occupants: string;
+  dotNumber: string | null;
+  poundsOverWeight: string | null;
+  occupants: string | null;
   hasMotorcycle: boolean;
   hasTrailer: boolean;
   is16PlusPass: boolean;
 }
 
 export interface PlateData {
-  value: string;
-  lable: string;
+  value: string ;
+  lable: string ;
 }
 
 export interface parserVehicleDetailsResponce {

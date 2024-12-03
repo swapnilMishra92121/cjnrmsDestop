@@ -20,6 +20,7 @@ import { Submit } from "@/components/CommonComponents/Fields/Submit/Submit";
 import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
 import { successAddedMessage } from "@/utils/const";
 
+
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
   ${({ $customPadding }) => `padding: ${$customPadding ?? "16px"};`}
 `;
@@ -154,7 +155,7 @@ const Vehicles: FC<VehicleProps> = ({
                   name="state"
                   label="State"
                   width="30%"
-                  value={vehicleForm.values.state}
+                  value={vehicleForm.values.state || ""}
                   onChange={vehicleForm.handleChange}
                 />
 
@@ -171,7 +172,7 @@ const Vehicles: FC<VehicleProps> = ({
               <Flex gap="small" vertical wrap>
                 <EnhancedCheckbox
                   name="noPlate"
-                  checked={vehicleForm.values.noPlate}
+                  checked={vehicleForm.values.noPlate || false}
                   onChange={vehicleForm.handleChange}
                 >
                   No Plate
@@ -191,28 +192,28 @@ const Vehicles: FC<VehicleProps> = ({
                 name="make"
                 label="Make"
                 width="20%"
-                value={vehicleForm.values.make}
+                value={vehicleForm.values.make || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="model"
                 label="Model"
                 width="20%"
-                value={vehicleForm.values.model}
+                value={vehicleForm.values.model || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="year"
                 label="Year"
                 width="20%"
-                value={vehicleForm.values.year}
+                value={vehicleForm.values.year || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="color"
                 label="Color"
                 width="20%"
-                value={vehicleForm.values.color}
+                value={vehicleForm.values.color || ""}
                 onChange={vehicleForm.handleChange}
               />
             </Flex>
@@ -247,12 +248,10 @@ const Vehicles: FC<VehicleProps> = ({
                 name="vin"
                 label="VIN"
                 width="30%"
-                value={vehicleForm.values.vin}
+                value={vehicleForm.values.vin || ""}
                 onChange={vehicleForm.handleChange}
               />
-            </Flex>
-
-            <Flex gap="middle" align="flex-end" wrap>
+              <Flex gap="middle" align="flex-end" wrap>
               <EnhancedCheckbox
                 name="isCommercialVehicle"
                 checked={vehicleForm.values.isCommercialVehicle}
@@ -268,26 +267,29 @@ const Vehicles: FC<VehicleProps> = ({
                 Hazardous Material (DOT)
               </EnhancedCheckbox>
             </Flex>
+            </Flex>
+
+            
 
             <Flex gap="middle" align="flex-end" wrap>
               <EnhancedInput
                 name="dotNumber"
                 label="DOT#"
-                width="20%"
-                value={vehicleForm.values.dotNumber}
+                width="18%"
+                value={vehicleForm.values.dotNumber || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedInput
                 name="poundsOverWeight"
                 label="Pounds Overweight"
-                width="20%"
-                value={vehicleForm.values.poundsOverWeight}
+                width="18%"
+                value={vehicleForm.values.poundsOverWeight || ""}
                 onChange={vehicleForm.handleChange}
               />
               <EnhancedSelect
                 name="occupants"
                 label="Occupants"
-                containerStyles={{ width: customWidth ?? "20%" }}
+                containerStyles={{ width:"20%" }}
                 options={[
                   { label: "2", value: "1" },
                   { label: "3", value: "2" },
@@ -297,9 +299,7 @@ const Vehicles: FC<VehicleProps> = ({
                 value={vehicleForm.values.occupants}
                 onChange={vehicleForm.handleChange}
               />
-            </Flex>
-
-            <Flex gap="middle" align="flex-end" wrap>
+                <Flex gap="middle" align="flex-end" wrap>
               <EnhancedCheckbox
                 name="hasMotorcycle"
                 checked={vehicleForm.values.hasMotorcycle}
@@ -322,6 +322,9 @@ const Vehicles: FC<VehicleProps> = ({
                 16+ Pass
               </EnhancedCheckbox>
             </Flex>
+            </Flex>
+
+          
 
             {!isGlanceView && (
               <Flex
@@ -329,13 +332,13 @@ const Vehicles: FC<VehicleProps> = ({
                 justify="flex-end"
                 style={{ padding: "12px" }}
               >
-                 <Button
+                 {/* <Button
                   type="primary"
                   htmlType="submit"
                   style={{ marginLeft: "8px" }}
                 >
                   Submit
-                </Button>
+                </Button> */}
 
                 <Button
                   onClick={(): void => {

@@ -1,5 +1,5 @@
 "use client";
-
+import "./addCitation.css"
 import { useEffect, useState } from "react";
 import Subject from "./Tabs/Subject/Subject";
 import Vehicles from "./Tabs/Vehicles/Vehicles";
@@ -14,11 +14,10 @@ import GlanceView from "./GlanceView";
 import images from "../../../assets";
 import Image from "next/image";
 import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsComponents";
-import { LocationI } from "./Tabs/Location/components/LocationFormI";
 import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
-import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
-import { successAddedMessage } from "@/utils/const";
+import { ModalComponent } from "@/components/CommonComponents/Modal/ModalComponent";
+import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
@@ -26,6 +25,7 @@ export const AddCitations: React.FC = () => {
   const [activeBtn, setActiveBtn] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
+  const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
       plate: "",
@@ -188,8 +188,25 @@ export const AddCitations: React.FC = () => {
     },
   });
 
+  const loginHandler=()=>{
+     console.log("hello world...");
+  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowUpdatePopUp(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
+      <ModalComponent
+        open={true}
+        innerContant={<LoginConfirmation
+        onClose={()=>{}}
+        onLogin={loginHandler}
+        />}
+      />
       <div
         className="citation"
         style={{
@@ -197,7 +214,7 @@ export const AddCitations: React.FC = () => {
           overflow: "hidden",
         }}
       >
-        <Flex gap="small" vertical wrap>
+        <Flex gap="small" vertical wrap style={{ marginTop: "-20px" }}>
           <Flex gap="middle" justify="space-between" align="center">
             {/* <h4 style={{ display: "flex" }}>Add Citation</h4> */}
             <Image alt="Logo" src={newLogo} height={100} width={150} />
@@ -234,6 +251,16 @@ export const AddCitations: React.FC = () => {
                   setActiveBtn(3);
                 }}
               />
+              {glanceView && <ButtonComponents
+                name="Officer Notes"
+                showBackgroundColor={activeBtn === 4 ? true : false}
+                color={activeBtn === 4 ? "#00FFFF" : "gray"}
+                textColor={activeBtn === 4 ? "#fff" : "gray"}
+                borderColor={activeBtn === 4 ? "gray" : "gray"}
+                handleClick={() => {
+                  setActiveBtn(4);
+                }}
+              />}
             </Flex>
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
@@ -269,7 +296,7 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="theme" placement="bottom">
                 <Button
-                  onClick={() => {}}
+                  onClick={() => { }}
                   icon={
                     <Image src={theme} alt="grid view" height={20} width={20} />
                   }
@@ -336,9 +363,40 @@ export const AddCitations: React.FC = () => {
           )}
 
           {glanceView && (
-            <GlanceView setformData={setformData} formData={formData} />
+            <GlanceView  setformData={setformData} formData={formData} activeBtn={activeBtn} setActiveBtn={setActiveBtn} />
           )}
         </Flex>
+
+
+        {showUpdatePopUp &&
+          <div className="_Update_modal_container">
+            <p className="update_title_container">
+              The CJN App has new version 13.2.5 available,
+              introducing enhanced features, improved performance,
+              and technical optimizations for a seamless user experience.
+            </p>
+
+            <div className="_button_container">
+              <div></div>
+              <Flex gap={"10px"}>
+                <ButtonComponents
+                  name="Remind me later"
+                  showBackgroundColor={false}
+                  handleClick={() => { setShowUpdatePopUp(false) }}
+                  textColor="gray"
+                  borderColor="gray"
+                />
+                <ButtonComponents
+                  name="Update"
+                  textColor="#fff"
+                  showBackgroundColor={true}
+                  color="#3672b3"
+                />
+
+              </Flex>
+            </div>
+          </div>
+        }
       </div>
     </>
   );
