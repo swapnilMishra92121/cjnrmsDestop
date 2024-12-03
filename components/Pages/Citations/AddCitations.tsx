@@ -102,30 +102,24 @@ export const AddCitations: React.FC = () => {
     },
     Violation: {
       endangerLifeOrProperty: true,
-      category: "",
-      statusType: "",
-      searchStatueOrOrdinance: "",
-      searchDescription: "",
-      nibrsCode: "",
-      level: "",
       violations: [
         {
-          thirdViolation: true,
+          thirdViolation: false,
           statueOrOrdinance: "",
           description: "",
         },
-      ], // Initialize as an array of objects
-      addThirdViolation: true,
+      ],
       speed: "",
       zone: "",
       disobey: "",
       acTaken: "",
-      acTesType: "",
+      acTestType: "",
       acReading: "",
       status: "",
-      speciesNumber: false,
+      speciesNumber: "",
       speciesNumberValue: "",
-      wildlifeRestitution: false,
+      wildlifeRestitution: "",
+      wildlifeRestitutionValue: "",
     },
     Notes: {
       comments: "",
@@ -353,7 +347,6 @@ export const AddCitations: React.FC = () => {
               <Tooltip title="Setting" placement="bottom">
                 <Button
                   onClick={() => {
-                 
                     setActiveTab(6);
                   }}
                   icon={

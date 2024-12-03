@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import styled from "styled-components";
 import { Form, FormikProvider, useFormik, FieldArray } from "formik";
 import Button from "antd/lib/button";
@@ -34,30 +34,24 @@ const Violations: FC<ViolationProps> = ({
   formData,
 }) => {
   const initialValues = {
-    endangerLifeOrProperty: true,
-    violations: formData?.Violation?.violations ?? [],
-    speed: formData?.Violation?.speed,
-    zone: formData?.Violation?.zone,
-    disobey: formData?.Violation?.disobey,
-    acTaken: formData?.Violation?.acTaken,
-    acTestType: formData?.Violation?.acTesType,
-    acReading: formData?.Violation?.acReading,
-    status: formData?.Violation?.status,
-    speciesNumber: formData?.Violation?.speciesNumber,
-    speciesNumberValue: formData?.Violation?.speciesNumberValue,
-    wildlifeRestitution: formData?.Violation?.wildlifeRestitution,
-    wildlifeRestitutionValue: formData?.Violation?.wildlifeRestitution,
+    endangerLifeOrProperty: formData.Violation?.endangerLifeOrProperty ?? true,
+    violations: formData.Violation?.violations ?? [],
+    speed: formData.Violation?.speed ?? "",
+    zone: formData.Violation?.zone ?? "",
+    disobey: formData.Violation?.disobey ?? "",
+    acTaken: formData.Violation?.acTaken ?? "",
+    acTestType: formData.Violation?.acTestType ?? "",
+    acReading: formData.Violation?.acReading ?? "",
+    status: formData.Violation?.status ?? "",
+    speciesNumber: formData.Violation?.speciesNumber ?? "",
+    speciesNumberValue: formData.Violation?.speciesNumberValue ?? "",
+    wildlifeRestitution: formData.Violation?.wildlifeRestitution ?? "",
+    wildlifeRestitutionValue:
+      formData.Violation?.wildlifeRestitutionValue ?? "",
   };
 
   const onSubmit = (values: typeof initialValues) => {
-    console.log(values);
-    // setformData({
-    //   ...formData,
-    //   Violation: {
-    //     ...formData.Violation,
-    //     violations: values.violations,
-    //   },
-    // });
+    console.log("Submitted Values:", values);
   };
 
   const violationsForm = useFormik({
@@ -69,32 +63,26 @@ const Violations: FC<ViolationProps> = ({
   useEffect(() => {
     setformData({
       ...formData,
-      Violation: {
-        ...formData.Violation,
-        violations: violationsForm?.values.violations,
-      },
+      Violation: violationsForm.values,
     });
-  }, [violationsForm?.values])
+  }, [violationsForm.values]);
 
   return (
     <StyledFormContainer $customPadding={customPadding}>
       <FormikProvider value={violationsForm}>
         <Form>
           {!isGlanceView && (
-            <>
-              <div style={{ padding: "12px" }}>
-                <EnhancedRadio name="endangerLifeOrProperty">
-                  Endanger Life or Property
-                </EnhancedRadio>
-              </div>
-            </>
+            <div style={{ padding: "12px" }}>
+              <EnhancedRadio name="endangerLifeOrProperty">
+                Endanger Life or Property
+              </EnhancedRadio>
+            </div>
           )}
 
           <FieldArray
             name="violations"
             render={({ remove, push }) => (
-              <Flex gap={"12px"} vertical>
-
+              <Flex gap="12px" vertical>
                 {violationsForm.values.violations.map((violation, index) => (
                   <Flex
                     key={index}
@@ -107,34 +95,34 @@ const Violations: FC<ViolationProps> = ({
                   >
                     <EnhancedTextInput
                       name={`violations.${index}.statueOrOrdinance`}
-                      label="Statue/Ordinance"
+                      label="Statute/Ordinance"
                       width="20%"
+                      value={violation.statueOrOrdinance} // Bind value for pre-filling
                     />
                     <EnhancedTextInput
                       name={`violations.${index}.description`}
                       label="Description"
                       width="20%"
+                      value={violation.description} // Bind value for pre-filling
                     />
                     <EnhancedRadio
                       name={`violations.${index}.thirdViolation`}
                       style={{ justifyContent: "flex-end" }}
+                      checked={violation.thirdViolation} // Bind value for pre-filling
                     >
                       3rd Violation
                     </EnhancedRadio>
-                    {index !== 0 && <Button
-                      type="text"
-                      danger
-                      onClick={() => remove(index)}
-                    >
-                      <Image
-                        src={images?.Delete}
-                        height={20}
-                        width={20}
-                        alt="Delete"
-                      />
-                    </Button>}
-                    {
-                      index === (violationsForm?.values?.violations?.length - 1) &&
+                    {index !== 0 && (
+                      <Button type="text" danger onClick={() => remove(index)}>
+                        <Image
+                          src={images?.Delete}
+                          height={20}
+                          width={20}
+                          alt="Delete"
+                        />
+                      </Button>
+                    )}
+                    {index === violationsForm.values.violations.length - 1 && (
                       <ButtonComponents
                         name="Add"
                         showBackgroundColor={false}
@@ -142,26 +130,38 @@ const Violations: FC<ViolationProps> = ({
                         icon={images?.Add}
                         borderColor="#3672b3"
                         handleClick={() =>
-                          push({ thirdViolation: true, statueOrOrdinance: "", description: "" })
+                          push({
+                            thirdViolation: false,
+                            statueOrOrdinance: "",
+                            description: "",
+                          })
                         }
                       />
-                    }
+                    )}
                   </Flex>
                 ))}
               </Flex>
             )}
           />
 
-          <Flex style={{ padding: "12px" }} gap="12px" >
+          <Flex style={{ padding: "12px" }} gap="12px">
             <EnhancedTextInput name="speed" label="Speed (MPH)" width="15%" />
             <EnhancedTextInput name="zone" label="Zone (MPH)" width="15%" />
             <EnhancedTextInput name="disobey" label="Disobey" width="15%" />
           </Flex>
 
-          <Flex style={{ padding: "12px" }} gap={"12px"}>
+          <Flex style={{ padding: "12px" }} gap="12px">
             <EnhancedTextInput name="acTaken" label="AC Taken" width="15%" />
-            <EnhancedTextInput name="acTestType" label="AC Test Type" width="15%" />
-            <EnhancedTextInput name="acReading" label="AC Reading" width="15%" />
+            <EnhancedTextInput
+              name="acTestType"
+              label="AC Test Type"
+              width="15%"
+            />
+            <EnhancedTextInput
+              name="acReading"
+              label="AC Reading"
+              width="15%"
+            />
           </Flex>
 
           <Flex style={{ padding: "12px" }}>
@@ -178,9 +178,6 @@ const Violations: FC<ViolationProps> = ({
 
           {!isGlanceView && (
             <Flex style={{ padding: "12px", textAlign: "right" }}>
-              {/* <Button htmlType="submit" type="primary">
-                Save Violations
-              </Button> */}
               <Button
                 style={{ marginLeft: "12px" }}
                 onClick={() => violationsForm.resetForm()}
