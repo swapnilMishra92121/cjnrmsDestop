@@ -15,7 +15,7 @@ export interface GlanceViewIPrams {
   setformData: (data: FormData) => void;
   formData: FormData;
   activeBtn: number | null,
-  setActiveBtn: (data: number | null) => void;
+  setActiveBtn: (data: number) => void;
 }
 
 const { Enlarge } = images;

@@ -11,7 +11,7 @@ import {
 } from "../../../../CommonComponents/Fields/EnhancedInput";
 import EnhancedSelect from "../../../../CommonComponents/Fields/EnhancedInput/EnhancedSelect";
 import Button from "antd/lib/button";
-import "./Components/notes.css"
+import "./Components/notes.css";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
 import { successAddedMessage } from "@/utils/const";
@@ -23,7 +23,7 @@ type NotesProps = {
   customPadding?: string;
   setformData: (data: FormData) => void;
   formData: FormData;
-  setActiveBtn?: (data: number | null) => void
+  setActiveBtn?: (data: number) => void;
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -63,7 +63,7 @@ const Notes: FC<NotesProps> = ({
   isGlanceView,
   setformData,
   formData,
-  setActiveBtn
+  setActiveBtn,
 }) => {
   const initialValues = {
     comments: formData?.Notes?.comments,
@@ -110,11 +110,9 @@ const Notes: FC<NotesProps> = ({
     AtStop: formData?.Notes?.AtStop,
     Admitted: formData?.Notes?.Admitted,
     otherWarning: formData?.Notes?.otherWarning,
-    NoOtherTraffic: formData?.Notes?.NoOtherTraffic
-
-
+    NoOtherTraffic: formData?.Notes?.NoOtherTraffic,
   };
-  const [showPreview, setShowPreview] = useState<boolean>(false)
+  const [showPreview, setShowPreview] = useState<boolean>(false);
   const notesForm = useFormik({
     initialValues: initialValues,
     onSubmit: (values) => {
@@ -122,23 +120,20 @@ const Notes: FC<NotesProps> = ({
     },
   });
 
-
-
-
   const handleSubmit = () => {
     window.electronAPI.createSubjectOutputJsonFile(formData);
     openNotificationWithIcon("success", successAddedMessage);
-  }
+  };
 
   useEffect(() => {
     setformData({
       ...formData,
-      Notes: notesForm?.values
-    })
+      Notes: notesForm?.values,
+    });
   }, [notesForm?.values]);
 
   return (
-    <FormikProvider value={notesForm} >
+    <FormikProvider value={notesForm}>
       <Flex style={{ display: "flex", gap: "20px" }}>
         <Flex>
           <Form>
@@ -157,117 +152,124 @@ const Notes: FC<NotesProps> = ({
                     label="Incident Summary"
                   />
                 </Flex>
-                {!isGlanceView && <div>
-                  <Flex gap="middle" align="flex-end" wrap>
-                    {/* <EnhancedSelect
+                {!isGlanceView && (
+                  <div>
+                    <Flex gap="middle" align="flex-end" wrap>
+                      {/* <EnhancedSelect
                     name="mode"
                     label="Mode"
                     options={modeOptions}
                     containerStyles={{ width: customWidth ?? "10%" }}
                   /> */}
-                    <EnhancedInput name="mode" label="Mode" width="20%" />
-                    <EnhancedInput name="lock" label="Lock" width="20%" />
-                    <EnhancedInput name="otherMethod" label="Other Method" width="20%" />
-                    {/* <EnhancedSelect
+                      <EnhancedInput name="mode" label="Mode" width="20%" />
+                      <EnhancedInput name="lock" label="Lock" width="20%" />
+                      <EnhancedInput
+                        name="otherMethod"
+                        label="Other Method"
+                        width="20%"
+                      />
+                      {/* <EnhancedSelect
                     name="lock"
                     label="Lock"
                     options={lockOptions}
                     containerStyles={{ width: customWidth ?? "10%" }}
                   /> */}
-                    {/* <EnhancedSelect
+                      {/* <EnhancedSelect
                     name="otherMethod"
                     label="Other Method"
                     options={otherMethodOptions}
                     containerStyles={{ width: customWidth ?? "10%" }}
                   /> */}
-                  </Flex>
+                    </Flex>
 
-                  <Flex gap="middle" align="flex-end" wrap>
-                    <EnhancedInput name="pbtNumber" label="PBT Number" width="20%" />
-                    <EnhancedInput
-                      name="squadNumber"
-                      label="Squad Number"
-                      width="20%"
-                    />
-                    <EnhancedRadio name="isInDashVideoAvailable">
-                      In-Dash Video Available
-                    </EnhancedRadio>
-                  </Flex>
+                    <Flex gap="middle" align="flex-end" wrap>
+                      <EnhancedInput
+                        name="pbtNumber"
+                        label="PBT Number"
+                        width="20%"
+                      />
+                      <EnhancedInput
+                        name="squadNumber"
+                        label="Squad Number"
+                        width="20%"
+                      />
+                      <EnhancedRadio name="isInDashVideoAvailable">
+                        In-Dash Video Available
+                      </EnhancedRadio>
+                    </Flex>
 
-                  <Flex gap="middle" align="flex-end" wrap>
-                    <EnhancedRadioGroup
-                      label="Observations"
-                      dir="row"
-                      name="observations"
-                      items={observationsOptions}
-                    />
-                  </Flex>
-                </div>}
-
-
+                    <Flex gap="middle" align="flex-end" wrap>
+                      <EnhancedRadioGroup
+                        label="Observations"
+                        dir="row"
+                        name="observations"
+                        items={observationsOptions}
+                      />
+                    </Flex>
+                  </div>
+                )}
 
                 <h3 className="meta_title_notes">Road Type</h3>
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="Residential"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Residential
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Rural"
-                  // onChange={vehicl}
+                    // onChange={vehicl}
                   >
                     Rural
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Divided"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Divided
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Other"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Other
                   </EnhancedCheckbox>
                 </Flex>
 
-
                 <h3 className="meta_title_notes">Unsafe Conditions</h3>
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="ImpairedVisibility"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Impaired Visibility
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="TrafficPresent"
-                  // onChange={vehicl}
+                    // onChange={vehicl}
                   >
                     Traffic Present
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Freeway"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Freeway
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Slippery"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Slippery
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="CauseToDodge"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Cause to Dodge
                   </EnhancedCheckbox>
@@ -276,36 +278,37 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="Rain"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Rain
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Snow"
-                  // onChange={vehicl}
+                    // onChange={vehicl}
                   >
                     Snow
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Fog"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Fog
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="ConditionOther"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Other
                   </EnhancedCheckbox>
-
-
                 </Flex>
 
-
                 <Flex gap="middle" align="flex-end" wrap>
-                  <EnhancedInput name="ViolatorDirection" label="Violator Direction" width="20%" />
+                  <EnhancedInput
+                    name="ViolatorDirection"
+                    label="Violator Direction"
+                    width="20%"
+                  />
                   <EnhancedInput name="Lane" label="Lane" width="10%" />
                   <EnhancedInput name="Method" label="Method" width="20%" />
                   {/* <EnhancedSelect
@@ -324,138 +327,150 @@ const Notes: FC<NotesProps> = ({
                       name="SquadDirection"
                       label="Squad Direction"
                       width="20%"
-
                     />
-                    <EnhancedInput name="SquadNumber" label="Squad Number" width="20%" />
+                    <EnhancedInput
+                      name="SquadNumber"
+                      label="Squad Number"
+                      width="20%"
+                    />
                     <Flex gap="middle" align="flex-end" wrap vertical>
-
                       <EnhancedCheckbox
                         name="audio"
 
-                      // onChange={vehicleForm.handleChange}
+                        // onChange={vehicleForm.handleChange}
                       >
                         Audio Recorded
                       </EnhancedCheckbox>
                       <EnhancedCheckbox
                         name="Video"
 
-                      // onChange={vehicl}
+                        // onChange={vehicl}
                       >
                         Video Recorded
                       </EnhancedCheckbox>
                     </Flex>
                   </Flex>
-
-
                 </Flex>
 
                 <h3 className="meta_title_notes">Observation</h3>
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="ObservationVehicleOverPosted"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Observation Vehicle Over Posted
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="AudoClear"
-                  // onChange={vehicl}
+                    // onChange={vehicl}
                   >
                     Audo Clear/Strong/Steady
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="AlwaysInSight"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Always In Sight
                   </EnhancedCheckbox>
                 </Flex>
 
-
                 <h3 className="meta_title_notes">Traffic Survey</h3>
                 <Flex gap={"70px"} align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="NoOtherTraffic"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     No Other Traffic
                   </EnhancedCheckbox>
-                  <EnhancedInput name="OtherTraffic" label="Other Traffic" width="40%" />
+                  <EnhancedInput
+                    name="OtherTraffic"
+                    label="Other Traffic"
+                    width="40%"
+                  />
                 </Flex>
-
 
                 <h3 className="meta_title_notes">Doppler Audio</h3>
                 <Flex gap={"88px"} align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="SingleTarget"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Single Target
                   </EnhancedCheckbox>
                   <Flex gap={"10px"}>
-                    <EnhancedInput name="otherTarget" label="Other Target" width="35%" />
+                    <EnhancedInput
+                      name="otherTarget"
+                      label="Other Target"
+                      width="35%"
+                    />
                     <EnhancedInput name="Terrain" label="Terrain" width="35%" />
-
                   </Flex>
                 </Flex>
-
-
 
                 <h3 className="meta_title_notes">Warning Issued</h3>
                 <Flex gap="large" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="SeatBelt"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Seat Belt
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="WarningOther"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Other
                   </EnhancedCheckbox>
                   <Flex gap="small">
-                    <EnhancedInput name="otherWarning" label="Other Warning" width="35%" />
-                    <EnhancedInput name="Insurance" label="Insuranve" width="35%" />
+                    <EnhancedInput
+                      name="otherWarning"
+                      label="Other Warning"
+                      width="35%"
+                    />
+                    <EnhancedInput
+                      name="Insurance"
+                      label="Insuranve"
+                      width="35%"
+                    />
                   </Flex>
                 </Flex>
 
-                <h3 className="meta_title_notes">No Seat Belt Use Observed When.</h3>
+                <h3 className="meta_title_notes">
+                  No Seat Belt Use Observed When.
+                </h3>
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="meeting"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Meeting
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Following"
-                  // onChange={vehicl}
+                    // onChange={vehicl}
                   >
                     Following
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="AtStop"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     At Stop
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Admitted"
-                  // onChange={vehicleForm.handleChange}
+                    // onChange={vehicleForm.handleChange}
                   >
                     Admitted
                   </EnhancedCheckbox>
-
-
                 </Flex>
 
-
                 {!isGlanceView && (
-                  <Flex style={{ display: "flex", justifyContent: "space-between" }}>
+                  <Flex
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <div></div>
                     <Flex>
                       <Flex
@@ -493,8 +508,7 @@ const Notes: FC<NotesProps> = ({
             </StyledFormContainer>
           </Form>
         </Flex>
-        {
-          isGlanceView &&
+        {isGlanceView && (
           <div>
             <div className="preview_pdf_container"></div>
             <div className="button_container">
@@ -505,10 +519,9 @@ const Notes: FC<NotesProps> = ({
                 color="#e8f2f8"
                 handleClick={() => {
                   if (setActiveBtn) {
-                    setActiveBtn(null)
+                    setActiveBtn(0);
                   }
-                }
-                }
+                }}
               />
 
               <ButtonComponents
@@ -520,7 +533,7 @@ const Notes: FC<NotesProps> = ({
               />
             </div>
           </div>
-        }
+        )}
       </Flex>
     </FormikProvider>
   );
