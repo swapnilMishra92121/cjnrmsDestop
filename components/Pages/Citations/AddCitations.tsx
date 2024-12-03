@@ -1,5 +1,5 @@
 "use client";
-import "./addCitation.css"
+import "./addCitation.css";
 import { useEffect, useState } from "react";
 import Subject from "./Tabs/Subject/Subject";
 import Vehicles from "./Tabs/Vehicles/Vehicles";
@@ -18,6 +18,7 @@ import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import { ModalComponent } from "@/components/CommonComponents/Modal/ModalComponent";
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
+import PrintersAndScanners from "./setting/PrintersAndScanners";
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
@@ -188,9 +189,9 @@ export const AddCitations: React.FC = () => {
     },
   });
 
-  const loginHandler=()=>{
-     console.log("hello world...");
-  }
+  const loginHandler = () => {
+    console.log("hello world...");
+  };
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowUpdatePopUp(true);
@@ -198,15 +199,19 @@ export const AddCitations: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const [settingTab, setsettingTab] = useState<boolean>(false);
+
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+
   return (
     <>
-      <ModalComponent
+      {/* <ModalComponent
         open={true}
         innerContant={<LoginConfirmation
         onClose={()=>{}}
         onLogin={loginHandler}
         />}
-      />
+      /> */}
       <div
         className="citation"
         style={{
@@ -248,19 +253,43 @@ export const AddCitations: React.FC = () => {
                 textColor={activeBtn === 3 ? "#fff" : "gray"}
                 borderColor={activeBtn === 3 ? "gray" : "gray"}
                 handleClick={() => {
+                  if (!selectedPrinter) {
+                    console.error("No printer selected!");
+                    alert("Please select a printer before downloading.");
+                    return;
+                  }
+
+                  const content = {
+                    title: "Example PDF",
+                    body: "This PDF is generated from JSON content!",
+                  };
+                  // Trigger the printPDF method
+                  window.electronAPI
+                    .printPDF(selectedPrinter, content)
+                    .then((response) => {
+                      console.log("done");
+                    })
+                    .catch((error) => {
+                      console.error("Error while printing PDF:", error);
+                      alert(
+                        "An unexpected error occurred while printing the PDF."
+                      );
+                    });
                   setActiveBtn(3);
                 }}
               />
-              {glanceView && <ButtonComponents
-                name="Officer Notes"
-                showBackgroundColor={activeBtn === 4 ? true : false}
-                color={activeBtn === 4 ? "#00FFFF" : "gray"}
-                textColor={activeBtn === 4 ? "#fff" : "gray"}
-                borderColor={activeBtn === 4 ? "gray" : "gray"}
-                handleClick={() => {
-                  setActiveBtn(4);
-                }}
-              />}
+              {glanceView && (
+                <ButtonComponents
+                  name="Officer Notes"
+                  showBackgroundColor={activeBtn === 4 ? true : false}
+                  color={activeBtn === 4 ? "#00FFFF" : "gray"}
+                  textColor={activeBtn === 4 ? "#fff" : "gray"}
+                  borderColor={activeBtn === 4 ? "gray" : "gray"}
+                  handleClick={() => {
+                    setActiveBtn(4);
+                  }}
+                />
+              )}
             </Flex>
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
@@ -296,7 +325,7 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="theme" placement="bottom">
                 <Button
-                  onClick={() => { }}
+                  onClick={() => {}}
                   icon={
                     <Image src={theme} alt="grid view" height={20} width={20} />
                   }
@@ -308,6 +337,25 @@ export const AddCitations: React.FC = () => {
               <Tooltip title="account" placement="bottom">
                 <Button
                   onClick={() => {}}
+                  icon={
+                    <Image
+                      src={account}
+                      alt="grid view"
+                      height={20}
+                      width={20}
+                    />
+                  }
+                  // style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
+                  title="Grid View"
+                />
+              </Tooltip>
+
+              <Tooltip title="Setting" placement="bottom">
+                <Button
+                  onClick={() => {
+                 
+                    setActiveTab(6);
+                  }}
                   icon={
                     <Image
                       src={account}
@@ -357,23 +405,39 @@ export const AddCitations: React.FC = () => {
                 />
               )}
               {activeTab === 5 && (
-                <Notes setformData={setformData} formData={formData} />
+                <Notes
+                  setformData={setformData}
+                  formData={formData}
+                  selectedPrinter={selectedPrinter}
+                />
+              )}
+
+              {activeTab === 6 && (
+                <PrintersAndScanners
+                  selectedPrinter={selectedPrinter}
+                  setSelectedPrinter={setSelectedPrinter}
+                />
               )}
             </Flex>
           )}
 
           {glanceView && (
-            <GlanceView  setformData={setformData} formData={formData} activeBtn={activeBtn} setActiveBtn={setActiveBtn} />
+            <GlanceView
+              setformData={setformData}
+              formData={formData}
+              activeBtn={activeBtn}
+              setActiveBtn={setActiveBtn}
+              selectedPrinter={selectedPrinter}
+            />
           )}
         </Flex>
 
-
-        {showUpdatePopUp &&
+        {showUpdatePopUp && (
           <div className="_Update_modal_container">
             <p className="update_title_container">
-              The CJN App has new version 13.2.5 available,
-              introducing enhanced features, improved performance,
-              and technical optimizations for a seamless user experience.
+              The CJN App has new version 13.2.5 available, introducing enhanced
+              features, improved performance, and technical optimizations for a
+              seamless user experience.
             </p>
 
             <div className="_button_container">
@@ -382,7 +446,9 @@ export const AddCitations: React.FC = () => {
                 <ButtonComponents
                   name="Remind me later"
                   showBackgroundColor={false}
-                  handleClick={() => { setShowUpdatePopUp(false) }}
+                  handleClick={() => {
+                    setShowUpdatePopUp(false);
+                  }}
                   textColor="gray"
                   borderColor="gray"
                 />
@@ -392,11 +458,10 @@ export const AddCitations: React.FC = () => {
                   showBackgroundColor={true}
                   color="#3672b3"
                 />
-
               </Flex>
             </div>
           </div>
-        }
+        )}
       </div>
     </>
   );

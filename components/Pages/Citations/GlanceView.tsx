@@ -14,8 +14,9 @@ import { FormData } from "./AddCitationsI";
 export interface GlanceViewIPrams {
   setformData: (data: FormData) => void;
   formData: FormData;
-  activeBtn: number | null,
+  activeBtn: number | null;
   setActiveBtn: (data: number) => void;
+  selectedPrinter: string;
 }
 
 const { Enlarge } = images;
@@ -30,7 +31,6 @@ const StyledContainer = styled.div`
   width: 100%;
   max-width: 100%;
 `;
-
 
 const StyledCard = styled(Card)`
   .ant-card-body {
@@ -56,15 +56,27 @@ const ExtraButtonsLayout = (
   </Space>
 );
 
-const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData, activeBtn, setActiveBtn }) => {
+const GlanceView: React.FC<GlanceViewIPrams> = ({
+  setformData,
+  formData,
+  activeBtn,
+  setActiveBtn,
+  selectedPrinter,
+}) => {
   return (
     <>
-      {
-        activeBtn === 4 ? <Card 
-        title="Officer Notes"
-        bordered={false} 
-        extra={ExtraButtonsLayout} 
-        style={{ width: "100%", transform: "scaleY(0.65)", marginTop: "-15.3%", marginBottom: "-14.5%"}}>
+      {activeBtn === 4 ? (
+        <Card
+          title="Officer Notes"
+          bordered={false}
+          extra={ExtraButtonsLayout}
+          style={{
+            width: "100%",
+            transform: "scaleY(0.65)",
+            marginTop: "-15.3%",
+            marginBottom: "-14.5%",
+          }}
+        >
           <Notes
             customWidth="40%"
             customPadding="0px"
@@ -72,82 +84,108 @@ const GlanceView: React.FC<GlanceViewIPrams> = ({ setformData, formData, activeB
             setformData={setformData}
             formData={formData}
             setActiveBtn={setActiveBtn}
+            selectedPrinter={selectedPrinter}
           />
-        </Card> :
-          <StyledContainer>
-            <Row gutter={16} style={{ width: "100%", transform: "scaleY(0.75)", marginTop: "-9.9%", marginBottom: "-6.5%" }}>
-              <Col span={12}>
-                <Space size="middle" direction="vertical" style={{ width: "100%" }}>
-                  <StyledCard
-                    title="Subject"
-                    bordered={false}
-                    extra={ExtraButtonsLayout}
+        </Card>
+      ) : (
+        <StyledContainer>
+          <Row
+            gutter={16}
+            style={{
+              width: "100%",
+              transform: "scaleY(0.75)",
+              marginTop: "-9.9%",
+              marginBottom: "-6.5%",
+            }}
+          >
+            <Col span={12}>
+              <Space
+                size="middle"
+                direction="vertical"
+                style={{ width: "100%" }}
+              >
+                <StyledCard
+                  title="Subject"
+                  bordered={false}
+                  extra={ExtraButtonsLayout}
                   // style={{ padding: "12px" }}
-                  >
-                    <Subject
-                      customWidth="40%"
-                      customPadding="0px"
-                      isGlanceView
-                      setformData={setformData}
-                      formData={formData}
-                    />
-                  </StyledCard>
+                >
+                  <Subject
+                    customWidth="40%"
+                    customPadding="0px"
+                    isGlanceView
+                    setformData={setformData}
+                    formData={formData}
+                  />
+                </StyledCard>
 
-                  <StyledCard
-                    title="Vehicle Information"
-                    bordered={false}
-                    extra={ExtraButtonsLayout}
-                  >
-                    <Vehicles
-                      customWidth="40%"
-                      customPadding="0px"
-                      isGlanceView
-                      setformData={setformData}
-                      formData={formData}
-                    />
-                  </StyledCard>
-                </Space>
-              </Col>
-              <Col span={12}>
-                <Space size="middle" direction="vertical" style={{ width: "100%" }}>
-                  <StyledCard title="Location" bordered={false} extra={ExtraButtonsLayout}>
-                    <Location
-                      customWidth="40%"
-                      customPadding="0px"
-                      isGlanceView
-                      setformData={setformData}
-                      formData={formData}
-                    />
-                  </StyledCard>
+                <StyledCard
+                  title="Vehicle Information"
+                  bordered={false}
+                  extra={ExtraButtonsLayout}
+                >
+                  <Vehicles
+                    customWidth="40%"
+                    customPadding="0px"
+                    isGlanceView
+                    setformData={setformData}
+                    formData={formData}
+                  />
+                </StyledCard>
+              </Space>
+            </Col>
+            <Col span={12}>
+              <Space
+                size="middle"
+                direction="vertical"
+                style={{ width: "100%" }}
+              >
+                <StyledCard
+                  title="Location"
+                  bordered={false}
+                  extra={ExtraButtonsLayout}
+                >
+                  <Location
+                    customWidth="40%"
+                    customPadding="0px"
+                    isGlanceView
+                    setformData={setformData}
+                    formData={formData}
+                  />
+                </StyledCard>
 
-                  <StyledCard title="Violations" bordered={false} extra={ExtraButtonsLayout}>
-                    <Violations
-                      customWidth="40%"
-                      customPadding="0px"
-                      isGlanceView
-                      setformData={setformData}
-                      formData={formData}
-                    />
-                  </StyledCard>
+                <StyledCard
+                  title="Violations"
+                  bordered={false}
+                  extra={ExtraButtonsLayout}
+                >
+                  <Violations
+                    customWidth="40%"
+                    customPadding="0px"
+                    isGlanceView
+                    setformData={setformData}
+                    formData={formData}
+                  />
+                </StyledCard>
 
-                  <StyledCard
-                    title="Citation Information"
-                    bordered={false}
-                    extra={ExtraButtonsLayout}
-                  >
-                    <CitationInformation
-                      customWidth="40%"
-                      customPadding="0px"
-                      isGlanceView
-                      setformData={setformData}
-                      formData={formData}
-                    />
-                  </StyledCard>
-                </Space>
-              </Col>
-            </Row>
-          </StyledContainer>
-      }
+                <StyledCard
+                  title="Citation Information"
+                  bordered={false}
+                  extra={ExtraButtonsLayout}
+                >
+                  <CitationInformation
+                    customWidth="40%"
+                    customPadding="0px"
+                    isGlanceView
+                    setformData={setformData}
+                    formData={formData}
+                  />
+                </StyledCard>
+              </Space>
+            </Col>
+          </Row>
+        </StyledContainer>
+      )}
     </>
   );
 };

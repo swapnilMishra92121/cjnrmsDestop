@@ -24,6 +24,7 @@ type NotesProps = {
   setformData: (data: FormData) => void;
   formData: FormData;
   setActiveBtn?: (data: number) => void;
+  selectedPrinter: string;
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -64,6 +65,7 @@ const Notes: FC<NotesProps> = ({
   setformData,
   formData,
   setActiveBtn,
+  selectedPrinter,
 }) => {
   const initialValues = {
     comments: formData?.Notes?.comments,
@@ -122,6 +124,28 @@ const Notes: FC<NotesProps> = ({
 
   const handleSubmit = () => {
     window.electronAPI.createSubjectOutputJsonFile(formData);
+
+    if (!selectedPrinter) {
+      console.error("No printer selected!");
+      alert("Please select a printer before downloading.");
+      return;
+    }
+
+    const content = {
+      title: "Example PDF",
+      body: "This PDF is generated from JSON content!",
+    };
+    // Trigger the printPDF method
+    window.electronAPI
+      .printPDF(selectedPrinter, formData)
+      .then((response) => {
+        console.log("done");
+      })
+      .catch((error) => {
+        console.error("Error while printing PDF:", error);
+        alert("An unexpected error occurred while printing the PDF.");
+      });
+
     openNotificationWithIcon("success", successAddedMessage);
   };
 

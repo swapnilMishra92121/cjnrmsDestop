@@ -172,7 +172,6 @@ function registerIPCHandlers() {
 
       const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-      console.log(jsonData)
 
       // Replace placeholders in the template with the provided data
       htmlContent = bindDataToTemplate(htmlContent,jsonData);
@@ -270,6 +269,8 @@ function registerIPCHandlers() {
 * @returns {string} - The HTML content with data bound.
 */
   function bindDataToTemplate(template,dataa) {
+
+    console.log(dataa[0])
 
 
     let data =dataa[0]
