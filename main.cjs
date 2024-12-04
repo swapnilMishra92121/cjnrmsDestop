@@ -1,9 +1,11 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, shell,dialog } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const url = require("url");
 const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
 const AuthProvider = require("./AuthProvider");
+// const nodePath = require("node:path");
 
 const isDev = false;
 let appWindow;
@@ -23,6 +25,16 @@ function runAdminScript() {
   );
 }
 
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient("electron-fiddle", process.execPath, [
+      path.resolve(process.argv[1]),
+    ]);
+  } else {
+    app.setAsDefaultProtocolClient("electron-fiddle");
+  }
+}
+
 function createWindow() {
   appWindow = new BrowserWindow({
     width: 800,
@@ -34,6 +46,7 @@ function createWindow() {
     },
   });
 
+  appWindow.loadFile("index.html");
   appWindow.loadURL(
     isDev
       ? "http://localhost:3000" // Next.js dev server URL
@@ -48,6 +61,52 @@ function createWindow() {
     appWindow = null;
   });
 }
+
+// this is for the Linux and Windows
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (appWindow) {
+      if (appWindow.isMinimized()) appWindow.restore();
+      appWindow.focus();
+    }
+
+    const dummyToken = commandLine.pop()?.split("=")?.[1];
+    if(dummyToken){
+      try {
+        const tokenData = {
+          token: dummyToken,
+        };
+        const filePath= path.join(__dirname,"Token","token.json");
+        fs.writeFileSync(filePath, JSON.stringify(tokenData, null, 2), "utf-8");
+      } catch (error) {
+        console.error("Error saving token to file:", error);
+      }
+    }
+
+    // the commandLine is array of strings in which last element is deep link url
+    // dialog.showErrorBox(
+    //   "Welcome Back",
+    //   `You arrived from: ${commandLine.pop()}`
+    // );
+  });
+
+  // Create mainWindow, load the rest of the app, etc...
+  app.whenReady().then(() => {
+    createWindow();
+  });
+}
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
+
 
 app.on("ready", async () => {
   runAdminScript();
@@ -294,11 +353,69 @@ function registerIPCHandlers() {
       throw error;
     }
   });
+
+
+  ipcMain.handle("read-token", async () => {
+    try {
+      const filePath = path.join(__dirname, "Token", "token.json");
+      const fileContent = fs.readFileSync(filePath, "utf-8");
+      const jsonData = JSON.parse(fileContent);
+      return jsonData.token; // Return the token
+    } catch (error) {
+      console.error("Error reading token.json:", error);
+      return null; // Handle errors gracefully
+    }
+  });
+  
   // Event Handlers
- 
 }
 
 ipcMain.on("LOGIN", async () => {
   console.log("login started");
   await auth.login();
 });
+
+
+// Handle window controls via IPC
+ipcMain.on('save-token', (event, tokenValue) => {
+  console.log('Token received:', tokenValue);
+
+  // Save the token value to a file
+  const filePath = path.join(app.getPath('userData'), 'token.txt');
+  fs.writeFileSync(filePath, tokenValue);
+  console.log(`Token saved to ${filePath}`);
+});
+
+
+app.on("second-instance", (event, commandLine) => {
+  // Focus the app window if already running
+  if (appWindow) {
+    if (appWindow.isMinimized()) appWindow.restore();
+    appWindow.focus();
+  }
+
+  // Get the deep link URL (last argument in commandLine)
+  const deepLink = commandLine.find((arg) => arg.startsWith("electron-fiddle://"));
+  if (deepLink) {
+    const parsedUrl = url.parse(deepLink, true); // Parse URL and query params
+    const token = parsedUrl.query.token; // Extract token from query params
+
+    console.log(`Token from deep link: ${token}`);
+
+    // Optionally send token to the renderer process
+    if (appWindow) {
+      appWindow.webContents.send("deep-link-token", token);
+    }
+  }
+});
+
+app.on("open-url", (event, deepLink) => {
+  event.preventDefault();
+  if (appWindow) {
+    const parsedUrl = url.parse(deepLink, true);
+    const token = parsedUrl.query.token;
+    console.log(`Token from open-url: ${token}`);
+    appWindow.webContents.send("deep-link-token", token);
+  }
+});
+

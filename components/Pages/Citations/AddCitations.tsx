@@ -24,6 +24,7 @@ import { IpcRenderer } from "electron";
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
+  const [token, setToken] = useState<string | null>(null);
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
@@ -194,11 +195,18 @@ export const AddCitations: React.FC = () => {
 
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
 
-  const loginHandler=()=>{
-    console.log("jjjjjjjjjjjjjjjjjjjjj");
+  const loginHandler = () => {
     window.electronAPI.sendLogin()
   }
+
+  const handleToken = async () => {
+    const token = await window.electronAPI.getToken();
+    console.log("token", token);
+    setToken(token);
+  }
+
   useEffect(() => {
+    handleToken();
     const timer = setTimeout(() => {
       setShowUpdatePopUp(true);
     }, 4000);
@@ -207,13 +215,13 @@ export const AddCitations: React.FC = () => {
 
   return (
     <>
-      <ModalComponent
+      {!token && <ModalComponent
         open={true}
         innerContant={<LoginConfirmation
-        onClose={()=>{}}
-        onLogin={loginHandler}
+          onClose={() => { }}
+          onLogin={loginHandler}
         />}
-      />
+      />}
       <div
         className="citation"
         style={{

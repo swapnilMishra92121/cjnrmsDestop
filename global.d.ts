@@ -8,6 +8,7 @@ interface ElectronAPI {
 	updateJSONData: (updatedData: {}) => Promise<string>;
 	createSubjectOutputJsonFile:(data: {}) => Promise<string>;
 	sendLogin:()=>void;
+	getToken:()=> Promise<string>;
   }
   
   declare global {

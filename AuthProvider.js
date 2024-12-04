@@ -1,5 +1,6 @@
 const { PublicClientApplication } = require("@azure/msal-node");
 const { shell } = require("electron");
+const { promises } = require("fs");
 class AuthProvider {
   clientApplication;
   msalConfig;
@@ -26,15 +27,16 @@ class AuthProvider {
 
   async login() {
     try {
-        console.log("hello world....");
       const openBrowser = async (url) => {
         await shell.openExternal(url);
       };
+
+      const successTemplate = await promises.readFile("./index.html","utf-8");
       const authResponse = await this.clientApplication.acquireTokenInteractive(
         {
           openBrowser,
-        //   successTemplate: "You are signed in.",
-        //   failureTemplate: "<h1> Opps! Something went wrong </h1>",
+          successTemplate: successTemplate,
+          failureTemplate: "<h1> Opps! Something went wrong </h1>",
         }
       );
       console.log("authresponse", authResponse);
