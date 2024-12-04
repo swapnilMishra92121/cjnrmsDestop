@@ -1,17 +1,12 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
+const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
 
 
-
-
-
-
-
-
-const isDev = false;
 let appWindow;
 
 
@@ -24,10 +19,82 @@ function runAdminScript() {
       console.error(`Error executing script: ${error}`);
       return;
     }
-    console.log(`Script output: ${stdout}`);
+    log.info(`Script output: ${stdout}`);
   });
 }
 
+function setupAutoUpdate() {
+  log.info('Setting up auto-update...');
+
+  // Set the feed URL
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'swapnilMishra92121',
+    repo: 'cjnrmsDestop',
+    channel: 'latest'  // Optional, specify the channel if needed
+  });
+
+  log.info('1');
+
+  // Check for updates when the app is ready
+  autoUpdater.checkForUpdatesAndNotify().then((val) => {
+    log.info('Check for updates successful:', val);
+  }).catch((err) => {
+    log.error('Error checking for updates:', err);
+  });
+
+  log.info('2');
+
+  // Listen for the update events
+  autoUpdater.on('update-available', (info) => {
+    log.info('Update available: ', info);
+
+    // Prompt user to download the update
+    dialog.showMessageBox(appWindow, {
+      type: 'info',
+      title: 'Update Available',
+      message: 'A new version is available. Do you want to download it now?',
+      buttons: ['Yes', 'Later']
+    }).then((response) => {
+      if (response.response === 0) { // 'Yes' clicked
+        autoUpdater.downloadUpdate();
+      }
+    });
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    log.info('Update downloaded.');
+
+    // Notify the user when the update is ready to be installed
+    dialog.showMessageBox(appWindow, {
+      type: 'info',
+      title: 'Update Available',
+      message: 'A new version has been downloaded. The application will restart to apply the update.',
+      buttons: ['OK']
+    }).then(() => {
+      // Restart the app to apply the update
+      autoUpdater.quitAndInstall();
+    });
+  });
+
+  // Listen for the download progress
+  autoUpdater.on('download-progress', (progressObj) => {
+    let log_message = "Download speed: " + progressObj.bytesPerSecond;
+    log_message = log_message + ' - Downloaded ' + progressObj.percent + '% (' + progressObj.transferred + "/" + progressObj.total + ')';
+    log.info(log_message);
+
+    // Optionally, you can show the progress to the user using a dialog or custom window
+    // dialog.showMessageBox(appWindow, { message: `Downloading: ${progressObj.percent}%` });
+  });
+
+  autoUpdater.on('error', (err) => {
+    log.error('Auto-update error: ', err);
+  });
+}
+
+
+
+// Create Window
 function createWindow() {
   appWindow = new BrowserWindow({
     width: 800,
@@ -39,18 +106,11 @@ function createWindow() {
     }
   });
 
+  // Load your app's main content
+  appWindow.loadURL(`file:///${path.join(__dirname, 'out', 'index.html')}`);
 
-
-
-  appWindow.loadURL(
-    isDev
-      ? 'http://localhost:3000' // Next.js dev server URL
-      : `file:///${path.join(__dirname, "out", "index.html")}`
-  );
-
-  if (isDev) {
-    appWindow.webContents.openDevTools();
-  }
+  // appWindow.webContents.openDevTools();
+  log.info('App is starting...');
 
   appWindow.on('closed', () => {
     appWindow = null;
@@ -60,6 +120,7 @@ function createWindow() {
 app.on('ready', async () => {
   runAdminScript();
   createWindow();
+  setupAutoUpdate();
   registerIPCHandlers();
 });
 
@@ -69,9 +130,8 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
+
 });
-
-
 
 
 
@@ -79,7 +139,7 @@ function registerIPCHandlers() {
   ipcMain.handle('get-printers', async () => {
     if (appWindow && appWindow.webContents) {
       const printers = await appWindow.webContents.getPrinters();
-      console.log(printers)
+      log.info(printers)
       return printers;
     }
     return [];
@@ -174,7 +234,7 @@ function registerIPCHandlers() {
 
 
       // Replace placeholders in the template with the provided data
-      htmlContent = bindDataToTemplate(htmlContent,jsonData);
+      htmlContent = bindDataToTemplate(htmlContent, jsonData);
 
       // Load the HTML content into the hidden window
       await renderWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
@@ -268,17 +328,17 @@ function registerIPCHandlers() {
 * @param {object} data - The data object to bind.
 * @returns {string} - The HTML content with data bound.
 */
-  function bindDataToTemplate(template,dataa) {
+  function bindDataToTemplate(template, dataa) {
 
-    console.log(dataa[0])
+    log.info(dataa[0])
 
 
-    let data =dataa[0]
+    let data = dataa[0]
 
 
     const violationRows = data.Violation.violations
-    .map((violation) => {
-      return `
+      .map((violation) => {
+        return `
         <tr>
           <td colspan="4">
             <table style="width: 100%">
@@ -294,42 +354,42 @@ function registerIPCHandlers() {
           <td>PM, M, GM</td>
         </tr>
       `;
-    })
-    .join('');
+      })
+      .join('');
 
 
     return template
-    .replace(/{{ViolationRows}}/g, violationRows)
-    .replace(/{{Identification}}/g, data.Subject.identificationType || '')
-    .replace(/{{County Name}}/g, data.CitationInfo.county || '')
-    .replace(/{{DL Checked}}/g, data.Subject.cdl ? 'checked' : '')
-    .replace(/{{DVSWeb Checked}}/g, data.Subject.dvsWeb ? 'checked' : '')
-    .replace(/{{PhotoID Checked}}/g, data.Subject.photoID ? 'checked' : '')
-    .replace(/{{FP Checked}}/g, data.Subject.fp ? 'checked' : '')
-    .replace(/{{Other Checked}}/g, data.Subject.other ? 'checked' : '')
-    .replace(/{{DL Number}}/g, data.Vehicles.plate || '')
-    .replace(/{{State}}/g, data.Subject.state || '')
-    .replace(
-      /{{Name}}/g,
-      `${data.Subject.firstName || ''} ${data.Subject.middleName || ''} ${data.Subject.lastName || ''} ${data.Subject.suffix || ''}`.trim()
-    )
-    .replace(/{{Address}}/g, data.Subject.address || '')
-    .replace(/{{Street}}/g, data.Location.address || '')
-    .replace(/{{Apt}}/g, data.Location.apt || '')
-    .replace(/{{City}}/g, data.Subject.city || '')
-    .replace(/{{Zip}}/g, data.Subject.zip || '')
-    .replace(/{{DOB}}/g, data.Subject.dob || '')
-    .replace(/{{Height}}/g, data.Subject.height || '')
-    .replace(/{{Weight}}/g, data.Subject.weight || '')
-    .replace(/{{Eyes}}/g, data.Subject.eyes || '')
-    .replace(/{{Gender}}/g, data.Subject.gender || '')
-    .replace(/{{Color}}/g, data.Vehicles.color || '')
-    .replace(/{{Make}}/g, data.Vehicles.make || '')
-    .replace(/{{DateofOffense}}/g, data.CitationInfo.offenseDate?.$d?.toString().split('T')[0] || '')
-    .replace(/{{TimeofOffense}}/g, data.CitationInfo.offenseTime?.$d?.toString().split('T')[1]?.split('.')[0] || '')
-    .replace(/{{Citation #}}/g, `#${data.CitationInfo.caseOrICRNumber}` || '')
-    .replace(/{{SequentialNumber}}/g, data.CitationInfo.sequentialNumber || '___')
-    .replace(/{{TotalCitations}}/g, data.CitationInfo.totalCitations || '___');
+      .replace(/{{ViolationRows}}/g, violationRows)
+      .replace(/{{Identification}}/g, data.Subject.identificationType || '')
+      .replace(/{{County Name}}/g, data.CitationInfo.county || '')
+      .replace(/{{DL Checked}}/g, data.Subject.cdl ? 'checked' : '')
+      .replace(/{{DVSWeb Checked}}/g, data.Subject.dvsWeb ? 'checked' : '')
+      .replace(/{{PhotoID Checked}}/g, data.Subject.photoID ? 'checked' : '')
+      .replace(/{{FP Checked}}/g, data.Subject.fp ? 'checked' : '')
+      .replace(/{{Other Checked}}/g, data.Subject.other ? 'checked' : '')
+      .replace(/{{DL Number}}/g, data.Vehicles.plate || '')
+      .replace(/{{State}}/g, data.Subject.state || '')
+      .replace(
+        /{{Name}}/g,
+        `${data.Subject.firstName || ''} ${data.Subject.middleName || ''} ${data.Subject.lastName || ''} ${data.Subject.suffix || ''}`.trim()
+      )
+      .replace(/{{Address}}/g, data.Subject.address || '')
+      .replace(/{{Street}}/g, data.Location.address || '')
+      .replace(/{{Apt}}/g, data.Location.apt || '')
+      .replace(/{{City}}/g, data.Subject.city || '')
+      .replace(/{{Zip}}/g, data.Subject.zip || '')
+      .replace(/{{DOB}}/g, data.Subject.dob || '')
+      .replace(/{{Height}}/g, data.Subject.height || '')
+      .replace(/{{Weight}}/g, data.Subject.weight || '')
+      .replace(/{{Eyes}}/g, data.Subject.eyes || '')
+      .replace(/{{Gender}}/g, data.Subject.gender || '')
+      .replace(/{{Color}}/g, data.Vehicles.color || '')
+      .replace(/{{Make}}/g, data.Vehicles.make || '')
+      .replace(/{{DateofOffense}}/g, data.CitationInfo.offenseDate?.$d?.toString().split('T')[0] || '')
+      .replace(/{{TimeofOffense}}/g, data.CitationInfo.offenseTime?.$d?.toString().split('T')[1]?.split('.')[0] || '')
+      .replace(/{{Citation #}}/g, `#${data.CitationInfo.caseOrICRNumber}` || '')
+      .replace(/{{SequentialNumber}}/g, data.CitationInfo.sequentialNumber || '___')
+      .replace(/{{TotalCitations}}/g, data.CitationInfo.totalCitations || '___');
 
 
 
@@ -363,7 +423,7 @@ function registerIPCHandlers() {
   });
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
-    
+
     const randomNumber = Math.floor(1000 + Math.random() * 9000);
     const filePath = path.join(__dirname, 'SavedData', `citation-${someParameter.Vehicles.plate}.json`);
     try {
@@ -382,7 +442,7 @@ function registerIPCHandlers() {
       jsonData.push({ ...someParameter, id: jsonData.length });
       fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
 
-      console.log(`Data added successfully to ${someParameter.plate}.json!`);
+      log.info(`Data added successfully to ${someParameter.plate}.json!`);
       return `Data added successfully to ${someParameter.plate}.json`;
     } catch (error) {
       console.error('Error writing to JSON file:', error);
@@ -415,7 +475,7 @@ function registerIPCHandlers() {
       jsonData.push({ ...someParameter, id: jsonData.length });
       fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
 
-      console.log(`Data added successfully to ${someParameter.plate}.json!`);
+      log.info(`Data added successfully to ${someParameter.plate}.json!`);
       return `Data added successfully to ${someParameter.plate}.json`;
     } catch (error) {
       console.error('Error writing to JSON file:', error);
@@ -457,7 +517,7 @@ function registerIPCHandlers() {
 
       jsonData[itemIndex] = { ...jsonData[itemIndex], ...updatedData };
       fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
-      console.log('Data updated successfully in JSON file!');
+      log.info('Data updated successfully in JSON file!');
 
       return 'Data updated successfully';
     } catch (error) {
