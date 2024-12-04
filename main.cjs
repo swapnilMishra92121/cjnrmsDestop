@@ -31,10 +31,10 @@ function setupAutoUpdate() {
     provider: 'github',
     owner: 'swapnilMishra92121',
     repo: 'cjnrmsDestop',
-    channel: 'latest'  // Optional, specify the channel if needed
+    channel: 'latest',  
   });
 
-  log.info('1');
+  log.info('1',`https://github.com/swapnilMishra92121/cjnrmsDestop/releases/download/${app.getVersion()}/CjnCitation.Setup.${app.getVersion()}.exe`);
 
   // Check for updates when the app is ready
   autoUpdater.checkForUpdatesAndNotify().then((val) => {
