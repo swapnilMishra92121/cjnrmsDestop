@@ -215,7 +215,6 @@ export const AddCitations: React.FC = () => {
       >
         <Flex gap="small" vertical wrap style={{ marginTop: "-20px" }}>
           <Flex gap="middle" justify="space-between" align="center">
-            {/* <h4 style={{ display: "flex" }}>Add Citation</h4> */}
             <Image alt="Logo" src={newLogo} height={100} width={150} />
             <Flex gap="small">
               <ButtonComponents
@@ -351,7 +350,7 @@ export const AddCitations: React.FC = () => {
                   }}
                   icon={
                     <Image
-                      src={account}
+                      src={Setting}
                       alt="grid view"
                       height={20}
                       width={20}
