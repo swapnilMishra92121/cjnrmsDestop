@@ -67,7 +67,9 @@
       "Vehicle/**",
       "package.json",
       "litedb_demo3.exe",
-      "out/**"
+      "out/**",
+      "run_as_admin.ps1",
+      "start-all.bat"
     ],
     "extraResources": [
       {

@@ -10,16 +10,19 @@ const log = require('electron-log');
 let appWindow;
 
 
-
-
 function runAdminScript() {
+  // Path to the PowerShell script
   const scriptPath = path.join(app.getAppPath(), 'run_as_admin.ps1');
-  exec(`powershell -ExecutionPolicy Bypass -File "${scriptPath}"`, (error, stdout, stderr) => {
+  // Dynamic path to the .exe file
+  const exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
+  // Run the PowerShell script with the dynamic .exe path
+  const command = `powershell -ExecutionPolicy Bypass -File "${scriptPath}" -exePath "${exePath}"`;
+  exec(command, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error}`);
       return;
     }
-    log.info(`Script output: ${stdout}`);
+    console.log(`Script output: ${stdout}`);
   });
 }
 
@@ -31,10 +34,10 @@ function setupAutoUpdate() {
     provider: 'github',
     owner: 'swapnilMishra92121',
     repo: 'cjnrmsDestop',
-    channel: 'latest',  
+    channel: 'latest',
   });
 
-  log.info('1',`https://github.com/swapnilMishra92121/cjnrmsDestop/releases/download/${app.getVersion()}/CjnCitation.Setup.${app.getVersion()}.exe`);
+  log.info('1', `https://github.com/swapnilMishra92121/cjnrmsDestop/releases/download/${app.getVersion()}/CjnCitation.Setup.${app.getVersion()}.exe`);
 
   // Check for updates when the app is ready
   autoUpdater.checkForUpdatesAndNotify().then((val) => {
@@ -91,8 +94,6 @@ function setupAutoUpdate() {
     log.error('Auto-update error: ', err);
   });
 }
-
-
 
 // Create Window
 function createWindow() {
@@ -424,7 +425,6 @@ function registerIPCHandlers() {
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
 
-    const randomNumber = Math.floor(1000 + Math.random() * 9000);
     const filePath = path.join(__dirname, 'SavedData', `citation-${someParameter.Vehicles.plate}.json`);
     try {
       // Check if file exists. If not, initialize with an empty array.

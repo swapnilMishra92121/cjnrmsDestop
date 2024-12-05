@@ -1,9 +1,14 @@
+param (
+    [string]$exePath
+)
+
+
 # Check if running on Windows
 Write-Host "Running on Windows"
 
 # Define the commands to create and start the service
 $scriptContent = @"
-sc.exe create ".NET Service 0.1" binpath= "C:\Users\QSS\Desktop\cjnrmsDestop\CJNCitationService\CJNParser.Worker.exe" start=auto
+sc.exe create ".NET Service 0.1" binpath= "$exePath" start=auto
 sc.exe start ".NET Service 0.1"
 "@
 
