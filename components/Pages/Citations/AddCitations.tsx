@@ -202,6 +202,8 @@ export const AddCitations: React.FC = () => {
       {!token && (
         <ModalComponent
           open={false}
+          width={1000}
+          height={500}
           innerContant={
             <LoginConfirmation onClose={() => {}} onLogin={loginHandler} />
           }

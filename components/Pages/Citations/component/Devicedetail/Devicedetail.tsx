@@ -5,6 +5,9 @@ import {
   setDesktopPropertiesIState,
 } from "./DevicedetailIParams";
 import { DropdownComponent } from "@/components/CommonComponents/Fields/Dropdown/DropdownComponent";
+import "./LoginConfirmation.css";
+import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
+import { Button } from "antd";
 
 const Unit = [
   { label: "Unit 1", value: "citationType1" },
@@ -74,51 +77,55 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({}) => {
         />
       </div>
 
-      <div className="loginConfirmation_container">
+      <div style={{ marginTop: "3%" }} className="loginConfirmation_container">
         <div className="property">
-          <label>IP Address</label>
-          <span>{'103.181.160.20'}</span>
+          <label style={{ fontWeight: "bold" }}>IP Address : </label>
+          <span>{"103.181.160.20"}</span>
         </div>
         <div className="property">
-          <label>Geo Location</label>
+          <label style={{ fontWeight: "bold" }}>Geo Location : </label>
           <span>{desktopProperties.GeoLocation}</span>
         </div>
         <div className="property">
-          <label>Device Name</label>
+          <label style={{ fontWeight: "bold" }}>Device Name : </label>
           <span>{desktopProperties.DeviceName}</span>
         </div>
         <div className="property">
-          <label>Device Type</label>
+          <label style={{ fontWeight: "bold" }}>Device Type : </label>
           <span>{desktopProperties.DeviceType}</span>
         </div>
         <div className="property">
-          <label>Operating System</label>
+          <label style={{ fontWeight: "bold" }}>Operating System : </label>
           <span>{desktopProperties.OperatingSystem}</span>
         </div>
         <div className="property">
-          <label>System Architecture</label>
+          <label style={{ fontWeight: "bold" }}>System Architecture : </label>
           <span>{desktopProperties.SystemArchitecture}</span>
         </div>
         <div className="property">
-          <label>Display Resolution</label>
+          <label style={{ fontWeight: "bold" }}>Display Resolution : </label>
           <span>{desktopProperties.DisplayResolution}</span>
         </div>
         <div className="property">
-          <label>Application Version</label>
+          <label style={{ fontWeight: "bold" }}>Application Version : </label>
           <span>{desktopProperties.ApplicationVersion}</span>
         </div>
         <div className="property">
-          <label>Public IP Address</label>
+          <label style={{ fontWeight: "bold" }}>Public IP Address : </label>
           <span>{desktopProperties.PublicIpaddress}</span>
         </div>
         <div className="property">
-          <label>MAC Address</label>
+          <label style={{ fontWeight: "bold" }}>MAC Address : </label>
           <span>{desktopProperties.Macaddress}</span>
         </div>
         <div className="property">
-          <label>Proxy/VPN Details</label>
+          <label style={{ fontWeight: "bold" }}>Proxy/VPN Details : </label>
           <span>{desktopProperties.ProxyVpndetails}</span>
         </div>
+      </div>
+
+      <div style={{ marginTop: "3%" }}>
+        <Button>Submit</Button>
       </div>
     </div>
   );

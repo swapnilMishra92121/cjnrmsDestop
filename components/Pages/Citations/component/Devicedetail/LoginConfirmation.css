@@ -1,0 +1,10 @@
+
+
+.property label {
+  font-weight: bold;
+}
+
+.property span {
+  display: block;
+  margin-top: 5px;
+}
