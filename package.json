@@ -1,6 +1,6 @@
 {
   "name": "cjncitation",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "An Electron application with Next.js and backend server.",
   "main": "main.cjs",
   "scripts": {
