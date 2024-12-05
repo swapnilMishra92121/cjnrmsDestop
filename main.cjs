@@ -5,9 +5,11 @@ const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
+const AuthProvider = require('./AuthProvider')
 
 
 let appWindow;
+const auth = new AuthProvider()
 
 
 function runAdminScript() {
@@ -152,10 +154,6 @@ if (!gotTheLock) {
     // );
   });
 
-  // Create mainWindow, load the rest of the app, etc...
-  app.whenReady().then(() => {
-    createWindow();
-  });
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -179,7 +177,6 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
-
 });
 
 
