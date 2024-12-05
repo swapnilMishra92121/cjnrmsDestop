@@ -5,7 +5,7 @@ const Registry = require('winreg');
 
 
 const regKey = new Registry({
-  hive: Registry.HKCU, // or HKLM for machine-wide access
+  hive: Registry.HKLM, // or HKLM for machine-wide access
   key: '\\Software\\CJNRMS'
 });
 
@@ -40,7 +40,7 @@ class AuthProvider {
       const originalText = "SensitiveData123";
       const encryptedData = safeStorage.encryptString(originalText);
 
-      regKey.set('Token', Registry.REG_SZ, encryptedData, (err) => {
+      regKey.set('Token', Registry.REG_SZ, "anujsingh", (err) => {
         if (err) console.error('Error writing token:', err);
         else console.log('Token saved to registry.');
       });
