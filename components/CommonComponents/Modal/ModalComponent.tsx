@@ -15,8 +15,6 @@ export const ModalComponent: React.FC<ModalComponentIProps> = ({
   onClose,
   style,
 }) => {
- 
- 
   return (
     <Modal
       title={title}

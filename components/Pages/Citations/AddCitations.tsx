@@ -19,6 +19,7 @@ import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/Bu
 import { ModalComponent } from "@/components/CommonComponents/Modal/ModalComponent";
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
 import PrintersAndScanners from "./setting/PrintersAndScanners";
+import { Devicedetail } from "./component/Devicedetail/Devicedetail";
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
@@ -187,9 +188,7 @@ export const AddCitations: React.FC = () => {
 
   const loginHandler = () => {
     window.electronAPI.sendLogin();
-  }
-
-  
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -198,18 +197,19 @@ export const AddCitations: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-
-  
-
   return (
     <>
-      {!token && <ModalComponent
-        open={false}
-        innerContant={<LoginConfirmation
-          onClose={() => { }}
-          onLogin={loginHandler}
-        />}
-      />}
+      {!token && (
+        <ModalComponent
+          open={false}
+          innerContant={
+            <LoginConfirmation onClose={() => {}} onLogin={loginHandler} />
+          }
+        />
+      )}
+
+      <ModalComponent open={true} innerContant={<Devicedetail />} />
+
       <div
         className="citation"
         style={{
@@ -427,8 +427,6 @@ export const AddCitations: React.FC = () => {
             />
           )}
         </Flex>
-
-       
       </div>
     </>
   );

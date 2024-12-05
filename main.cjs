@@ -1,11 +1,14 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
-const AuthProvider = require('./AuthProvider')
+const AuthProvider = require('./AuthProvider');
+const os = require('os');
+const axios = require('axios');
+const networkInterfaces = os.networkInterfaces();
 
 
 let appWindow;
@@ -112,11 +115,10 @@ function setupAutoUpdate() {
   });
 }
 
-// Create Window
 function createWindow() {
   appWindow = new BrowserWindow({
-    width: 1000,
-    height: 1000,
+    width: 2000,
+    height: 1200,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -135,7 +137,6 @@ function createWindow() {
   });
 }
 
-// this is for the Linux and Windows
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
@@ -155,10 +156,6 @@ if (!gotTheLock) {
   });
 
 }
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
@@ -180,8 +177,48 @@ app.on("activate", () => {
 });
 
 
+function getLocalIpAddress() {
+  const interfaces = networkInterfaces();
+  let ipAddress = '';
+  for (let interfaceName in interfaces) {
+    for (let iface of interfaces[interfaceName]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        ipAddress = iface.address;
+        break;
+      }
+    }
+  }
+  return ipAddress;
+}
+
+async function getGeoLocation(ip) {
+  const response = await axios.get(`https://ipinfo.io/${ip}/json`);
+  return response.data.city + ', ' + response.data.region + ', ' + response.data.country;
+}
+
+function getDisplayResolution() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  return `${primaryDisplay.size.width}x${primaryDisplay.size.height}`;
+}
+
+function getMacAddress() {
+  console.log(networkInterfaces)
+  // for (let iface of Object.values(networkInterfaces)) {
+  //   for (let i of iface) {
+  //     if (i.mac && !i.internal) {
+  //       return i.mac;
+  //     }
+  //   }
+  // }
+  return null;
+}
+
+function getProxyDetails() {
+  return 'Proxy details here';
+}
 
 function registerIPCHandlers() {
+
   ipcMain.handle("get-printers", async () => {
     if (appWindow && appWindow.webContents) {
       const printers = await appWindow.webContents.getPrinters();
@@ -365,15 +402,13 @@ function registerIPCHandlers() {
     }
   });
 
-
-
-
   /**
 * Function to replace placeholders in the HTML template with dynamic data.
 * @param {string} template - The HTML template string.
 * @param {object} data - The data object to bind.
 * @returns {string} - The HTML content with data bound.
 */
+
   function bindDataToTemplate(template, dataa) {
 
     log.info(dataa[0])
@@ -441,8 +476,6 @@ function registerIPCHandlers() {
 
   }
 
-
-
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
       const args = [
@@ -497,79 +530,6 @@ function registerIPCHandlers() {
   }
   );
 
-  ipcMain.handle(
-    "create-output-json-file",
-    async (event, someParameter = {}) => {
-      if (!someParameter.plate) {
-        throw new Error(
-          "Plate number is required in someParameter to create the file."
-        );
-      }
-
-      const filePath = path.join(
-        __dirname,
-        "Vehicle",
-        `${someParameter.plate}.json`
-      );
-
-      log.info(`Data added successfully to ${someParameter.plate}.json!`);
-      return `Data added successfully to ${someParameter.plate}.json`;
-
-    });
-
-
-
-  ipcMain.handle('create-output-json-file', async (event, someParameter = {}) => {
-    if (!someParameter.plate) {
-      throw new Error("Plate number is required in someParameter to create the file.");
-    }
-
-    const filePath = path.join(__dirname, 'Vehicle', `${someParameter.plate}.json`);
-
-    try {
-      // Check if file exists. If not, initialize with an empty array.
-      const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
-      let jsonData = [];
-
-      // Parse the existing file content or initialize as an empty array if parsing fails.
-      try {
-        // Check if file exists. If not, initialize with an empty array.
-        const fileContent = fs.existsSync(filePath)
-          ? fs.readFileSync(filePath, "utf-8")
-          : "[]";
-        let jsonData = [];
-
-        // Parse the existing file content or initialize as an empty array if parsing fails.
-        try {
-          jsonData = JSON.parse(fileContent);
-        } catch {
-          console.warn("Invalid JSON format. Initializing empty array.");
-        }
-
-        // Add new data with a unique id based on current array length.
-        jsonData.push({ ...someParameter, id: jsonData.length });
-        fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
-
-        console.log(`Data added successfully to ${someParameter.plate}.json!`);
-        return `Data added successfully to ${someParameter.plate}.json`;
-      } catch (error) {
-        console.error("Error writing to JSON file:", error);
-        throw error;
-      }
-
-      // Add new data with a unique id based on current array length.
-      jsonData.push({ ...someParameter, id: jsonData.length });
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
-
-      log.info(`Data added successfully to ${someParameter.plate}.json!`);
-      return `Data added successfully to ${someParameter.plate}.json`;
-    } catch (error) {
-      console.error('Error writing to JSON file:', error);
-      throw error;
-    }
-  }
-  );
-
   ipcMain.handle("get-json-data", async () => {
     const filePath = path.join(__dirname, "Vehicle", "data.json");
     try {
@@ -617,16 +577,34 @@ function registerIPCHandlers() {
     }
   });
 
+  ipcMain.handle("get-desktop-properties", async () => {
+    const publicIp = await axios.get('https://api.ipify.org?format=json');
+
+    const properties = {
+      // Ipaddress: getLocalIpAddress(),
+      GeoLocation: await getGeoLocation(publicIp.data.ip),
+      DeviceName: os.hostname(),
+      DeviceType: os.type(),
+      OperatingSystem: os.platform(),
+      SystemArchitecture: os.arch(),
+      DisplayResolution: getDisplayResolution(),
+      ApplicationVersion: app.getVersion(),
+      PublicIpaddress: publicIp.data.ip,
+      Macaddress: getMacAddress(),
+      ProxyVpndetails: getProxyDetails(),
+    };
+
+    console.log(properties)
+
+    return properties;
+  });
+
 }
 
 ipcMain.on("LOGIN", async () => {
   console.log("login started");
   await auth.login();
 });
-
-
-
-
 
 app.on("second-instance", (event, commandLine) => {
   // Focus the app window if already running
