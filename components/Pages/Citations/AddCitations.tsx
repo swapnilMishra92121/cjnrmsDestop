@@ -28,6 +28,7 @@ export const AddCitations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
   const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
       plate: "",
@@ -185,26 +186,20 @@ export const AddCitations: React.FC = () => {
   });
 
   const loginHandler = () => {
-    window.electronAPI.sendLogin()
+    window.electronAPI.sendLogin();
   }
 
-  const handleToken = async () => {
-    const token = await window.electronAPI.getToken();
-    console.log("token", token);
-    setToken(token);
-  }
+  
 
   useEffect(() => {
-    handleToken();
     const timer = setTimeout(() => {
       setShowUpdatePopUp(true);
     }, 4000);
     return () => clearTimeout(timer);
   }, []);
 
-  const [settingTab, setsettingTab] = useState<boolean>(false);
 
-  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+  
 
   return (
     <>

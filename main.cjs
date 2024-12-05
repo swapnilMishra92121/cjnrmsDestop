@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell,dialog } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const url = require("url");
@@ -72,19 +72,6 @@ if (!gotTheLock) {
     if (appWindow) {
       if (appWindow.isMinimized()) appWindow.restore();
       appWindow.focus();
-    }
-
-    const dummyToken = commandLine.pop()?.split("=")?.[1];
-    if(dummyToken){
-      try {
-        const tokenData = {
-          token: dummyToken,
-        };
-        const filePath= path.join(__dirname,"Token","token.json");
-        fs.writeFileSync(filePath, JSON.stringify(tokenData, null, 2), "utf-8");
-      } catch (error) {
-        console.error("Error saving token to file:", error);
-      }
     }
 
     // the commandLine is array of strings in which last element is deep link url
@@ -528,20 +515,6 @@ function registerIPCHandlers() {
     }
   });
 
-
-  ipcMain.handle("read-token", async () => {
-    try {
-      const filePath = path.join(__dirname, "Token", "token.json");
-      const fileContent = fs.readFileSync(filePath, "utf-8");
-      const jsonData = JSON.parse(fileContent);
-      return jsonData.token; // Return the token
-    } catch (error) {
-      console.error("Error reading token.json:", error);
-      return null; // Handle errors gracefully
-    }
-  });
-  
-  // Event Handlers
 }
 
 ipcMain.on("LOGIN", async () => {
@@ -550,15 +523,7 @@ ipcMain.on("LOGIN", async () => {
 });
 
 
-// Handle window controls via IPC
-ipcMain.on('save-token', (event, tokenValue) => {
-  console.log('Token received:', tokenValue);
 
-  // Save the token value to a file
-  const filePath = path.join(app.getPath('userData'), 'token.txt');
-  fs.writeFileSync(filePath, tokenValue);
-  console.log(`Token saved to ${filePath}`);
-});
 
 
 app.on("second-instance", (event, commandLine) => {

@@ -12,5 +12,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   sendLogin :()=> ipcRenderer.send('LOGIN'),
   openApp: ()=>ipcRenderer.send('shell:open'),
-  getToken: ()=> ipcRenderer.invoke("read-token")
+  // getToken: ()=> ipcRenderer.invoke("read-token")
 });

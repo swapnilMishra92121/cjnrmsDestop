@@ -1,6 +1,14 @@
 const { PublicClientApplication } = require("@azure/msal-node");
-const { shell } = require("electron");
+const { shell,safeStorage } = require("electron");
 const { promises } = require("fs");
+const Registry = require('winreg');
+
+
+const regKey = new Registry({
+  hive: Registry.HKCU, // or HKLM for machine-wide access
+  key: '\\Software\\CJNRMS'
+});
+
 class AuthProvider {
   clientApplication;
   msalConfig;
@@ -26,21 +34,35 @@ class AuthProvider {
   }
 
   async login() {
+
+    
+    if(safeStorage.isEncryptionAvailable()){
+      const originalText = "SensitiveData123";
+      const encryptedData = safeStorage.encryptString(originalText);
+
+      regKey.set('Token', Registry.REG_SZ, encryptedData, (err) => {
+        if (err) console.error('Error writing token:', err);
+        else console.log('Token saved to registry.');
+      });
+
+      // console.log("Encrypted Data:", encryptedData.toString('base64')); // Logs encrypted data in base64 format
+      
+    }
     try {
       const openBrowser = async (url) => {
         await shell.openExternal(url);
       };
-
-      const successTemplate = await promises.readFile("./index.html","utf-8");
-      const authResponse = await this.clientApplication.acquireTokenInteractive(
-        {
-          openBrowser,
-          successTemplate: successTemplate,
-          failureTemplate: "<h1> Opps! Something went wrong </h1>",
-        }
-      );
-      console.log("authresponse", authResponse);
-      this.account = authResponse.account;
+       
+      // const successTemplate = await promises.readFile("./index.html","utf-8");
+      // const authResponse = await this.clientApplication.acquireTokenInteractive(
+      //   {
+      //     openBrowser,
+      //     successTemplate: successTemplate,
+      //     failureTemplate: "<h1> Opps! Something went wrong </h1>",
+      //   }
+      // );
+      // console.log("authresponse", authResponse);
+      // this.account = authResponse.account;
     } catch (error) {
       console.log("Error while login", error);
     }
