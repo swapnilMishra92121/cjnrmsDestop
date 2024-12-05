@@ -1,5 +1,5 @@
 "use client";
-import "./addCitation.css"
+import "./addCitation.css";
 import { useEffect, useState } from "react";
 import Subject from "./Tabs/Subject/Subject";
 import Vehicles from "./Tabs/Vehicles/Vehicles";
@@ -16,10 +16,9 @@ import Image from "next/image";
 import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsComponents";
 import { FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
-import PrintersAndScanners from "./setting/PrintersAndScanners";
 import { ModalComponent } from "@/components/CommonComponents/Modal/ModalComponent";
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
-import { IpcRenderer } from "electron";
+import PrintersAndScanners from "./setting/PrintersAndScanners";
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
@@ -31,114 +30,108 @@ export const AddCitations: React.FC = () => {
   const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
-      plate: null,
-      state: null,
-      expiration: null,
+      plate: "",
+      state: "",
+      expiration: "",
       noPlate: false,
       twentyOneDayPlate: false,
-      make: null,
-      model: null,
-      year: null,
-      color: null,
-      style: null,
-      type: null,
-      vin: null,
+      make: "",
+      model: "",
+      year: "",
+      color: "",
+      style: "",
+      type: "",
+      vin: "",
       isCommercialVehicle: true,
       hasHazardousMaterial: false,
-      dotNumber: null,
-      poundsOverWeight: null,
-      occupants: null,
+      dotNumber: "",
+      poundsOverWeight: "",
+      occupants: "",
       hasMotorcycle: false,
       hasTrailer: false,
       is16PlusPass: false,
     },
     Subject: {
-      plate: null,
-      identificationType: null,
-      subjectType: null,
-      dlState: null,
+      plate: "",
+      identificationType: "",
+      subjectType: "",
+      dlState: "",
       cdl: false,
       parked: false,
-      lastName: null,
-      firstName: null,
-      middleName: null,
-      suffix: null,
-      address: null,
-      apt: null,
-      city: null,
-      state: null,
-      zip: null,
-      race: null,
-      gender: null,
-      dob: null,
-      age: null,
+      lastName: "",
+      firstName: "",
+      middleName: "",
+      suffix: "",
+      address: "",
+      apt: "",
+      city: "",
+      state: "",
+      zip: "",
+      race: "",
+      gender: "",
+      dob: "",
+      age: "",
       isJuvenileCourtOffense: false,
-      juvenileOffenseType: null,
-      height: null,
-      weight: null,
-      hair: null,
-      eyes: null,
+      juvenileOffenseType: "",
+      height: "",
+      weight: "",
+      hair: "",
+      eyes: "",
       driver: false,
       owner: false,
       citee: false,
       passenger: false,
-      LicenseNumber: null
+      LicenseNumber: "",
     },
     Location: {
-      address: null,
-      apt: null,
-      city: null,
-      state: null,
-      zip: null,
-      weather: null,
-      direction: null,
-      parkingMeterNumber: null,
-      meterType: null,
-      zoneType: null,
-      hasStopLocation: null,
-      stopLocationAddress: null,
-      stopLocationApt: null,
-      stopLocationCity: null,
-      stopLocationState: null,
-      stopLocationZip: null,
+      address: "",
+      apt: "",
+      city: "",
+      state: "",
+      zip: "",
+      weather: "",
+      direction: "",
+      parkingMeterNumber: "",
+      meterType: "",
+      zoneType: "",
+      hasStopLocation: "",
+      stopLocationAddress: "",
+      stopLocationApt: "",
+      stopLocationCity: "",
+      stopLocationState: "",
+      stopLocationZip: "",
     },
     Violation: {
       endangerLifeOrProperty: true,
-      category: null,
-      statusType: null,
-      searchStatueOrOrdinance: null,
-      searchDescription: null,
-      nibrsCode: null,
-      level: null,
       violations: [
         {
-          thirdViolation: true,
-          statueOrOrdinance: null,
-          description: null,
+          thirdViolation: false,
+          statueOrOrdinance: "",
+          description: "",
         },
-      ], // Initialize as an array of objects
-      addThirdViolation: true,
-      speed: null,
-      zone: null,
-      disobey: null,
-      acTaken: null,
-      acTesType: null,
-      acReading: null,
-      status: null,
-      speciesNumber: false,
-      speciesNumberValue: null,
-      wildlifeRestitution: false,
+      ],
+      speed: "",
+      zone: "",
+      disobey: "",
+      acTaken: "",
+      acTestType: "",
+      acReading: "",
+      status: "",
+      speciesNumber: "",
+      speciesNumberValue: "",
+      wildlifeRestitution: "",
+      wildlifeRestitutionValue: "",
     },
     Notes: {
-      comments: null,
-      incidentSummary: null,
-      mode: null,
-      otherMethod: null,
-      lock: null,
-      pbtNumber: null,
-      squadNumber: null,
+      comments: "",
+      incidentSummary: "",
+      mode: "",
+      otherMethod: "",
+      lock: "",
+      pbtNumber: "",
+      squadNumber: "",
       isInDashVideoAvailable: true,
-      observations: null,
+      observations: "",
       Residential: false,
       Rural: false,
       Divided: false,
@@ -152,48 +145,44 @@ export const AddCitations: React.FC = () => {
       Snow: false,
       Fog: false,
       ConditionOther: false,
-      ViolatorDirection: null,
-      Lane: null,
-      Method: null,
-      SquadDirection: null,
-      SquadNumber: null,
+      ViolatorDirection: "",
+      Lane: "",
+      Method: "",
+      SquadDirection: "",
+      SquadNumber: "",
       audio: false,
       Video: false,
       ObservationVehicleOverPosted: false,
       AudoClear: false,
       AlwaysInSight: false,
-      OtherTraffic: null,
+      OtherTraffic: "",
       SingleTarget: false,
-      otherTarget: null,
-      Terrain: null,
+      otherTarget: "",
+      Terrain: "",
       SeatBelt: false,
-      WarningOther: null,
-      Insurance: null,
+      WarningOther: "",
+      Insurance: "",
       meeting: false,
       Following: false,
       AtStop: false,
       Admitted: false,
-      otherWarning: null,
+      otherWarning: "",
       NoOtherTraffic: false,
     },
     CitationInfo: {
-      citationType: null,
-      deliveryMethod: null,
-      offenseDate: null,
-      offenseTime: null,
-      officer: null,
-      badge: null,
-      caseOrICRNumber: null,
-      county: null,
-      prosecutingCourt: null,
-      prosecutingEntity: null,
+      citationType: "",
+      deliveryMethod: "",
+      offenseDate: "",
+      offenseTime: "",
+      officer: "",
+      badge: "",
+      caseOrICRNumber: "",
+      county: "",
+      prosecutingCourt: "",
+      prosecutingEntity: "",
       mandatoryCourt: false,
-    }
-  })
-  const [OpenLoginModal, setOpenLoginModal] = useState<boolean>(false);
-  const [settingTab, setsettingTab] = useState<boolean>(false);
-
-  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+    },
+  });
 
   const loginHandler = () => {
     window.electronAPI.sendLogin()
@@ -212,6 +201,10 @@ export const AddCitations: React.FC = () => {
     }, 4000);
     return () => clearTimeout(timer);
   }, []);
+
+  const [settingTab, setsettingTab] = useState<boolean>(false);
+
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
 
   return (
     <>
@@ -272,7 +265,6 @@ export const AddCitations: React.FC = () => {
                     title: "Example PDF",
                     body: "This PDF is generated from JSON content!",
                   };
-
                   // Trigger the printPDF method
                   window.electronAPI
                     .printPDF(selectedPrinter, content)
@@ -288,16 +280,18 @@ export const AddCitations: React.FC = () => {
                   setActiveBtn(3);
                 }}
               />
-              {glanceView && <ButtonComponents
-                name="Officer Notes"
-                showBackgroundColor={activeBtn === 4 ? true : false}
-                color={activeBtn === 4 ? "#00FFFF" : "gray"}
-                textColor={activeBtn === 4 ? "#fff" : "gray"}
-                borderColor={activeBtn === 4 ? "gray" : "gray"}
-                handleClick={() => {
-                  setActiveBtn(4);
-                }}
-              />}
+              {glanceView && (
+                <ButtonComponents
+                  name="Officer Notes"
+                  showBackgroundColor={activeBtn === 4 ? true : false}
+                  color={activeBtn === 4 ? "#00FFFF" : "gray"}
+                  textColor={activeBtn === 4 ? "#fff" : "gray"}
+                  borderColor={activeBtn === 4 ? "gray" : "gray"}
+                  handleClick={() => {
+                    setActiveBtn(4);
+                  }}
+                />
+              )}
             </Flex>
             <Flex gap="small" align="center">
               <Tooltip title="Split View" placement="bottom">
@@ -333,11 +327,27 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="theme" placement="bottom">
                 <Button
-                  onClick={() => { }}
+                  onClick={() => {}}
                   icon={
                     <Image src={theme} alt="grid view" height={20} width={20} />
                   }
-                  style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
+                  // style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
+                  title="Grid View"
+                />
+              </Tooltip>
+
+              <Tooltip title="account" placement="bottom">
+                <Button
+                  onClick={() => {}}
+                  icon={
+                    <Image
+                      src={account}
+                      alt="grid view"
+                      height={20}
+                      width={20}
+                    />
+                  }
+                  // style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
                   title="Grid View"
                 />
               </Tooltip>
@@ -345,7 +355,7 @@ export const AddCitations: React.FC = () => {
               <Tooltip title="Setting" placement="bottom">
                 <Button
                   onClick={() => {
-                    setsettingTab(true);
+                    setActiveTab(6);
                   }}
                   icon={
                     <Image
@@ -359,87 +369,76 @@ export const AddCitations: React.FC = () => {
                   title="Grid View"
                 />
               </Tooltip>
-
-              <Tooltip title="account" placement="bottom">
-                <Button
-                  onClick={() => { }}
-                  icon={
-                    <Image
-                      src={account}
-                      alt="grid view"
-                      height={20}
-                      width={20}
-                    />
-                  }
-                  // style={{ border: glanceView ? "1px solid #4096ff" : "none" }}
-                  title="Grid View"
-                />
-              </Tooltip>
             </Flex>
           </Flex>
 
-          {settingTab ? (
-            <PrintersAndScanners selectedPrinter={selectedPrinter} setSelectedPrinter={setSelectedPrinter} />
-          ) : (
-            <>
-              {!glanceView && (
-                <Flex gap="middle" vertical wrap>
-                  <TabsComponents
-                    activeTab={activeTab}
-                    tabList={[
-                      { name: "Subject", id: 1 },
-                      { name: "Vehicles", id: 2 },
-                      { name: "Location", id: 3 },
-                      { name: "Violations", id: 4 },
-                      { name: "Citation Information", id: 5 },
-                      { name: "Notes", id: 5 },
-                    ]}
-                    handleTabChange={setActiveTab}
-                  />
+          {!glanceView && (
+            <Flex gap="middle" vertical wrap>
+              <TabsComponents
+                activeTab={activeTab}
+                tabList={[
+                  { name: "Subject", id: 1 },
+                  { name: "Vehicles", id: 2 },
+                  { name: "Location", id: 3 },
+                  { name: "Violations", id: 4 },
+                  { name: "Citation Information", id: 5 },
+                  { name: "Notes", id: 5 },
+                ]}
+                handleTabChange={setActiveTab}
+              />
 
-                  {activeTab === 0 && (
-                    <Subject setformData={setformData} formData={formData} />
-                  )}
-                  {activeTab === 1 && (
-                    <Vehicles setformData={setformData} formData={formData} />
-                  )}
-                  {activeTab === 2 && (
-                    <Location formData={formData} setformData={setformData} />
-                  )}
-                  {activeTab === 3 && (
-                    <Violations setformData={setformData} formData={formData} />
-                  )}
-                  {activeTab === 4 && (
-                    <CitationInformation
-                      setformData={setformData}
-                      formData={formData}
-                    />
-                  )}
-                  {activeTab === 5 && (
-                    <Notes setformData={setformData} formData={formData} />
-                  )}
-                </Flex>
+              {activeTab === 0 && (
+                <Subject setformData={setformData} formData={formData} />
               )}
-
-              {glanceView && (
-                <GlanceView
+              {activeTab === 1 && (
+                <Vehicles setformData={setformData} formData={formData} />
+              )}
+              {activeTab === 2 && (
+                <Location formData={formData} setformData={setformData} />
+              )}
+              {activeTab === 3 && (
+                <Violations setformData={setformData} formData={formData} />
+              )}
+              {activeTab === 4 && (
+                <CitationInformation
                   setformData={setformData}
                   formData={formData}
-                  activeBtn={activeBtn}
-                  setActiveBtn={setActiveBtn}
                 />
               )}
-            </>
+              {activeTab === 5 && (
+                <Notes
+                  setformData={setformData}
+                  formData={formData}
+                  selectedPrinter={selectedPrinter}
+                />
+              )}
+
+              {activeTab === 6 && (
+                <PrintersAndScanners
+                  selectedPrinter={selectedPrinter}
+                  setSelectedPrinter={setSelectedPrinter}
+                />
+              )}
+            </Flex>
+          )}
+
+          {glanceView && (
+            <GlanceView
+              setformData={setformData}
+              formData={formData}
+              activeBtn={activeBtn}
+              setActiveBtn={setActiveBtn}
+              selectedPrinter={selectedPrinter}
+            />
           )}
         </Flex>
 
-
-        {showUpdatePopUp &&
+        {showUpdatePopUp && (
           <div className="_Update_modal_container">
             <p className="update_title_container">
-              The CJN App has new version 13.2.5 available,
-              introducing enhanced features, improved performance,
-              and technical optimizations for a seamless user experience.
+              The CJN App has new version 13.2.5 available, introducing enhanced
+              features, improved performance, and technical optimizations for a
+              seamless user experience.
             </p>
 
             <div className="_button_container">
@@ -448,7 +447,9 @@ export const AddCitations: React.FC = () => {
                 <ButtonComponents
                   name="Remind me later"
                   showBackgroundColor={false}
-                  handleClick={() => { setShowUpdatePopUp(false) }}
+                  handleClick={() => {
+                    setShowUpdatePopUp(false);
+                  }}
                   textColor="gray"
                   borderColor="gray"
                 />
@@ -458,11 +459,10 @@ export const AddCitations: React.FC = () => {
                   showBackgroundColor={true}
                   color="#3672b3"
                 />
-
               </Flex>
             </div>
           </div>
-        }
+        )}
       </div>
     </>
   );

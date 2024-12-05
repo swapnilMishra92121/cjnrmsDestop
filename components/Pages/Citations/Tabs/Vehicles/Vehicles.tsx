@@ -16,6 +16,9 @@ import {
   EnhancedPicker,
   EnhancedSelect,
 } from "@/components/CommonComponents/Fields/EnhancedInput";
+import { Submit } from "@/components/CommonComponents/Fields/Submit/Submit";
+import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
+import { successAddedMessage } from "@/utils/const";
 
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -95,15 +98,6 @@ const Vehicles: FC<VehicleProps> = ({
   useEffect(() => {
     initialRender();
   }, []);
-
-
-  useEffect(()=>{
-    setformData({
-      ...formData,
-      Vehicles:vehicleForm.initialValues
-    })
-
-  },[vehicleForm.initialValues])
 
   return (
     <StyledFormContainer $customPadding={customPadding}>

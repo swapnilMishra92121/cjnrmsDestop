@@ -18,7 +18,7 @@ type CitationInformationProps = {
   customWidth?: string;
   customPadding?: string;
   setformData: (data: FormData) => void;
-  formData: FormData
+  formData: FormData;
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -72,19 +72,19 @@ const CitationInformation: FC<CitationInformationProps> = ({
   customWidth,
   customPadding,
   setformData,
-  formData
+  formData,
 }) => {
   const initialValues = {
-    citationType: "",
-    deliveryMethod: "",
-    offenseDate: "",
-    offenseTime: "",
-    officer: "",
-    badge: "",
-    caseOrICRNumber: "",
-    county: "",
-    prosecutingCourt: "",
-    prosecutingEntity: "",
+    citationType: formData.CitationInfo.citationType,
+    deliveryMethod: formData.CitationInfo.deliveryMethod,
+    offenseDate: formData.CitationInfo.offenseDate,
+    offenseTime: formData.CitationInfo.offenseTime,
+    officer: formData.CitationInfo.officer,
+    badge: formData.CitationInfo.badge,
+    caseOrICRNumber: formData.CitationInfo.caseOrICRNumber,
+    county: formData.CitationInfo.county,
+    prosecutingCourt: formData.CitationInfo.prosecutingCourt,
+    prosecutingEntity: formData.CitationInfo.prosecutingEntity,
     mandatoryCourt: true,
   } as const;
 
@@ -97,11 +97,13 @@ const CitationInformation: FC<CitationInformationProps> = ({
     onSubmit,
   });
 
+  console.log(citationInfoForm?.values);
+
   useEffect(() => {
     setformData({
       ...formData,
-      CitationInfo: citationInfoForm?.values
-    })
+      CitationInfo: citationInfoForm?.values,
+    });
   }, [citationInfoForm?.values]);
 
   return (
@@ -162,21 +164,18 @@ const CitationInformation: FC<CitationInformationProps> = ({
                 options={prosecutingCourtOptions}
                 containerStyles={{ width: "19%" }}
               />
-              
-                <EnhancedSelect
-                  label="Prosecuting Entity"
-                  name="prosecutingEntity"
-                  options={prosecutingEntityOptions}
-                  containerStyles={{ width: "19%" }}
-                />
 
-                <EnhancedRadio name="mandatoryCourt">
-                  Mandatory Court
-                </EnhancedRadio>
-              
+              <EnhancedSelect
+                label="Prosecuting Entity"
+                name="prosecutingEntity"
+                options={prosecutingEntityOptions}
+                containerStyles={{ width: "19%" }}
+              />
+
+              <EnhancedRadio name="mandatoryCourt">
+                Mandatory Court
+              </EnhancedRadio>
             </Flex>
-
-
 
             {!isGlanceView && (
               <Flex
@@ -184,13 +183,6 @@ const CitationInformation: FC<CitationInformationProps> = ({
                 justify="flex-end"
                 style={{ padding: "12px" }}
               >
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginLeft: "8px" }}
-                >
-                  Submit
-                </Button>
                 <Button
                   onClick={(): void => {
                     citationInfoForm.resetForm();
