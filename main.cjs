@@ -11,20 +11,20 @@ let appWindow;
 
 
 function runAdminScript() {
-  // Path to the PowerShell script
   const scriptPath = path.join(app.getAppPath(), 'run_as_admin.ps1');
-  // Dynamic path to the .exe file
   const exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
-  // Run the PowerShell script with the dynamic .exe path
   const command = `powershell -ExecutionPolicy Bypass -File "${scriptPath}" -exePath "${exePath}"`;
+
+  log.info(command)
   exec(command, (error, stdout, stderr) => {
     if (error) {
-      console.error(`Error executing script: ${error}`);
+      log.info(`Error executing script: ${error}`);
       return;
     }
-    console.log(`Script output: ${stdout}`);
+    log.error(`Script output: ${stdout}`);
   });
 }
+
 
 function setupAutoUpdate() {
   log.info('Setting up auto-update...');
