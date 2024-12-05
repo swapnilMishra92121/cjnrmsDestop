@@ -23,10 +23,12 @@ import PrintersAndScanners from "./setting/PrintersAndScanners";
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
-  const [activeBtn, setActiveBtn] = useState<number>(0);
+  const [token, setToken] = useState<string | null>(null);
+  const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
   const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
       plate: "",
@@ -184,8 +186,11 @@ export const AddCitations: React.FC = () => {
   });
 
   const loginHandler = () => {
-    console.log("hello world...");
-  };
+    window.electronAPI.sendLogin();
+  }
+
+  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowUpdatePopUp(true);
@@ -193,19 +198,18 @@ export const AddCitations: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const [settingTab, setsettingTab] = useState<boolean>(false);
 
-  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+  
 
   return (
     <>
-      {/* <ModalComponent
+      {!token && <ModalComponent
         open={true}
         innerContant={<LoginConfirmation
-        onClose={()=>{}}
-        onLogin={loginHandler}
+          onClose={() => { }}
+          onLogin={loginHandler}
         />}
-      /> */}
+      />}
       <div
         className="citation"
         style={{

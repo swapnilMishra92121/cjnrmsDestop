@@ -23,6 +23,21 @@ function runAdminScript() {
     }
     log.error(`Script output: ${stdout}`);
   });
+
+
+
+  if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+      app.setAsDefaultProtocolClient("electron-fiddle", process.execPath, [
+        path.resolve(process.argv[1]),
+      ]);
+    } else {
+      app.setAsDefaultProtocolClient("electron-fiddle");
+    }
+  }
+
+
+
 }
 
 
@@ -103,8 +118,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
-    }
+      preload: path.join(__dirname, "preload.js"),
+    },
   });
 
   // Load your app's main content
@@ -113,23 +128,56 @@ function createWindow() {
   // appWindow.webContents.openDevTools();
   log.info('App is starting...');
 
-  appWindow.on('closed', () => {
+  appWindow.on("closed", () => {
     appWindow = null;
   });
 }
 
-app.on('ready', async () => {
+// this is for the Linux and Windows
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (appWindow) {
+      if (appWindow.isMinimized()) appWindow.restore();
+      appWindow.focus();
+    }
+
+    // the commandLine is array of strings in which last element is deep link url
+    // dialog.showErrorBox(
+    //   "Welcome Back",
+    //   `You arrived from: ${commandLine.pop()}`
+    // );
+  });
+
+  // Create mainWindow, load the rest of the app, etc...
+  app.whenReady().then(() => {
+    createWindow();
+  });
+}
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+
+app.on("ready", async () => {
   runAdminScript();
   createWindow();
   setupAutoUpdate();
   registerIPCHandlers();
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 
 });
@@ -137,7 +185,7 @@ app.on('activate', () => {
 
 
 function registerIPCHandlers() {
-  ipcMain.handle('get-printers', async () => {
+  ipcMain.handle("get-printers", async () => {
     if (appWindow && appWindow.webContents) {
       const printers = await appWindow.webContents.getPrinters();
       log.info(printers)
@@ -146,7 +194,7 @@ function registerIPCHandlers() {
     return [];
   });
 
-  ipcMain.handle('print-pdf', async (event, printerName, content) => {
+  ipcMain.handle("print-pdf", async (event, printerName, content) => {
     try {
       // const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
       // const printWindow = new BrowserWindow({
@@ -302,7 +350,7 @@ function registerIPCHandlers() {
       });
 
       if (!printResult.success) {
-        throw new Error(printResult.error || 'Unknown print error');
+        throw new Error(printResult.error || "Unknown print error");
       }
 
       // Close the preview window after printing
@@ -315,7 +363,7 @@ function registerIPCHandlers() {
 
 
     } catch (error) {
-      console.error('Error in print-pdf handler:', error);
+      console.error("Error in print-pdf handler:", error);
       return { success: false, error: error.message };
     }
   });
@@ -408,7 +456,7 @@ function registerIPCHandlers() {
 
       sudo.exec(
         `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
-        { name: 'LiteDB App' },
+        { name: "LiteDB App" },
         (error, stdout, stderr) => {
           if (error) {
             console.error(`Error: ${error.message}`);
@@ -421,7 +469,8 @@ function registerIPCHandlers() {
         }
       );
     });
-  });
+  }
+  );
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
 
@@ -435,20 +484,41 @@ function registerIPCHandlers() {
       try {
         jsonData = JSON.parse(fileContent);
       } catch {
-        console.warn('Invalid JSON format. Initializing empty array.');
+        console.warn("Invalid JSON format. Initializing empty array.");
       }
 
       // Add new data with a unique id based on current array length.
       jsonData.push({ ...someParameter, id: jsonData.length });
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+
+      console.log(`Data added successfully to ${someParameter.plate}.json!`);
+      return `Data added successfully to ${someParameter.plate}.json`;
+    } catch (error) {
+      console.error("Error writing to JSON file:", error);
+      throw error;
+    }
+  }
+  );
+
+  ipcMain.handle(
+    "create-output-json-file",
+    async (event, someParameter = {}) => {
+      if (!someParameter.plate) {
+        throw new Error(
+          "Plate number is required in someParameter to create the file."
+        );
+      }
+
+      const filePath = path.join(
+        __dirname,
+        "Vehicle",
+        `${someParameter.plate}.json`
+      );
 
       log.info(`Data added successfully to ${someParameter.plate}.json!`);
       return `Data added successfully to ${someParameter.plate}.json`;
-    } catch (error) {
-      console.error('Error writing to JSON file:', error);
-      throw error;
-    }
-  });
+
+    });
 
 
 
@@ -466,9 +536,28 @@ function registerIPCHandlers() {
 
       // Parse the existing file content or initialize as an empty array if parsing fails.
       try {
-        jsonData = JSON.parse(fileContent);
-      } catch {
-        console.warn('Invalid JSON format. Initializing empty array.');
+        // Check if file exists. If not, initialize with an empty array.
+        const fileContent = fs.existsSync(filePath)
+          ? fs.readFileSync(filePath, "utf-8")
+          : "[]";
+        let jsonData = [];
+
+        // Parse the existing file content or initialize as an empty array if parsing fails.
+        try {
+          jsonData = JSON.parse(fileContent);
+        } catch {
+          console.warn("Invalid JSON format. Initializing empty array.");
+        }
+
+        // Add new data with a unique id based on current array length.
+        jsonData.push({ ...someParameter, id: jsonData.length });
+        fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+
+        console.log(`Data added successfully to ${someParameter.plate}.json!`);
+        return `Data added successfully to ${someParameter.plate}.json`;
+      } catch (error) {
+        console.error("Error writing to JSON file:", error);
+        throw error;
       }
 
       // Add new data with a unique id based on current array length.
@@ -481,50 +570,96 @@ function registerIPCHandlers() {
       console.error('Error writing to JSON file:', error);
       throw error;
     }
-  });
+  }
+  );
 
-  ipcMain.handle('get-json-data', async () => {
-    const filePath = path.join(__dirname, 'Vehicle', 'data.json');
+  ipcMain.handle("get-json-data", async () => {
+    const filePath = path.join(__dirname, "Vehicle", "data.json");
     try {
       if (!fs.existsSync(filePath)) {
-        console.warn('File does not exist, returning empty array.');
+        console.warn("File does not exist, returning empty array.");
         return [];
       }
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const fileContent = fs.readFileSync(filePath, "utf-8");
       return JSON.parse(fileContent);
     } catch (error) {
-      console.error('Error reading JSON file:', error);
+      console.error("Error reading JSON file:", error);
       throw error;
     }
   });
 
-  ipcMain.handle('update-json-data', async (event, updatedData) => {
-    const filePath = path.join(__dirname, 'Vehicle', 'data.json');
+  ipcMain.handle("update-json-data", async (event, updatedData) => {
+    const filePath = path.join(__dirname, "Vehicle", "data.json");
     try {
-      const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
+      const fileContent = fs.existsSync(filePath)
+        ? fs.readFileSync(filePath, "utf-8")
+        : "[]";
       let jsonData = [];
 
       try {
         jsonData = JSON.parse(fileContent);
       } catch {
-        console.warn('Invalid JSON format. Initializing empty array.');
+        console.warn("Invalid JSON format. Initializing empty array.");
       }
 
-      const itemIndex = jsonData.findIndex((item) => item?.id === updatedData.id);
+      const itemIndex = jsonData.findIndex(
+        (item) => item?.id === updatedData.id
+      );
       if (itemIndex === -1) {
-        throw new Error('Item not found');
+        throw new Error("Item not found");
       }
 
       jsonData[itemIndex] = { ...jsonData[itemIndex], ...updatedData };
       fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
       log.info('Data updated successfully in JSON file!');
 
-      return 'Data updated successfully';
+      return "Data updated successfully";
     } catch (error) {
-      console.error('Error updating JSON file:', error);
+      console.error("Error updating JSON file:", error);
       throw error;
     }
   });
+
 }
 
+ipcMain.on("LOGIN", async () => {
+  console.log("login started");
+  await auth.login();
+});
+
+
+
+
+
+app.on("second-instance", (event, commandLine) => {
+  // Focus the app window if already running
+  if (appWindow) {
+    if (appWindow.isMinimized()) appWindow.restore();
+    appWindow.focus();
+  }
+
+  // Get the deep link URL (last argument in commandLine)
+  const deepLink = commandLine.find((arg) => arg.startsWith("electron-fiddle://"));
+  if (deepLink) {
+    const parsedUrl = url.parse(deepLink, true); // Parse URL and query params
+    const token = parsedUrl.query.token; // Extract token from query params
+
+    console.log(`Token from deep link: ${token}`);
+
+    // Optionally send token to the renderer process
+    if (appWindow) {
+      appWindow.webContents.send("deep-link-token", token);
+    }
+  }
+});
+
+app.on("open-url", (event, deepLink) => {
+  event.preventDefault();
+  if (appWindow) {
+    const parsedUrl = url.parse(deepLink, true);
+    const token = parsedUrl.query.token;
+    console.log(`Token from open-url: ${token}`);
+    appWindow.webContents.send("deep-link-token", token);
+  }
+});
 
