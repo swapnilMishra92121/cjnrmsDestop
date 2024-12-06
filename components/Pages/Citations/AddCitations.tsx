@@ -204,7 +204,7 @@ export const AddCitations: React.FC = () => {
   return (
     <>
       {!token && <ModalComponent
-        open={true}
+        open={false}
         innerContant={<LoginConfirmation
           onClose={() => { }}
           onLogin={loginHandler}
@@ -428,36 +428,7 @@ export const AddCitations: React.FC = () => {
           )}
         </Flex>
 
-        {showUpdatePopUp && (
-          <div className="_Update_modal_container">
-            <p className="update_title_container">
-              The CJN App has new version 13.2.5 available, introducing enhanced
-              features, improved performance, and technical optimizations for a
-              seamless user experience.
-            </p>
-
-            <div className="_button_container">
-              <div></div>
-              <Flex gap={"10px"}>
-                <ButtonComponents
-                  name="Remind me later"
-                  showBackgroundColor={false}
-                  handleClick={() => {
-                    setShowUpdatePopUp(false);
-                  }}
-                  textColor="gray"
-                  borderColor="gray"
-                />
-                <ButtonComponents
-                  name="Update"
-                  textColor="#fff"
-                  showBackgroundColor={true}
-                  color="#3672b3"
-                />
-              </Flex>
-            </div>
-          </div>
-        )}
+       
       </div>
     </>
   );

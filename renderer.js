@@ -8,14 +8,13 @@
 console.log('Renderer process loaded');
 
 // Event listener for the Save Token button
-    document.getElementById('saveToken').addEventListener('click', () => {
-      const inputElement = document.getElementById('tokenInput');
-      console.log('hello world', inputElement.value);
-      const tokenValue = inputElement.value;
-  
-    //   ipcRenderer.send('save-token', tokenValue);
-    });
-  
+document.getElementById('saveToken').addEventListener('click', () => {
+  const inputElement = document.getElementById('tokenInput');
+  console.log('hello world', inputElement.value);
+  const tokenValue = inputElement.value;
 
- 
-  
+  //   ipcRenderer.send('save-token', tokenValue);
+});
+
+
+

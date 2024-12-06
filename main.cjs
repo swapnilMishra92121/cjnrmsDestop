@@ -1,44 +1,122 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
-const path = require("path");
-const fs = require("fs");
-const url = require("url");
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const path = require('path');
+const fs = require('fs');
 const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
-const AuthProvider = require("./AuthProvider");
-// const nodePath = require("node:path");
+const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
+const AuthProvider = require('./AuthProvider')
 
-const isDev = false;
+
 let appWindow;
-const auth = new AuthProvider();
+const auth = new AuthProvider()
+
 
 function runAdminScript() {
-  const scriptPath = path.join(app.getAppPath(), "run_as_admin.ps1");
-  exec(
-    `powershell -ExecutionPolicy Bypass -File "${scriptPath}"`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing script: ${error}`);
-        return;
-      }
-      console.log(`Script output: ${stdout}`);
+  const scriptPath = path.join(app.getAppPath(), 'run_as_admin.ps1');
+  const exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
+  const command = `powershell -ExecutionPolicy Bypass -File "${scriptPath}" -exePath "${exePath}"`;
+
+  log.info(command)
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      log.info(`Error executing script: ${error}`);
+      return;
     }
-  );
-}
+    log.error(`Script output: ${stdout}`);
+  });
 
-if (process.defaultApp) {
-  if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient("electron-fiddle", process.execPath, [
-      path.resolve(process.argv[1]),
-    ]);
-  } else {
-    app.setAsDefaultProtocolClient("electron-fiddle");
+
+
+  if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+      app.setAsDefaultProtocolClient("electron-fiddle", process.execPath, [
+        path.resolve(process.argv[1]),
+      ]);
+    } else {
+      app.setAsDefaultProtocolClient("electron-fiddle");
+    }
   }
+
+
+
 }
 
+
+function setupAutoUpdate() {
+  log.info('Setting up auto-update...');
+
+  // Set the feed URL
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'swapnilMishra92121',
+    repo: 'cjnrmsDestop',
+    channel: 'latest',
+  });
+
+  log.info('1', `https://github.com/swapnilMishra92121/cjnrmsDestop/releases/download/${app.getVersion()}/CjnCitation.Setup.${app.getVersion()}.exe`);
+
+  // Check for updates when the app is ready
+  autoUpdater.checkForUpdatesAndNotify().then((val) => {
+    log.info('Check for updates successful:', val);
+  }).catch((err) => {
+    log.error('Error checking for updates:', err);
+  });
+
+  log.info('2');
+
+  // Listen for the update events
+  autoUpdater.on('update-available', (info) => {
+    log.info('Update available: ', info);
+
+    // Prompt user to download the update
+    dialog.showMessageBox(appWindow, {
+      type: 'info',
+      title: 'Update Available',
+      message: 'A new version is available. Do you want to download it now?',
+      buttons: ['Yes', 'Later']
+    }).then((response) => {
+      if (response.response === 0) { // 'Yes' clicked
+        autoUpdater.downloadUpdate();
+      }
+    });
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    log.info('Update downloaded.');
+
+    // Notify the user when the update is ready to be installed
+    dialog.showMessageBox(appWindow, {
+      type: 'info',
+      title: 'Update Available',
+      message: 'A new version has been downloaded. The application will restart to apply the update.',
+      buttons: ['OK']
+    }).then(() => {
+      // Restart the app to apply the update
+      autoUpdater.quitAndInstall();
+    });
+  });
+
+  // Listen for the download progress
+  autoUpdater.on('download-progress', (progressObj) => {
+    let log_message = "Download speed: " + progressObj.bytesPerSecond;
+    log_message = log_message + ' - Downloaded ' + progressObj.percent + '% (' + progressObj.transferred + "/" + progressObj.total + ')';
+    log.info(log_message);
+
+    // Optionally, you can show the progress to the user using a dialog or custom window
+    // dialog.showMessageBox(appWindow, { message: `Downloading: ${progressObj.percent}%` });
+  });
+
+  autoUpdater.on('error', (err) => {
+    log.error('Auto-update error: ', err);
+  });
+}
+
+// Create Window
 function createWindow() {
   appWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 1000,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -46,16 +124,11 @@ function createWindow() {
     },
   });
 
-  appWindow.loadFile("index.html");
-  appWindow.loadURL(
-    isDev
-      ? "http://localhost:3000" // Next.js dev server URL
-      : `file:///${path.join(__dirname, "out", "index.html")}`
-  );
+  // Load your app's main content
+  appWindow.loadURL(`file:///${path.join(__dirname, 'out', 'index.html')}`);
 
-  if (isDev) {
-    appWindow.webContents.openDevTools();
-  }
+  // appWindow.webContents.openDevTools();
+  log.info('App is starting...');
 
   appWindow.on("closed", () => {
     appWindow = null;
@@ -81,10 +154,6 @@ if (!gotTheLock) {
     // );
   });
 
-  // Create mainWindow, load the rest of the app, etc...
-  app.whenReady().then(() => {
-    createWindow();
-  });
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -98,6 +167,7 @@ app.on('window-all-closed', () => {
 app.on("ready", async () => {
   runAdminScript();
   createWindow();
+  setupAutoUpdate();
   registerIPCHandlers();
 });
 
@@ -109,11 +179,13 @@ app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
+
+
 function registerIPCHandlers() {
   ipcMain.handle("get-printers", async () => {
     if (appWindow && appWindow.webContents) {
       const printers = await appWindow.webContents.getPrinters();
-      console.log(printers);
+      log.info(printers)
       return printers;
     }
     return [];
@@ -208,7 +280,7 @@ function registerIPCHandlers() {
 
 
       // Replace placeholders in the template with the provided data
-      htmlContent = bindDataToTemplate(htmlContent,jsonData);
+      htmlContent = bindDataToTemplate(htmlContent, jsonData);
 
       // Load the HTML content into the hidden window
       await renderWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
@@ -302,17 +374,17 @@ function registerIPCHandlers() {
 * @param {object} data - The data object to bind.
 * @returns {string} - The HTML content with data bound.
 */
-  function bindDataToTemplate(template,dataa) {
+  function bindDataToTemplate(template, dataa) {
 
-    console.log(dataa[0])
+    log.info(dataa[0])
 
 
-    let data =dataa[0]
+    let data = dataa[0]
 
 
     const violationRows = data.Violation.violations
-    .map((violation) => {
-      return `
+      .map((violation) => {
+        return `
         <tr>
           <td colspan="4">
             <table style="width: 100%">
@@ -328,42 +400,42 @@ function registerIPCHandlers() {
           <td>PM, M, GM</td>
         </tr>
       `;
-    })
-    .join('');
+      })
+      .join('');
 
 
     return template
-    .replace(/{{ViolationRows}}/g, violationRows)
-    .replace(/{{Identification}}/g, data.Subject.identificationType || '')
-    .replace(/{{County Name}}/g, data.CitationInfo.county || '')
-    .replace(/{{DL Checked}}/g, data.Subject.cdl ? 'checked' : '')
-    .replace(/{{DVSWeb Checked}}/g, data.Subject.dvsWeb ? 'checked' : '')
-    .replace(/{{PhotoID Checked}}/g, data.Subject.photoID ? 'checked' : '')
-    .replace(/{{FP Checked}}/g, data.Subject.fp ? 'checked' : '')
-    .replace(/{{Other Checked}}/g, data.Subject.other ? 'checked' : '')
-    .replace(/{{DL Number}}/g, data.Vehicles.plate || '')
-    .replace(/{{State}}/g, data.Subject.state || '')
-    .replace(
-      /{{Name}}/g,
-      `${data.Subject.firstName || ''} ${data.Subject.middleName || ''} ${data.Subject.lastName || ''} ${data.Subject.suffix || ''}`.trim()
-    )
-    .replace(/{{Address}}/g, data.Subject.address || '')
-    .replace(/{{Street}}/g, data.Location.address || '')
-    .replace(/{{Apt}}/g, data.Location.apt || '')
-    .replace(/{{City}}/g, data.Subject.city || '')
-    .replace(/{{Zip}}/g, data.Subject.zip || '')
-    .replace(/{{DOB}}/g, data.Subject.dob || '')
-    .replace(/{{Height}}/g, data.Subject.height || '')
-    .replace(/{{Weight}}/g, data.Subject.weight || '')
-    .replace(/{{Eyes}}/g, data.Subject.eyes || '')
-    .replace(/{{Gender}}/g, data.Subject.gender || '')
-    .replace(/{{Color}}/g, data.Vehicles.color || '')
-    .replace(/{{Make}}/g, data.Vehicles.make || '')
-    .replace(/{{DateofOffense}}/g, data.CitationInfo.offenseDate?.$d?.toString().split('T')[0] || '')
-    .replace(/{{TimeofOffense}}/g, data.CitationInfo.offenseTime?.$d?.toString().split('T')[1]?.split('.')[0] || '')
-    .replace(/{{Citation #}}/g, `#${data.CitationInfo.caseOrICRNumber}` || '')
-    .replace(/{{SequentialNumber}}/g, data.CitationInfo.sequentialNumber || '___')
-    .replace(/{{TotalCitations}}/g, data.CitationInfo.totalCitations || '___');
+      .replace(/{{ViolationRows}}/g, violationRows)
+      .replace(/{{Identification}}/g, data.Subject.identificationType || '')
+      .replace(/{{County Name}}/g, data.CitationInfo.county || '')
+      .replace(/{{DL Checked}}/g, data.Subject.cdl ? 'checked' : '')
+      .replace(/{{DVSWeb Checked}}/g, data.Subject.dvsWeb ? 'checked' : '')
+      .replace(/{{PhotoID Checked}}/g, data.Subject.photoID ? 'checked' : '')
+      .replace(/{{FP Checked}}/g, data.Subject.fp ? 'checked' : '')
+      .replace(/{{Other Checked}}/g, data.Subject.other ? 'checked' : '')
+      .replace(/{{DL Number}}/g, data.Vehicles.plate || '')
+      .replace(/{{State}}/g, data.Subject.state || '')
+      .replace(
+        /{{Name}}/g,
+        `${data.Subject.firstName || ''} ${data.Subject.middleName || ''} ${data.Subject.lastName || ''} ${data.Subject.suffix || ''}`.trim()
+      )
+      .replace(/{{Address}}/g, data.Subject.address || '')
+      .replace(/{{Street}}/g, data.Location.address || '')
+      .replace(/{{Apt}}/g, data.Location.apt || '')
+      .replace(/{{City}}/g, data.Subject.city || '')
+      .replace(/{{Zip}}/g, data.Subject.zip || '')
+      .replace(/{{DOB}}/g, data.Subject.dob || '')
+      .replace(/{{Height}}/g, data.Subject.height || '')
+      .replace(/{{Weight}}/g, data.Subject.weight || '')
+      .replace(/{{Eyes}}/g, data.Subject.eyes || '')
+      .replace(/{{Gender}}/g, data.Subject.gender || '')
+      .replace(/{{Color}}/g, data.Vehicles.color || '')
+      .replace(/{{Make}}/g, data.Vehicles.make || '')
+      .replace(/{{DateofOffense}}/g, data.CitationInfo.offenseDate?.$d?.toString().split('T')[0] || '')
+      .replace(/{{TimeofOffense}}/g, data.CitationInfo.offenseTime?.$d?.toString().split('T')[1]?.split('.')[0] || '')
+      .replace(/{{Citation #}}/g, `#${data.CitationInfo.caseOrICRNumber}` || '')
+      .replace(/{{SequentialNumber}}/g, data.CitationInfo.sequentialNumber || '___')
+      .replace(/{{TotalCitations}}/g, data.CitationInfo.totalCitations || '___');
 
 
 
@@ -379,51 +451,50 @@ function registerIPCHandlers() {
         'read',
       ].join(' ');
 
-        sudo.exec(
-          `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
-          { name: "LiteDB App" },
-          (error, stdout, stderr) => {
-            if (error) {
-              console.error(`Error: ${error.message}`);
-              reject(error);
-            }
-            if (stderr) {
-              console.error(`Stderr: ${stderr}`);
-            }
-            resolve(stdout);
+      sudo.exec(
+        `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
+        { name: "LiteDB App" },
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error: ${error.message}`);
+            reject(error);
           }
-        );
-      });
-    }
+          if (stderr) {
+            console.error(`Stderr: ${stderr}`);
+          }
+          resolve(stdout);
+        }
+      );
+    });
+  }
   );
 
   ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
-    
-    const randomNumber = Math.floor(1000 + Math.random() * 9000);
+
     const filePath = path.join(__dirname, 'SavedData', `citation-${someParameter.Vehicles.plate}.json`);
     try {
       // Check if file exists. If not, initialize with an empty array.
       const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
       let jsonData = {};
 
-        // Parse the existing file content or initialize as an empty array if parsing fails.
-        try {
-          jsonData = JSON.parse(fileContent);
-        } catch {
-          console.warn("Invalid JSON format. Initializing empty array.");
-        }
-
-        // Add new data with a unique id based on current array length.
-        jsonData.push({ ...someParameter, id: jsonData.length });
-        fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
-
-        console.log(`Data added successfully to ${someParameter.plate}.json!`);
-        return `Data added successfully to ${someParameter.plate}.json`;
-      } catch (error) {
-        console.error("Error writing to JSON file:", error);
-        throw error;
+      // Parse the existing file content or initialize as an empty array if parsing fails.
+      try {
+        jsonData = JSON.parse(fileContent);
+      } catch {
+        console.warn("Invalid JSON format. Initializing empty array.");
       }
+
+      // Add new data with a unique id based on current array length.
+      jsonData.push({ ...someParameter, id: jsonData.length });
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+
+      console.log(`Data added successfully to ${someParameter.plate}.json!`);
+      return `Data added successfully to ${someParameter.plate}.json`;
+    } catch (error) {
+      console.error("Error writing to JSON file:", error);
+      throw error;
     }
+  }
   );
 
   ipcMain.handle(
@@ -441,6 +512,26 @@ function registerIPCHandlers() {
         `${someParameter.plate}.json`
       );
 
+      log.info(`Data added successfully to ${someParameter.plate}.json!`);
+      return `Data added successfully to ${someParameter.plate}.json`;
+
+    });
+
+
+
+  ipcMain.handle('create-output-json-file', async (event, someParameter = {}) => {
+    if (!someParameter.plate) {
+      throw new Error("Plate number is required in someParameter to create the file.");
+    }
+
+    const filePath = path.join(__dirname, 'Vehicle', `${someParameter.plate}.json`);
+
+    try {
+      // Check if file exists. If not, initialize with an empty array.
+      const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
+      let jsonData = [];
+
+      // Parse the existing file content or initialize as an empty array if parsing fails.
       try {
         // Check if file exists. If not, initialize with an empty array.
         const fileContent = fs.existsSync(filePath)
@@ -465,7 +556,18 @@ function registerIPCHandlers() {
         console.error("Error writing to JSON file:", error);
         throw error;
       }
+
+      // Add new data with a unique id based on current array length.
+      jsonData.push({ ...someParameter, id: jsonData.length });
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
+
+      log.info(`Data added successfully to ${someParameter.plate}.json!`);
+      return `Data added successfully to ${someParameter.plate}.json`;
+    } catch (error) {
+      console.error('Error writing to JSON file:', error);
+      throw error;
     }
+  }
   );
 
   ipcMain.handle("get-json-data", async () => {
@@ -505,8 +607,8 @@ function registerIPCHandlers() {
       }
 
       jsonData[itemIndex] = { ...jsonData[itemIndex], ...updatedData };
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
-      console.log("Data updated successfully in JSON file!");
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
+      log.info('Data updated successfully in JSON file!');
 
       return "Data updated successfully";
     } catch (error) {
