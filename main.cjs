@@ -57,8 +57,6 @@ function setupAutoUpdate() {
     channel: 'latest',
   });
 
-  log.info('1', `https://github.com/swapnilMishra92121/cjnrmsDestop/releases/download/${app.getVersion()}/CjnCitation.Setup.${app.getVersion()}.exe`);
-
   // Check for updates when the app is ready
   autoUpdater.checkForUpdatesAndNotify().then((val) => {
     log.info('Check for updates successful:', val);
