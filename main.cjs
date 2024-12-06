@@ -497,6 +497,35 @@ function registerIPCHandlers() {
   }
   );
 
+
+  ipcMain.handle('create-audit-json-file', async (event, someParameter = {}) => {
+
+    const filePath = path.join(__dirname, 'SavedData', `Audit-${someParameter?.NewValuesJson?.Vehicles?.plate}.json`);
+    try {
+      // Check if file exists. If not, initialize with an empty array.
+      const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
+      let jsonData = {};
+
+      // Parse the existing file content or initialize as an empty array if parsing fails.
+      try {
+        jsonData = JSON.parse(fileContent);
+      } catch {
+        console.warn("Invalid JSON format. Initializing empty array.");
+      }
+
+      // Add new data with a unique id based on current array length.
+      jsonData.push({ ...someParameter, id: jsonData.length });
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+
+      console.log(`Data added successfully to ${someParameter?.NewValuesJson?.Vehicles?.plate}.json!`);
+      return `Data added successfully to ${someParameter?.NewValuesJson?.Vehicles?.plate}.json`;
+    } catch (error) {
+      console.error("Error writing to JSON file:", error);
+      throw error;
+    }
+  }
+  );
+
   ipcMain.handle(
     "create-output-json-file",
     async (event, someParameter = {}) => {

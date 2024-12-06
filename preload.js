@@ -9,7 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getJSONData: () => ipcRenderer.invoke('get-json-data'),
   updateJSONData: (updatedData) => ipcRenderer.invoke('update-json-data', updatedData),
   createSubjectOutputJsonFile :(data)=> ipcRenderer.invoke('create-subject-json-file',data),
-
+  createAuditOutputJsonFile:(data)=> ipcRenderer.invoke('create-audit-json-file'),
   sendLogin :()=> ipcRenderer.send('LOGIN'),
   openApp: ()=>ipcRenderer.send('shell:open'),
   // getToken: ()=> ipcRenderer.invoke("read-token")

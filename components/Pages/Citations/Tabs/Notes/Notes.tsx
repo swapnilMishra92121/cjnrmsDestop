@@ -15,7 +15,7 @@ import "./Components/notes.css";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
 import { successAddedMessage } from "@/utils/const";
-import { FormData } from "../../AddCitationsI";
+import { AuditFormData, FormData } from "../../AddCitationsI";
 
 type NotesProps = {
   isGlanceView?: boolean;
@@ -25,6 +25,8 @@ type NotesProps = {
   formData: FormData;
   setActiveBtn?: (data: number) => void;
   selectedPrinter: string;
+  auditData: AuditFormData | undefined;
+  setAuditData: (data: AuditFormData) => void;
 };
 
 const StyledFormContainer = styled.div<{ $customPadding?: string }>`
@@ -66,6 +68,8 @@ const Notes: FC<NotesProps> = ({
   formData,
   setActiveBtn,
   selectedPrinter,
+  auditData,
+  setAuditData
 }) => {
   const initialValues = {
     comments: formData?.Notes?.comments,
@@ -114,7 +118,6 @@ const Notes: FC<NotesProps> = ({
     otherWarning: formData?.Notes?.otherWarning,
     NoOtherTraffic: formData?.Notes?.NoOtherTraffic,
   };
-  const [showPreview, setShowPreview] = useState<boolean>(false);
   const notesForm = useFormik({
     initialValues: initialValues,
     onSubmit: (values) => {
@@ -124,7 +127,10 @@ const Notes: FC<NotesProps> = ({
 
   const handleSubmit = () => {
     window.electronAPI.createSubjectOutputJsonFile(formData);
-
+    console.log("Audit Data",auditData);
+    if (auditData) {
+      window.electronAPI.createAuditOutputJsonFile(auditData);
+    }
     if (!selectedPrinter) {
       console.error("No printer selected!");
       alert("Please select a printer before downloading.");
@@ -237,27 +243,27 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="Residential"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Residential
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Rural"
-                    // onChange={vehicl}
+                  // onChange={vehicl}
                   >
                     Rural
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Divided"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Divided
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Other"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Other
                   </EnhancedCheckbox>
@@ -267,33 +273,33 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="ImpairedVisibility"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Impaired Visibility
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="TrafficPresent"
-                    // onChange={vehicl}
+                  // onChange={vehicl}
                   >
                     Traffic Present
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Freeway"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Freeway
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Slippery"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Slippery
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="CauseToDodge"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Cause to Dodge
                   </EnhancedCheckbox>
@@ -302,26 +308,26 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="Rain"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Rain
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Snow"
-                    // onChange={vehicl}
+                  // onChange={vehicl}
                   >
                     Snow
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Fog"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Fog
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="ConditionOther"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Other
                   </EnhancedCheckbox>
@@ -361,14 +367,14 @@ const Notes: FC<NotesProps> = ({
                       <EnhancedCheckbox
                         name="audio"
 
-                        // onChange={vehicleForm.handleChange}
+                      // onChange={vehicleForm.handleChange}
                       >
                         Audio Recorded
                       </EnhancedCheckbox>
                       <EnhancedCheckbox
                         name="Video"
 
-                        // onChange={vehicl}
+                      // onChange={vehicl}
                       >
                         Video Recorded
                       </EnhancedCheckbox>
@@ -380,19 +386,19 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="ObservationVehicleOverPosted"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Observation Vehicle Over Posted
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="AudoClear"
-                    // onChange={vehicl}
+                  // onChange={vehicl}
                   >
                     Audo Clear/Strong/Steady
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="AlwaysInSight"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Always In Sight
                   </EnhancedCheckbox>
@@ -402,7 +408,7 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap={"70px"} align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="NoOtherTraffic"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     No Other Traffic
                   </EnhancedCheckbox>
@@ -417,7 +423,7 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap={"88px"} align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="SingleTarget"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Single Target
                   </EnhancedCheckbox>
@@ -435,14 +441,14 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap="large" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="SeatBelt"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Seat Belt
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="WarningOther"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Other
                   </EnhancedCheckbox>
@@ -466,26 +472,26 @@ const Notes: FC<NotesProps> = ({
                 <Flex gap="middle" align="flex-end" wrap>
                   <EnhancedCheckbox
                     name="meeting"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Meeting
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="Following"
-                    // onChange={vehicl}
+                  // onChange={vehicl}
                   >
                     Following
                   </EnhancedCheckbox>
                   <EnhancedCheckbox
                     name="AtStop"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     At Stop
                   </EnhancedCheckbox>
 
                   <EnhancedCheckbox
                     name="Admitted"
-                    // onChange={vehicleForm.handleChange}
+                  // onChange={vehicleForm.handleChange}
                   >
                     Admitted
                   </EnhancedCheckbox>

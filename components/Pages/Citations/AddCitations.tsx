@@ -14,7 +14,7 @@ import GlanceView from "./GlanceView";
 import images from "../../../assets";
 import Image from "next/image";
 import { TabsComponents } from "../../CommonComponents/TabsComponents/TabsComponents";
-import { FormData } from "./AddCitationsI";
+import { AuditFormData, FormData } from "./AddCitationsI";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
 import { ModalComponent } from "@/components/CommonComponents/Modal/ModalComponent";
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
@@ -29,6 +29,7 @@ export const AddCitations: React.FC = () => {
   const [glanceView, setGlanceView] = useState<boolean>(false);
   const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+  const [AuditData, setAuditData] = useState<AuditFormData | undefined>()
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
       plate: "",
@@ -189,7 +190,7 @@ export const AddCitations: React.FC = () => {
     window.electronAPI.sendLogin();
   }
 
-  
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -199,12 +200,19 @@ export const AddCitations: React.FC = () => {
   }, []);
 
 
-  
+  useEffect(() => {
+    if (formData) {
+      setAuditData((prevAuditData) => ({
+        ...(prevAuditData || { Action: "Submit Citation", EntityType: "", citationId: null, NewValuesJson: formData }), // Provide defaults for required fields
+        NewValuesJson: formData,
+      }));
+    }
+  }, [formData]);
 
   return (
     <>
       {!token && <ModalComponent
-        open={false}
+        open={true}
         innerContant={<LoginConfirmation
           onClose={() => { }}
           onLogin={loginHandler}
@@ -322,7 +330,7 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="theme" placement="bottom">
                 <Button
-                  onClick={() => {}}
+                  onClick={() => { }}
                   icon={
                     <Image src={theme} alt="grid view" height={20} width={20} />
                   }
@@ -333,7 +341,7 @@ export const AddCitations: React.FC = () => {
 
               <Tooltip title="account" placement="bottom">
                 <Button
-                  onClick={() => {}}
+                  onClick={() => { }}
                   icon={
                     <Image
                       src={account}
@@ -405,6 +413,8 @@ export const AddCitations: React.FC = () => {
                   setformData={setformData}
                   formData={formData}
                   selectedPrinter={selectedPrinter}
+                  auditData={AuditData}
+                  setAuditData={setAuditData}
                 />
               )}
 
@@ -424,11 +434,13 @@ export const AddCitations: React.FC = () => {
               activeBtn={activeBtn}
               setActiveBtn={setActiveBtn}
               selectedPrinter={selectedPrinter}
+              auditData={AuditData}
+              setAuditData={setAuditData}
             />
           )}
         </Flex>
 
-       
+
       </div>
     </>
   );

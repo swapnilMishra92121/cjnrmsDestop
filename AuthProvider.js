@@ -18,8 +18,8 @@ class AuthProvider {
   constructor() {
     this.msalConfig = {
       auth: {
-        clientId: "9d7cd9d7-9a70-43d0-9676-801a31e748a4",
-        authority: `https://login.microsoftonline.com/1af9d803-aadd-4145-8bd7-d8f5ce087401`,
+        clientId: "62f3f32e-6b5e-4b82-a324-3dcbb6bdcc0a",
+        authority: `https://login.microsoftonline.com/organisations`,
       },
       system: {
         loggerOptions: {
@@ -34,21 +34,20 @@ class AuthProvider {
   }
 
   async login() {
-    // if(safeStorage.isEncryptionAvailable()){
-    //   const originalText = "SensitiveData123";
-    //   const encryptedData = safeStorage.encryptString(originalText);
 
-      // regKey.set('Token', Registry.REG_SZ, "anujsingh", (err) => {
-      //   if (err) console.error('Error writing token:', err);
-      //   else console.log('Token saved to registry.');
-      // });
-      
-      await keytar.setPassword('CJNRMS', 'Token', "AnujSingh@12345");
-      console.log("Token saved securely.");
+    
+    if(safeStorage.isEncryptionAvailable()){
+      const originalText = "SensitiveData123";
+      const encryptedData = safeStorage.encryptString(originalText);
+
+      regKey.set('Token', Registry.REG_SZ, encryptedData, (err) => {
+        if (err) console.error('Error writing token:', err);
+        else console.log('Token saved to registry.');
+      });
 
       // console.log("Encrypted Data:", encryptedData.toString('base64')); // Logs encrypted data in base64 format
       
-    // }
+    }
     try {
       const openBrowser = async (url) => {
         await shell.openExternal(url);

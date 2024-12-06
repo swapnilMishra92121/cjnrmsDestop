@@ -9,7 +9,7 @@ import Subject from "./Tabs/Subject/Subject";
 import { Location } from "./Tabs/Location/Location";
 import Violations from "./Tabs/Violations/Violations";
 import Notes from "./Tabs/Notes/Notes";
-import { FormData } from "./AddCitationsI";
+import { AuditFormData, FormData } from "./AddCitationsI";
 
 export interface GlanceViewIPrams {
   setformData: (data: FormData) => void;
@@ -17,6 +17,9 @@ export interface GlanceViewIPrams {
   activeBtn: number | null;
   setActiveBtn: (data: number) => void;
   selectedPrinter: string;
+  auditData : AuditFormData | undefined;
+  setAuditData : (data: AuditFormData)=>void
+  
 }
 
 const { Enlarge } = images;
@@ -62,6 +65,8 @@ const GlanceView: React.FC<GlanceViewIPrams> = ({
   activeBtn,
   setActiveBtn,
   selectedPrinter,
+  auditData,
+  setAuditData
 }) => {
   return (
     <>
@@ -85,6 +90,8 @@ const GlanceView: React.FC<GlanceViewIPrams> = ({
             formData={formData}
             setActiveBtn={setActiveBtn}
             selectedPrinter={selectedPrinter}
+            auditData={auditData}
+            setAuditData={setAuditData}
           />
         </Card>
       ) : (

@@ -67,3 +67,10 @@ export interface FormData {
   Notes: NotesI;
   CitationInfo: CitationInfoI;
 }
+
+export interface AuditFormData {
+  Action: string,
+  EntityType: string,
+  citationId:string | null,
+  NewValuesJson: FormData
+}
