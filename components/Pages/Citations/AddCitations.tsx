@@ -200,14 +200,11 @@ export const AddCitations: React.FC = () => {
   }, []);
 
 
-  useEffect(() => {
-    if (formData) {
-      setAuditData((prevAuditData) => ({
-        ...(prevAuditData || { Action: "Submit Citation", EntityType: "", citationId: null, NewValuesJson: formData }), // Provide defaults for required fields
-        NewValuesJson: formData,
-      }));
-    }
-  }, [formData]);
+ useEffect(()=>{
+    const token = window.localStorage.getItem("access_token");
+    console.log("token", token);
+    setToken(token);
+ },[token]);
 
   return (
     <>
