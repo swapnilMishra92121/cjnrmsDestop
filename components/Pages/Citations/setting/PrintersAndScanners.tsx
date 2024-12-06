@@ -27,7 +27,7 @@ const PrintersAndScanners: React.FC<PrintersAndScannersIparams> = ({
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.header}>Printers & scanners 999</h1>
+      <h1 style={styles.header}>Printers & scanners</h1>
 
       <div style={styles.section}>
         {printers.map((printer, index) => (

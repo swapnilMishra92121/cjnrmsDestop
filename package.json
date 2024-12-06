@@ -1,6 +1,6 @@
 {
   "name": "cjncitation",
-  "version": "1.0.5",
+  "version": "1.0.4",
   "description": "An Electron application with Next.js and backend server.",
   "main": "main.cjs",
   "scripts": {
@@ -65,6 +65,7 @@
     "files": [
       "main.cjs",
       "preload.js",
+      "AuthProvider.js",
       "backend/**",
       "pages/**",
       "node_modules/**",

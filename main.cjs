@@ -219,8 +219,8 @@ function registerIPCHandlers() {
 
   ipcMain.handle("get-printers", async () => {
     if (appWindow && appWindow.webContents) {
-      const printers = await appWindow.webContents.getPrinters();
-      log.info(printers)
+      const printers = await appWindow.webContents.getPrintersAsync();
+      console.log(printers)
       return printers;
     }
     return [];
@@ -228,73 +228,8 @@ function registerIPCHandlers() {
 
   ipcMain.handle("print-pdf", async (event, printerName, content) => {
     try {
-      // const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
-      // const printWindow = new BrowserWindow({
-      //   show: false,
-      //   webPreferences: {
-      //     nodeIntegration: false,
-      //     contextIsolation: true,
-      //   },
-      // });
-      // const htmlContent = `
-      //   <!DOCTYPE html>
-      //   <html>
-      //   <head>
-      //     <title>Print Content</title>
-      //     <meta charset="UTF-8">
-      //   </head>
-      //   <body>
-      //     <h1>${content.title}</h1>
-      //     <p>${content.body}</p>
-      //   </body>
-      //   </html>
-      // `;
-      // await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
-      // const pdfBuffer = await printWindow.webContents.printToPDF({});
-      // fs.writeFileSync(pdfPath, pdfBuffer);
-      // const printResult = await new Promise((resolve) => {
-      //   printWindow.webContents.print(
-      //     {
-      //       silent: true,
-      //       deviceName: printerName,
-      //     },
-      //     (success, errorType) => {
-      //       if (!success) {
-      //         console.error('Print failed:', errorType);
-      //         resolve({ success: false, error: errorType });
-      //       } else {
-      //         resolve({ success: true });
-      //       }
-      //     }
-      //   );
-      // });
-      // printWindow.close();
-      // if (!printResult.success) {
-      //   throw new Error(printResult.error || 'Unknown print error');
-      // }
-      // return { success: true };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
-
+  
       // Create a hidden window for rendering the content
       const renderWindow = new BrowserWindow({
         show: false,
@@ -303,102 +238,65 @@ function registerIPCHandlers() {
           contextIsolation: true,
         },
       });
-
+  
       // Load the HTML template
       const templatePath = path.join(__dirname, 'PDFTemplate', 'page3.html');
       let htmlContent = fs.readFileSync(templatePath, 'utf-8');
-
-
+  
+      // Load the JSON data
       const filePath = path.join(__dirname, 'SavedData', `citation-${content.Vehicles.plate}.json`);
-
       const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-
-
+  
       // Replace placeholders in the template with the provided data
       htmlContent = bindDataToTemplate(htmlContent, jsonData);
-
+  
       // Load the HTML content into the hidden window
       await renderWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
-
+  
       // Generate the PDF
       const pdfBuffer = await renderWindow.webContents.printToPDF({});
-
+  
       // Save the PDF to a temporary file
       fs.writeFileSync(pdfPath, pdfBuffer);
-
+  
+      // Print the PDF
+      const printResult = await new Promise((resolve) => {
+        renderWindow.webContents.print(
+          {
+            silent: true,
+            deviceName: printerName,
+          },
+          (success, errorType) => {
+            if (!success) {
+              console.error("Print failed:", errorType);
+              resolve({ success: false, error: errorType });
+            } else {
+              resolve({ success: true });
+            }
+          }
+        );
+      });
+  
       // Close the rendering window
       renderWindow.close();
-
-      // Create a new window for PDF preview
-      const previewWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        show: true,
-        webPreferences: {
-          nodeIntegration: false,
-          contextIsolation: true,
-        },
-      });
-
-      // Load the generated PDF in the preview window
-      previewWindow.loadURL(`file://${pdfPath}`);
-
-      // Print the PDF silently to the selected printer when confirmed
-      const printResult = await new Promise((resolve) => {
-        previewWindow.webContents.once('did-finish-load', () => {
-          // Add a confirmation button in the preview window
-          previewWindow.webContents.executeJavaScript(`
-              const button = document.createElement('button');
-              button.textContent = 'Print';
-              button.style.position = 'fixed';
-              button.style.bottom = '20px';
-              button.style.right = '20px';
-              button.style.padding = '10px 20px';
-              button.style.fontSize = '16px';
-              button.style.zIndex = '1000';
-              button.addEventListener('click', () => window.postMessage('print', '*'));
-              document.body.appendChild(button);
-            `);
-
-          // Wait for the user to click the "Print" button
-          const { ipcMain } = require('electron');
-          ipcMain.once('print-pdf', () => {
-            previewWindow.webContents.print(
-              {
-                silent: true,
-                deviceName: printerName,
-              },
-              (success, errorType) => {
-                if (!success) {
-                  console.error('Print failed:', errorType);
-                  resolve({ success: false, error: errorType });
-                } else {
-                  resolve({ success: true });
-                }
-              }
-            );
-          });
-        });
-      });
-
+  
       if (!printResult.success) {
         throw new Error(printResult.error || "Unknown print error");
       }
-
-      // Close the preview window after printing
-      previewWindow.close();
-
+  
       return { success: true };
-
-
-
-
-
     } catch (error) {
       console.error("Error in print-pdf handler:", error);
       return { success: false, error: error.message };
     }
   });
+  
+
+
+
+
+
+
 
   /**
 * Function to replace placeholders in the HTML template with dynamic data.
