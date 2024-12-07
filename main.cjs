@@ -15,22 +15,21 @@ let appWindow;
 const auth = new AuthProvider()
 
 
-function runAdminScript() {
-  const scriptPath = path.join(app.getAppPath(), 'run_as_admin.ps1');
+async function runAdminScript() {
   const exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
-  const command = `powershell -ExecutionPolicy Bypass -File "${scriptPath}" -exePath "${exePath}"`;
-
+  const command = `sc.exe create ".NET Service 0.1" binpath= "${exePath}" start=auto && sc.exe start ".NET Service 0.2"`;
   log.info(command)
-  exec(command, (error, stdout, stderr) => {
+  sudo.exec(command, { name: "NetService" }, (error, stdout, stderr) => {
     if (error) {
-      log.info(`Error executing script: ${error}`);
-      return;
+      log.error(`Error: ${error.message}`);
     }
-    log.error(`Script output: ${stdout}`);
+    if (stderr) {
+      log.error(`Stderr: ${stderr}`);
+    }
+    log.info(stdout);
   });
 
-
-
+  // Handling default protocol client setup (this part seems unrelated to the script execution but included as it was in your original function)
   if (process.defaultApp) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient("electron-fiddle", process.execPath, [
@@ -40,31 +39,21 @@ function runAdminScript() {
       app.setAsDefaultProtocolClient("electron-fiddle");
     }
   }
-
-
-
 }
 
 
 function setupAutoUpdate() {
-  log.info('Setting up auto-update...');
-
-  // Set the feed URL
   autoUpdater.setFeedURL({
     provider: 'github',
     owner: 'swapnilMishra92121',
     repo: 'cjnrmsDestop',
     channel: 'latest',
   });
-
-  // Check for updates when the app is ready
   autoUpdater.checkForUpdatesAndNotify().then((val) => {
     log.info('Check for updates successful:', val);
   }).catch((err) => {
     log.error('Error checking for updates:', err);
   });
-
-  log.info('2');
 
   // Listen for the update events
   autoUpdater.on('update-available', (info) => {
@@ -125,8 +114,7 @@ function createWindow() {
   });
 
   // Load your app's main content
-  // appWindow.loadURL(`file:///${path.join(__dirname, 'out', 'index.html')}`);
-  appWindow.loadURL(`http://localhost:4000`);
+  appWindow.loadURL(`file:///${path.join(__dirname, 'out', 'index.html')}`);
 
   // appWindow.webContents.openDevTools();
   log.info('App is starting...');
@@ -161,9 +149,9 @@ app.on('window-all-closed', () => {
 
 
 app.on("ready", async () => {
-  runAdminScript();
+  await runAdminScript();
   createWindow();
-  setupAutoUpdate();
+  // setupAutoUpdate();
   registerIPCHandlers();
 });
 
@@ -229,7 +217,7 @@ function registerIPCHandlers() {
   ipcMain.handle("print-pdf", async (event, printerName, content) => {
     try {
       const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
-  
+
       // Create a hidden window for rendering the content
       const renderWindow = new BrowserWindow({
         show: false,
@@ -238,27 +226,27 @@ function registerIPCHandlers() {
           contextIsolation: true,
         },
       });
-  
+
       // Load the HTML template
       const templatePath = path.join(__dirname, 'PDFTemplate', 'page3.html');
       let htmlContent = fs.readFileSync(templatePath, 'utf-8');
-  
+
       // Load the JSON data
       const filePath = path.join(__dirname, 'SavedData', `citation-${content.Vehicles.plate}.json`);
       const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-  
+
       // Replace placeholders in the template with the provided data
       htmlContent = bindDataToTemplate(htmlContent, jsonData);
-  
+
       // Load the HTML content into the hidden window
       await renderWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
-  
+
       // Generate the PDF
       const pdfBuffer = await renderWindow.webContents.printToPDF({});
-  
+
       // Save the PDF to a temporary file
       fs.writeFileSync(pdfPath, pdfBuffer);
-  
+
       // Print the PDF
       const printResult = await new Promise((resolve) => {
         renderWindow.webContents.print(
@@ -268,7 +256,7 @@ function registerIPCHandlers() {
           },
           (success, errorType) => {
             if (!success) {
-              console.error("Print failed:", errorType);
+              log.error("Print failed:", errorType);
               resolve({ success: false, error: errorType });
             } else {
               resolve({ success: true });
@@ -276,21 +264,21 @@ function registerIPCHandlers() {
           }
         );
       });
-  
+
       // Close the rendering window
       renderWindow.close();
-  
+
       if (!printResult.success) {
         throw new Error(printResult.error || "Unknown print error");
       }
-  
+
       return { success: true };
     } catch (error) {
-      console.error("Error in print-pdf handler:", error);
+      log.error("Error in print-pdf handler:", error);
       return { success: false, error: error.message };
     }
   });
-  
+
 
 
 
@@ -380,16 +368,19 @@ function registerIPCHandlers() {
         'read',
       ].join(' ');
 
+      log.info(args)
+      log.info(`${path.join(__dirname, "litedb_demo3.exe")} ${args}`)
+
       sudo.exec(
         `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
         { name: "LiteDB App" },
         (error, stdout, stderr) => {
           if (error) {
-            console.error(`Error: ${error.message}`);
+            log.error(`Error: ${error.message}`);
             reject(error);
           }
           if (stderr) {
-            console.error(`Stderr: ${stderr}`);
+            log.error(`Stderr: ${stderr}`);
           }
           resolve(stdout);
         }
@@ -420,7 +411,7 @@ function registerIPCHandlers() {
       console.log(`Data added successfully to ${someParameter.plate}.json!`);
       return `Data added successfully to ${someParameter.plate}.json`;
     } catch (error) {
-      console.error("Error writing to JSON file:", error);
+      log.error("Error writing to JSON file:", error);
       throw error;
     }
   }
@@ -436,7 +427,7 @@ function registerIPCHandlers() {
       const fileContent = fs.readFileSync(filePath, "utf-8");
       return JSON.parse(fileContent);
     } catch (error) {
-      console.error("Error reading JSON file:", error);
+      log.error("Error reading JSON file:", error);
       throw error;
     }
   });
@@ -468,7 +459,7 @@ function registerIPCHandlers() {
 
       return "Data updated successfully";
     } catch (error) {
-      console.error("Error updating JSON file:", error);
+      log.error("Error updating JSON file:", error);
       throw error;
     }
   });
