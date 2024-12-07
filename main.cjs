@@ -125,7 +125,8 @@ function createWindow() {
   });
 
   // Load your app's main content
-  appWindow.loadURL(`file:///${path.join(__dirname, 'out', 'index.html')}`);
+  // appWindow.loadURL(`file:///${path.join(__dirname, 'out', 'index.html')}`);
+  appWindow.loadURL(`http://localhost:4000`);
 
   // appWindow.webContents.openDevTools();
   log.info('App is starting...');
@@ -176,7 +177,7 @@ app.on("activate", () => {
 
 
 function getLocalIpAddress() {
-  const interfaces = networkInterfaces();
+  const interfaces = networkInterfaces;
   let ipAddress = '';
   for (let interfaceName in interfaces) {
     for (let iface of interfaces[interfaceName]) {
@@ -200,14 +201,13 @@ function getDisplayResolution() {
 }
 
 function getMacAddress() {
-  console.log(networkInterfaces)
-  // for (let iface of Object.values(networkInterfaces)) {
-  //   for (let i of iface) {
-  //     if (i.mac && !i.internal) {
-  //       return i.mac;
-  //     }
-  //   }
-  // }
+  for (let iface of Object.values(networkInterfaces)) {
+    for (let i of iface) {
+      if (i.mac && !i.internal) {
+        return i.mac;
+      }
+    }
+  }
   return null;
 }
 
@@ -476,8 +476,9 @@ function registerIPCHandlers() {
   ipcMain.handle("get-desktop-properties", async () => {
     const publicIp = await axios.get('https://api.ipify.org?format=json');
 
+
     const properties = {
-      // Ipaddress: getLocalIpAddress(),
+      Ipaddress: getLocalIpAddress(),
       GeoLocation: await getGeoLocation(publicIp.data.ip),
       DeviceName: os.hostname(),
       DeviceType: os.type(),

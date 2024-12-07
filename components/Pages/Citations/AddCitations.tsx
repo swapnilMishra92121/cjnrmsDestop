@@ -20,10 +20,12 @@ import { ModalComponent } from "@/components/CommonComponents/Modal/ModalCompone
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
 import PrintersAndScanners from "./setting/PrintersAndScanners";
 import { Devicedetail } from "./component/Devicedetail/Devicedetail";
+import { AddCitationsFunction } from "./AddCitationsFunction";
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
+  const addCitationsFunction=new AddCitationsFunction()
   const [token, setToken] = useState<string | null>(null);
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -190,12 +192,16 @@ export const AddCitations: React.FC = () => {
     window.electronAPI.sendLogin();
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowUpdatePopUp(true);
-    }, 4000);
-    return () => clearTimeout(timer);
-  }, []);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+      
+  //     addCitationsFunction.
+
+
+  //   }, 15 * 60 * 1000);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   return (
     <>

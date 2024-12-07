@@ -13,4 +13,5 @@ export interface setDesktopPropertiesIState{
     PublicIpaddress: string,
     Macaddress: string,
     ProxyVpndetails: string,
+    Ipaddress:string
 }

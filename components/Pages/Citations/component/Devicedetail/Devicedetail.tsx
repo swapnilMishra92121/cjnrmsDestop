@@ -7,23 +7,18 @@ import {
 import { DropdownComponent } from "@/components/CommonComponents/Fields/Dropdown/DropdownComponent";
 import "./LoginConfirmation.css";
 import { ButtonComponents } from "@/components/CommonComponents/Fields/Button/ButtonComponents";
-import { Button } from "antd";
+import { DevicedetailFunction } from "./DevicedetailFunction";
 
-const Unit = [
-  { label: "Unit 1", value: "citationType1" },
-  { label: "Unit 2", value: "citationType2" },
-  { label: "Unit 3", value: "citationType3" },
-  { label: "Unit 4", value: "citationType4" },
-];
+const Unit = [{ id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", value: "Unit 1" }];
 
 const Squad = [
-  { label: "Squad 1", value: "citationType1" },
-  { label: "Squad 2", value: "citationType2" },
-  { label: "Squad 3", value: "citationType3" },
-  { label: "Squad 4", value: "citationType4" },
+  { id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", value: "Squad 1" },
 ];
 
 export const Devicedetail: React.FC<DevicedetailIParams> = ({}) => {
+  const devicedetailFunction = new DevicedetailFunction();
+  const [UnitId, setUnitId] = useState<string>("");
+  const [SquadId, setSquadId] = useState<string>("");
   const [desktopProperties, setDesktopProperties] =
     useState<setDesktopPropertiesIState>({
       GeoLocation: "",
@@ -36,6 +31,7 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({}) => {
       PublicIpaddress: "",
       Macaddress: "",
       ProxyVpndetails: "",
+      Ipaddress: "",
     });
 
   useEffect(() => {
@@ -49,30 +45,36 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({}) => {
       });
   }, []);
 
+  const onSubmit = () => {
+    devicedetailFunction.deviceRegister(desktopProperties, UnitId, SquadId);
+  };
+
   return (
     <div>
       <div style={{ display: "flex" }}>
         <DropdownComponent
           dataSource={Unit.map((state) => ({
-            id: state.label,
+            id: state.id,
             value: state.value,
           }))}
           fieldName="Unit"
-          value={""}
+          value={UnitId}
           handleRowClick={(e) => {
-            // onHandelValueChange("State", e);
+            setUnitId(e);
           }}
         />
 
         <DropdownComponent
           dataSource={Squad.map((state) => ({
-            id: state.label,
+            id: state.id,
             value: state.value,
           }))}
           fieldName="Squad"
-          value={""}
+          value={SquadId
+            
+          }
           handleRowClick={(e) => {
-            // onHandelValueChange("State", e);
+            setSquadId(e);
           }}
         />
       </div>
@@ -125,7 +127,7 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({}) => {
       </div>
 
       <div style={{ marginTop: "3%" }}>
-        <Button>Submit</Button>
+        <ButtonComponents name="Submit" handleClick={onSubmit} />
       </div>
     </div>
   );
