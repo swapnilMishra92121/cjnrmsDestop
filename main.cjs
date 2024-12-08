@@ -14,11 +14,18 @@ const networkInterfaces = os.networkInterfaces();
 let appWindow;
 const auth = new AuthProvider()
 
+let isdev = false
+
+log.info(isdev, process.env.NEXT_PUBLIC_isDev, process.env.NEXT_PUBLIC_isDev == 'true')
 
 async function runAdminScript() {
-  const exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
-  const command = `sc.exe create ".NET Service 0.1" binpath= "${exePath}" start=auto && sc.exe start ".NET Service 0.2"`;
-  log.info(command)
+  let exePath = ""
+  if (isdev) {
+    exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
+  } else {
+    exePath = path.join(process.resourcesPath, 'app.asar.unpacked', 'CJNCitationService', 'CJNParser.Worker.exe');
+  }
+  const command = `sc.exe create ".NET Service 0.1" binpath= "${exePath}" start=auto && sc.exe start ".NET Service 0.1"`;
   sudo.exec(command, { name: "NetService" }, (error, stdout, stderr) => {
     if (error) {
       log.error(`Error: ${error.message}`);
@@ -29,7 +36,6 @@ async function runAdminScript() {
     log.info(stdout);
   });
 
-  // Handling default protocol client setup (this part seems unrelated to the script execution but included as it was in your original function)
   if (process.defaultApp) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient("electron-fiddle", process.execPath, [
@@ -362,17 +368,21 @@ function registerIPCHandlers() {
 
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
+      let dbPath = isdev ? path.join(__dirname, "CJNCitationService", "parser.db") : path.join(process.resourcesPath, 'app.asar.unpacked', 'CJNCitationService', 'parser.db')
       const args = [
-        path.join(__dirname, "CJNCitationService", "parser.db"),
+        dbPath,
         someParameter,
         'read',
       ].join(' ');
+      let litedb_demo3Path = isdev ? path.join(__dirname, "litedb_demo3.exe") : path.join(process.resourcesPath, 'app.asar.unpacked', 'litedb_demo3.exe')
+      let cmd = `${litedb_demo3Path} ${args}`
 
-      log.info(args)
-      log.info(`${path.join(__dirname, "litedb_demo3.exe")} ${args}`)
+      log.info(cmd,'kk')
+
+
 
       sudo.exec(
-        `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
+        cmd,
         { name: "LiteDB App" },
         (error, stdout, stderr) => {
           if (error) {
