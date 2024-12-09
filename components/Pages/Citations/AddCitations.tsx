@@ -20,13 +20,13 @@ import { ModalComponent } from "@/components/CommonComponents/Modal/ModalCompone
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
 import PrintersAndScanners from "./setting/PrintersAndScanners";
 import { Devicedetail } from "./component/Devicedetail/Devicedetail";
-import { AddCitationsFunction } from "./AddCitationsFunction";
+
 
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
-  const addCitationsFunction = new AddCitationsFunction()
+ 
   const [token, setToken] = useState<string | null>(null);
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -226,7 +226,7 @@ export const AddCitations: React.FC = () => {
         />
       )}
 
-      <ModalComponent open={false} innerContant={<Devicedetail />} />
+      <ModalComponent open={true} innerContant={<Devicedetail />} />
 
       <div
         className="citation"

@@ -677,8 +677,8 @@ function registerIPCHandlers() {
 }
 
 ipcMain.on("LOGIN", async () => {
-  await auth.login();
-  app.quit();
+  const token = await auth.login();
+  if (token) app.quit();
 });
 
 ipcMain.handle("get-token", async () => {

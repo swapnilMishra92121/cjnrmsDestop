@@ -46,6 +46,7 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({}) => {
   // }, []);
 
   const onSubmit = () => {
+    window.localStorage.setItem("UnitId",UnitId);
     devicedetailFunction.deviceRegister(desktopProperties, UnitId, SquadId);
   };
 
