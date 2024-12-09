@@ -226,7 +226,7 @@ export const AddCitations: React.FC = () => {
         />
       )}
 
-      <ModalComponent open={true} innerContant={<Devicedetail />} />
+      <ModalComponent open={false} innerContant={<Devicedetail />} />
 
       <div
         className="citation"
