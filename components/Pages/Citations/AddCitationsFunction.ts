@@ -24,10 +24,4 @@ export class AddCitationsFunction{
         );
         let res = response?.Data;
       }
-
-
-
-
-
-
 }

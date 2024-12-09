@@ -1,13 +1,8 @@
 const { PublicClientApplication } = require("@azure/msal-node");
 const { shell, safeStorage } = require("electron");
 const { promises } = require("fs");
-const Registry = require("winreg");
-const keytar = require("keytar");
 
-const regKey = new Registry({
-  hive: Registry.HKLM, // or HKLM for machine-wide access
-  key: "\\Software\\CJNRMS",
-});
+let Store; // Declare the Store variable
 
 class AuthProvider {
   clientApplication;
@@ -20,6 +15,7 @@ class AuthProvider {
       auth: {
         clientId: "62f3f32e-6b5e-4b82-a324-3dcbb6bdcc0a",
         authority: `https://login.microsoftonline.com/common`,
+        redirectUri: "myapp://login-success",
       },
       system: {
         loggerOptions: {
@@ -33,44 +29,64 @@ class AuthProvider {
     this.cache = this.clientApplication.getTokenCache();
   }
 
-  async login() {
-    if (safeStorage.isEncryptionAvailable()) {
-      // const originalText = "SensitiveData123";
-      // const encryptedData = safeStorage.encryptString(originalText);
-
-      // regKey.set("Token", Registry.REG_SZ, encryptedData, (err) => {
-      //   if (err) console.error("Error writing token:", err);
-      //   else console.log("Token saved to registry.");
-      // });
-
-      // console.log("Encrypted Data:", encryptedData.toString('base64')); // Logs encrypted data in base64 format
+  async initializeStore() {
+    if (!Store) {
+      // Dynamically import electron-store
+      const { default: ElectronStore } = await import("electron-store");
+      Store = new ElectronStore();
     }
+  }
+
+  async login() {
+    await this.initializeStore(); // Ensure store is initialized
+
     try {
       const openBrowser = async (url) => {
-        await shell.openExternal(url);
+        console.log("Authentication URL:", url);
+        await shell.openExternal(url); // No need to append redirect_uri here
       };
 
       const successTemplate = await promises.readFile("./index.html", "utf-8");
+
       const authResponse = await this.clientApplication.acquireTokenInteractive(
         {
           openBrowser,
           successTemplate: successTemplate,
           failureTemplate: "<h1> Opps! Something went wrong </h1>",
+          redirectUri: "myapp://login-success", // Specify redirect_uri here
         }
       );
-      console.log("Token", authResponse.accessToken);
+      Store.set("access_token", authResponse.accessToken);
       this.account = authResponse.account;
+      return authResponse.accessToken;
     } catch (error) {
-      console.log("Error while login", error);
+      console.error("Error while login:", error);
     }
   }
 
   async logout() {
-    // Your logout logic
+    await this.initializeStore();
+    try {
+      Store.delete("access_token");
+      console.log("Logged out and token cleared");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   }
 
   async getToken() {
-    // Your getToken logic
+    await this.initializeStore();
+    try {
+      const token = Store.get("access_token");
+      // console.log("token", token);
+      if (!token) {
+        console.error("No token found. User might not be logged in.");
+        return null;
+      }
+      return token;
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+    }
   }
 }
 

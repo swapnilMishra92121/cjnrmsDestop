@@ -22,17 +22,18 @@ import PrintersAndScanners from "./setting/PrintersAndScanners";
 import { Devicedetail } from "./component/Devicedetail/Devicedetail";
 import { AddCitationsFunction } from "./AddCitationsFunction";
 
+
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
-  const addCitationsFunction=new AddCitationsFunction()
+  const addCitationsFunction = new AddCitationsFunction()
   const [token, setToken] = useState<string | null>(null);
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
   const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
-  const [AuditData, setAuditData] = useState<AuditFormData | undefined>()
+  const [AuditData, setAuditData] = useState<AuditFormData | undefined>();
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
       plate: "",
@@ -189,30 +190,38 @@ export const AddCitations: React.FC = () => {
     },
   });
 
+
   const loginHandler = () => {
     window.electronAPI.sendLogin();
   };
 
+  const logOutHandler=async()=>{
+    await window.electronAPI.logout();  // Call logout function
+    setToken(null);  // Clear token from state in UI
+    console.log("Logged out successfully");
+  }
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-      
-  //     addCitationsFunction.
-
-
-  //   }, 15 * 60 * 1000);
-  //   return () => clearInterval(intervalId);
-  // }, []);
+  useEffect(() => {
+    const fetchToken = async () => {
+      const token = await window.electronAPI.getToken();  // Fetch the token
+      console.log("token",token);
+      setToken(token);
+      // if(token){
+      //   window.electronAPI.closeApp();
+      // }
+    };
+    fetchToken();
+  }, [token]);
 
   return (
     <>
       {!token && (
         <ModalComponent
-          open={false}
+          open={true}
           width={1000}
           height={500}
           innerContant={
-            <LoginConfirmation onClose={() => {}} onLogin={loginHandler} />
+            <LoginConfirmation onClose={() => { }} onLogin={loginHandler} />
           }
         />
       )}
@@ -373,6 +382,25 @@ export const AddCitations: React.FC = () => {
                   title="Grid View"
                 />
               </Tooltip>
+              
+              <ButtonComponents
+                  name="Logout"
+                  showBackgroundColor={true}
+                  color={"red"}
+                  textColor={"#fff" }
+                  borderColor={ "gray"}
+                  handleClick={() => {
+                    logOutHandler()
+                  }}
+                />
+
+                {/* <Button
+                  onClick={() => {
+                    logOutHandler()
+                  }}
+                  title="Logout"
+                /> */}
+              
             </Flex>
           </Flex>
 

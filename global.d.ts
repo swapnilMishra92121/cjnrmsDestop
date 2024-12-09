@@ -9,6 +9,9 @@ interface ElectronAPI {
 	createSubjectOutputJsonFile:(data: {}) => Promise<string>;
 	sendLogin:()=>void;
 	createAuditOutputJsonFile:(data:{})=> Promise<string>;
+	getToken:()=>Promise<string>;
+	logout:()=>void;
+	closeApp:()=>void;
   }
   
   declare global {

@@ -26,3 +26,7 @@
     text-rendering: auto;
     display: none !important;
 }
+
+.ant-modal .css-tpassh{
+    width: auto !important;
+}

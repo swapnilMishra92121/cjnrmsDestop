@@ -11,5 +11,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   createSubjectOutputJsonFile :(data)=> ipcRenderer.invoke('create-subject-json-file',data),
   createAuditOutputJsonFile:(data)=> ipcRenderer.invoke('create-audit-json-file'),
   sendLogin :()=> ipcRenderer.send('LOGIN'),
-  openApp: ()=>ipcRenderer.send('shell:open')
+  openApp: ()=>ipcRenderer.send('shell:open'),
+  getToken: () => ipcRenderer.invoke('get-token'),
+  logout: () => ipcRenderer.send('logout')  ,
+  closeApp: () => ipcRenderer.send('close-app'),
 });

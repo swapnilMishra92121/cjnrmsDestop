@@ -34,16 +34,16 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({}) => {
       Ipaddress: "",
     });
 
-  useEffect(() => {
-    window.electronAPI
-      .getDesktopProperties()
-      .then((detail: setDesktopPropertiesIState) => {
-        setDesktopProperties(detail);
-      })
-      .catch((err: any) => {
-        console.error(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   window.electronAPI
+  //     .getDesktopProperties()
+  //     .then((detail: setDesktopPropertiesIState) => {
+  //       setDesktopProperties(detail);
+  //     })
+  //     .catch((err: any) => {
+  //       console.error(err);
+  //     });
+  // }, []);
 
   const onSubmit = () => {
     devicedetailFunction.deviceRegister(desktopProperties, UnitId, SquadId);

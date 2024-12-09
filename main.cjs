@@ -1,24 +1,33 @@
-const { app, BrowserWindow, ipcMain, dialog, screen } = require('electron');
-const path = require('path');
-const fs = require('fs');
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  screen,
+  protocol,
+} = require("electron");
+const path = require("path");
+const fs = require("fs");
 const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
-const { autoUpdater } = require('electron-updater');
-const log = require('electron-log');
-const AuthProvider = require('./AuthProvider');
-const os = require('os');
-const axios = require('axios');
+const { autoUpdater } = require("electron-updater");
+const log = require("electron-log");
+const AuthProvider = require("./AuthProvider");
+const os = require("os");
+const axios = require("axios");
 const networkInterfaces = os.networkInterfaces();
 
-
 let appWindow;
-const auth = new AuthProvider()
-
+const auth = new AuthProvider();
 
 async function runAdminScript() {
-  const exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
+  const exePath = path.join(
+    app.getAppPath(),
+    "CJNCitationService",
+    "CJNParser.Worker.exe"
+  );
   const command = `sc.exe create ".NET Service 0.1" binpath= "${exePath}" start=auto && sc.exe start ".NET Service 0.2"`;
-  log.info(command)
+  log.info(command);
   sudo.exec(command, { name: "NetService" }, (error, stdout, stderr) => {
     if (error) {
       log.error(`Error: ${error.message}`);
@@ -41,64 +50,80 @@ async function runAdminScript() {
   }
 }
 
-
 function setupAutoUpdate() {
   autoUpdater.setFeedURL({
-    provider: 'github',
-    owner: 'swapnilMishra92121',
-    repo: 'cjnrmsDestop',
-    channel: 'latest',
+    provider: "github",
+    owner: "swapnilMishra92121",
+    repo: "cjnrmsDestop",
+    channel: "latest",
   });
-  autoUpdater.checkForUpdatesAndNotify().then((val) => {
-    log.info('Check for updates successful:', val);
-  }).catch((err) => {
-    log.error('Error checking for updates:', err);
-  });
+  autoUpdater
+    .checkForUpdatesAndNotify()
+    .then((val) => {
+      log.info("Check for updates successful:", val);
+    })
+    .catch((err) => {
+      log.error("Error checking for updates:", err);
+    });
 
   // Listen for the update events
-  autoUpdater.on('update-available', (info) => {
-    log.info('Update available: ', info);
+  autoUpdater.on("update-available", (info) => {
+    log.info("Update available: ", info);
 
     // Prompt user to download the update
-    dialog.showMessageBox(appWindow, {
-      type: 'info',
-      title: 'Update Available',
-      message: 'A new version is available. Do you want to download it now?',
-      buttons: ['Yes', 'Later']
-    }).then((response) => {
-      if (response.response === 0) { // 'Yes' clicked
-        autoUpdater.downloadUpdate();
-      }
-    });
+    dialog
+      .showMessageBox(appWindow, {
+        type: "info",
+        title: "Update Available",
+        message: "A new version is available. Do you want to download it now?",
+        buttons: ["Yes", "Later"],
+      })
+      .then((response) => {
+        if (response.response === 0) {
+          // 'Yes' clicked
+          autoUpdater.downloadUpdate();
+        }
+      });
   });
 
-  autoUpdater.on('update-downloaded', () => {
-    log.info('Update downloaded.');
+  autoUpdater.on("update-downloaded", () => {
+    log.info("Update downloaded.");
 
     // Notify the user when the update is ready to be installed
-    dialog.showMessageBox(appWindow, {
-      type: 'info',
-      title: 'Update Available',
-      message: 'A new version has been downloaded. The application will restart to apply the update.',
-      buttons: ['OK']
-    }).then(() => {
-      // Restart the app to apply the update
-      autoUpdater.quitAndInstall();
-    });
+    dialog
+      .showMessageBox(appWindow, {
+        type: "info",
+        title: "Update Available",
+        message:
+          "A new version has been downloaded. The application will restart to apply the update.",
+        buttons: ["OK"],
+      })
+      .then(() => {
+        // Restart the app to apply the update
+        autoUpdater.quitAndInstall();
+      });
   });
 
   // Listen for the download progress
-  autoUpdater.on('download-progress', (progressObj) => {
+  autoUpdater.on("download-progress", (progressObj) => {
     let log_message = "Download speed: " + progressObj.bytesPerSecond;
-    log_message = log_message + ' - Downloaded ' + progressObj.percent + '% (' + progressObj.transferred + "/" + progressObj.total + ')';
+    log_message =
+      log_message +
+      " - Downloaded " +
+      progressObj.percent +
+      "% (" +
+      progressObj.transferred +
+      "/" +
+      progressObj.total +
+      ")";
     log.info(log_message);
 
     // Optionally, you can show the progress to the user using a dialog or custom window
     // dialog.showMessageBox(appWindow, { message: `Downloading: ${progressObj.percent}%` });
   });
 
-  autoUpdater.on('error', (err) => {
-    log.error('Auto-update error: ', err);
+  autoUpdater.on("error", (err) => {
+    log.error("Auto-update error: ", err);
   });
 }
 
@@ -114,10 +139,10 @@ function createWindow() {
   });
 
   // Load your app's main content
-  appWindow.loadURL(`file:///${path.join(__dirname, 'out', 'index.html')}`);
+  appWindow.loadURL(`file:///${path.join(__dirname, "out", "index.html")}`);
 
   // appWindow.webContents.openDevTools();
-  log.info('App is starting...');
+  log.info("App is starting...");
 
   appWindow.on("closed", () => {
     appWindow = null;
@@ -141,18 +166,30 @@ if (!gotTheLock) {
     //   `You arrived from: ${commandLine.pop()}`
     // );
   });
-
 }
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
-})
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});
 
+ipcMain.on("close-app", () => {
+  app.quit(); // This will close the Electron app
+});
 
 app.on("ready", async () => {
   await runAdminScript();
   createWindow();
   // setupAutoUpdate();
   registerIPCHandlers();
+
+  // protocol.registerFileProtocol("myapp", (request, callback) => {
+  //   const url = request.url;
+  //   const token = new URL(url).searchParams.get("token");
+
+  //   // Send token to the renderer process
+  //   if (mainWindow) {
+  //     mainWindow.webContents.send("login-success", token);
+  //   }
+  // });
 });
 
 app.on("window-all-closed", () => {
@@ -163,13 +200,12 @@ app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
-
 function getLocalIpAddress() {
   const interfaces = networkInterfaces;
-  let ipAddress = '';
+  let ipAddress = "";
   for (let interfaceName in interfaces) {
     for (let iface of interfaces[interfaceName]) {
-      if (iface.family === 'IPv4' && !iface.internal) {
+      if (iface.family === "IPv4" && !iface.internal) {
         ipAddress = iface.address;
         break;
       }
@@ -180,7 +216,13 @@ function getLocalIpAddress() {
 
 async function getGeoLocation(ip) {
   const response = await axios.get(`https://ipinfo.io/${ip}/json`);
-  return response.data.city + ', ' + response.data.region + ', ' + response.data.country;
+  return (
+    response.data.city +
+    ", " +
+    response.data.region +
+    ", " +
+    response.data.country
+  );
 }
 
 function getDisplayResolution() {
@@ -200,15 +242,14 @@ function getMacAddress() {
 }
 
 function getProxyDetails() {
-  return 'Proxy details here';
+  return "Proxy details here";
 }
 
 function registerIPCHandlers() {
-
   ipcMain.handle("get-printers", async () => {
     if (appWindow && appWindow.webContents) {
       const printers = await appWindow.webContents.getPrintersAsync();
-      console.log(printers)
+      console.log(printers);
       return printers;
     }
     return [];
@@ -216,7 +257,7 @@ function registerIPCHandlers() {
 
   ipcMain.handle("print-pdf", async (event, printerName, content) => {
     try {
-      const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
+      const pdfPath = path.join(app.getPath("temp"), "temp.pdf");
 
       // Create a hidden window for rendering the content
       const renderWindow = new BrowserWindow({
@@ -228,18 +269,24 @@ function registerIPCHandlers() {
       });
 
       // Load the HTML template
-      const templatePath = path.join(__dirname, 'PDFTemplate', 'page3.html');
-      let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+      const templatePath = path.join(__dirname, "PDFTemplate", "page3.html");
+      let htmlContent = fs.readFileSync(templatePath, "utf-8");
 
       // Load the JSON data
-      const filePath = path.join(__dirname, 'SavedData', `citation-${content.Vehicles.plate}.json`);
-      const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      const filePath = path.join(
+        __dirname,
+        "SavedData",
+        `citation-${content.Vehicles.plate}.json`
+      );
+      const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
       // Replace placeholders in the template with the provided data
       htmlContent = bindDataToTemplate(htmlContent, jsonData);
 
       // Load the HTML content into the hidden window
-      await renderWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+      await renderWindow.loadURL(
+        `data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`
+      );
 
       // Generate the PDF
       const pdfBuffer = await renderWindow.webContents.printToPDF({});
@@ -279,27 +326,17 @@ function registerIPCHandlers() {
     }
   });
 
-
-
-
-
-
-
-
   /**
-* Function to replace placeholders in the HTML template with dynamic data.
-* @param {string} template - The HTML template string.
-* @param {object} data - The data object to bind.
-* @returns {string} - The HTML content with data bound.
-*/
+   * Function to replace placeholders in the HTML template with dynamic data.
+   * @param {string} template - The HTML template string.
+   * @param {object} data - The data object to bind.
+   * @returns {string} - The HTML content with data bound.
+   */
 
   function bindDataToTemplate(template, dataa) {
+    log.info(dataa[0]);
 
-    log.info(dataa[0])
-
-
-    let data = dataa[0]
-
+    let data = dataa[0];
 
     const violationRows = data.Violation.violations
       .map((violation) => {
@@ -308,142 +345,178 @@ function registerIPCHandlers() {
           <td colspan="4">
             <table style="width: 100%">
               <tr>
-                <td style="border: 0px; width: 65%">${violation.description || ''}</td>
-                <td style="border: 0px">${violation.statueOrOrdinance || ''}</td>
+                <td style="border: 0px; width: 65%">${
+                  violation.description || ""
+                }</td>
+                <td style="border: 0px">${
+                  violation.statueOrOrdinance || ""
+                }</td>
               </tr>
             </table>
           </td>
           <td>
-            <span class="checkbox" ${violation.thirdViolation ? 'checked' : ''}></span> 3rd violation
+            <span class="checkbox" ${
+              violation.thirdViolation ? "checked" : ""
+            }></span> 3rd violation
           </td>
           <td>PM, M, GM</td>
         </tr>
       `;
       })
-      .join('');
-
+      .join("");
 
     return template
       .replace(/{{ViolationRows}}/g, violationRows)
-      .replace(/{{Identification}}/g, data.Subject.identificationType || '')
-      .replace(/{{County Name}}/g, data.CitationInfo.county || '')
-      .replace(/{{DL Checked}}/g, data.Subject.cdl ? 'checked' : '')
-      .replace(/{{DVSWeb Checked}}/g, data.Subject.dvsWeb ? 'checked' : '')
-      .replace(/{{PhotoID Checked}}/g, data.Subject.photoID ? 'checked' : '')
-      .replace(/{{FP Checked}}/g, data.Subject.fp ? 'checked' : '')
-      .replace(/{{Other Checked}}/g, data.Subject.other ? 'checked' : '')
-      .replace(/{{DL Number}}/g, data.Vehicles.plate || '')
-      .replace(/{{State}}/g, data.Subject.state || '')
+      .replace(/{{Identification}}/g, data.Subject.identificationType || "")
+      .replace(/{{County Name}}/g, data.CitationInfo.county || "")
+      .replace(/{{DL Checked}}/g, data.Subject.cdl ? "checked" : "")
+      .replace(/{{DVSWeb Checked}}/g, data.Subject.dvsWeb ? "checked" : "")
+      .replace(/{{PhotoID Checked}}/g, data.Subject.photoID ? "checked" : "")
+      .replace(/{{FP Checked}}/g, data.Subject.fp ? "checked" : "")
+      .replace(/{{Other Checked}}/g, data.Subject.other ? "checked" : "")
+      .replace(/{{DL Number}}/g, data.Vehicles.plate || "")
+      .replace(/{{State}}/g, data.Subject.state || "")
       .replace(
         /{{Name}}/g,
-        `${data.Subject.firstName || ''} ${data.Subject.middleName || ''} ${data.Subject.lastName || ''} ${data.Subject.suffix || ''}`.trim()
+        `${data.Subject.firstName || ""} ${data.Subject.middleName || ""} ${
+          data.Subject.lastName || ""
+        } ${data.Subject.suffix || ""}`.trim()
       )
-      .replace(/{{Address}}/g, data.Subject.address || '')
-      .replace(/{{Street}}/g, data.Location.address || '')
-      .replace(/{{Apt}}/g, data.Location.apt || '')
-      .replace(/{{City}}/g, data.Subject.city || '')
-      .replace(/{{Zip}}/g, data.Subject.zip || '')
-      .replace(/{{DOB}}/g, data.Subject.dob || '')
-      .replace(/{{Height}}/g, data.Subject.height || '')
-      .replace(/{{Weight}}/g, data.Subject.weight || '')
-      .replace(/{{Eyes}}/g, data.Subject.eyes || '')
-      .replace(/{{Gender}}/g, data.Subject.gender || '')
-      .replace(/{{Color}}/g, data.Vehicles.color || '')
-      .replace(/{{Make}}/g, data.Vehicles.make || '')
-      .replace(/{{DateofOffense}}/g, data.CitationInfo.offenseDate?.$d?.toString().split('T')[0] || '')
-      .replace(/{{TimeofOffense}}/g, data.CitationInfo.offenseTime?.$d?.toString().split('T')[1]?.split('.')[0] || '')
-      .replace(/{{Citation #}}/g, `#${data.CitationInfo.caseOrICRNumber}` || '')
-      .replace(/{{SequentialNumber}}/g, data.CitationInfo.sequentialNumber || '___')
-      .replace(/{{TotalCitations}}/g, data.CitationInfo.totalCitations || '___');
-
-
-
-  }
-
-  ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
-    return new Promise((resolve, reject) => {
-      const args = [
-        path.join(__dirname, "CJNCitationService", "parser.db"),
-        someParameter,
-        'read',
-      ].join(' ');
-
-      log.info(args)
-      log.info(`${path.join(__dirname, "litedb_demo3.exe")} ${args}`)
-
-      sudo.exec(
-        `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
-        { name: "LiteDB App" },
-        (error, stdout, stderr) => {
-          if (error) {
-            log.error(`Error: ${error.message}`);
-            reject(error);
-          }
-          if (stderr) {
-            log.error(`Stderr: ${stderr}`);
-          }
-          resolve(stdout);
-        }
+      .replace(/{{Address}}/g, data.Subject.address || "")
+      .replace(/{{Street}}/g, data.Location.address || "")
+      .replace(/{{Apt}}/g, data.Location.apt || "")
+      .replace(/{{City}}/g, data.Subject.city || "")
+      .replace(/{{Zip}}/g, data.Subject.zip || "")
+      .replace(/{{DOB}}/g, data.Subject.dob || "")
+      .replace(/{{Height}}/g, data.Subject.height || "")
+      .replace(/{{Weight}}/g, data.Subject.weight || "")
+      .replace(/{{Eyes}}/g, data.Subject.eyes || "")
+      .replace(/{{Gender}}/g, data.Subject.gender || "")
+      .replace(/{{Color}}/g, data.Vehicles.color || "")
+      .replace(/{{Make}}/g, data.Vehicles.make || "")
+      .replace(
+        /{{DateofOffense}}/g,
+        data.CitationInfo.offenseDate?.$d?.toString().split("T")[0] || ""
+      )
+      .replace(
+        /{{TimeofOffense}}/g,
+        data.CitationInfo.offenseTime?.$d
+          ?.toString()
+          .split("T")[1]
+          ?.split(".")[0] || ""
+      )
+      .replace(/{{Citation #}}/g, `#${data.CitationInfo.caseOrICRNumber}` || "")
+      .replace(
+        /{{SequentialNumber}}/g,
+        data.CitationInfo.sequentialNumber || "___"
+      )
+      .replace(
+        /{{TotalCitations}}/g,
+        data.CitationInfo.totalCitations || "___"
       );
-    });
   }
+
+  ipcMain.handle(
+    "read-xml-files",
+    async (event, someParameter = "parser_vehicle_details") => {
+      return new Promise((resolve, reject) => {
+        const args = [
+          path.join(__dirname, "CJNCitationService", "parser.db"),
+          someParameter,
+          "read",
+        ].join(" ");
+
+        log.info(args);
+        log.info(`${path.join(__dirname, "litedb_demo3.exe")} ${args}`);
+
+        sudo.exec(
+          `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
+          { name: "LiteDB App" },
+          (error, stdout, stderr) => {
+            if (error) {
+              log.error(`Error: ${error.message}`);
+              reject(error);
+            }
+            if (stderr) {
+              log.error(`Stderr: ${stderr}`);
+            }
+            resolve(stdout);
+          }
+        );
+      });
+    }
   );
 
-  ipcMain.handle('create-subject-json-file', async (event, someParameter = {}) => {
-
-    const filePath = path.join(__dirname, 'SavedData', `citation-${someParameter.Vehicles.plate}.json`);
-    try {
-      // Check if file exists. If not, initialize with an empty array.
-      const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
-      let jsonData = {};
-
-      // Parse the existing file content or initialize as an empty array if parsing fails.
+  ipcMain.handle(
+    "create-subject-json-file",
+    async (event, someParameter = {}) => {
+      const filePath = path.join(
+        __dirname,
+        "SavedData",
+        `citation-${someParameter.Vehicles.plate}.json`
+      );
       try {
-        jsonData = JSON.parse(fileContent);
-      } catch {
-        console.warn("Invalid JSON format. Initializing empty array.");
+        // Check if file exists. If not, initialize with an empty array.
+        const fileContent = fs.existsSync(filePath)
+          ? fs.readFileSync(filePath, "utf-8")
+          : "[]";
+        let jsonData = {};
+
+        // Parse the existing file content or initialize as an empty array if parsing fails.
+        try {
+          jsonData = JSON.parse(fileContent);
+        } catch {
+          console.warn("Invalid JSON format. Initializing empty array.");
+        }
+
+        // Add new data with a unique id based on current array length.
+        jsonData.push({ ...someParameter, id: jsonData.length });
+        fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+
+        console.log(`Data added successfully to ${someParameter.plate}.json!`);
+        return `Data added successfully to ${someParameter.plate}.json`;
+      } catch (error) {
+        console.error("Error writing to JSON file:", error);
+        throw error;
       }
-
-      // Add new data with a unique id based on current array length.
-      jsonData.push({ ...someParameter, id: jsonData.length });
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
-
-      console.log(`Data added successfully to ${someParameter.plate}.json!`);
-      return `Data added successfully to ${someParameter.plate}.json`;
-    } catch (error) {
-      console.error("Error writing to JSON file:", error);
-      throw error;
     }
-  }
   );
 
-
-  ipcMain.handle('create-audit-json-file', async (event, someParameter = {}) => {
-
-    const filePath = path.join(__dirname, 'SavedData', `Audit-${someParameter?.NewValuesJson?.Vehicles?.plate}.json`);
-    try {
-      // Check if file exists. If not, initialize with an empty array.
-      const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
-      let jsonData = {};
-
-      // Parse the existing file content or initialize as an empty array if parsing fails.
+  ipcMain.handle(
+    "create-audit-json-file",
+    async (event, someParameter = {}) => {
+      const filePath = path.join(
+        __dirname,
+        "SavedData",
+        `Audit-${someParameter?.NewValuesJson?.Vehicles?.plate}.json`
+      );
       try {
-        jsonData = JSON.parse(fileContent);
-      } catch {
-        console.warn("Invalid JSON format. Initializing empty array.");
+        // Check if file exists. If not, initialize with an empty array.
+        const fileContent = fs.existsSync(filePath)
+          ? fs.readFileSync(filePath, "utf-8")
+          : "[]";
+        let jsonData = {};
+
+        // Parse the existing file content or initialize as an empty array if parsing fails.
+        try {
+          jsonData = JSON.parse(fileContent);
+        } catch {
+          console.warn("Invalid JSON format. Initializing empty array.");
+        }
+
+        // Add new data with a unique id based on current array length.
+        jsonData.push({ ...someParameter, id: jsonData.length });
+        fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+
+        console.log(
+          `Data added successfully to ${someParameter?.NewValuesJson?.Vehicles?.plate}.json!`
+        );
+        return `Data added successfully to ${someParameter?.NewValuesJson?.Vehicles?.plate}.json`;
+      } catch (error) {
+        console.error("Error writing to JSON file:", error);
+        throw error;
       }
-
-      // Add new data with a unique id based on current array length.
-      jsonData.push({ ...someParameter, id: jsonData.length });
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
-
-      console.log(`Data added successfully to ${someParameter?.NewValuesJson?.Vehicles?.plate}.json!`);
-      return `Data added successfully to ${someParameter?.NewValuesJson?.Vehicles?.plate}.json`;
-    } catch (error) {
-      console.error("Error writing to JSON file:", error);
-      throw error;
     }
-  }
   );
 
   ipcMain.handle(
@@ -463,24 +536,24 @@ function registerIPCHandlers() {
 
       log.info(`Data added successfully to ${someParameter.plate}.json!`);
       return `Data added successfully to ${someParameter.plate}.json`;
-
-    });
-
-
-
-  ipcMain.handle('create-output-json-file', async (event, someParameter = {}) => {
-    if (!someParameter.plate) {
-      throw new Error("Plate number is required in someParameter to create the file.");
     }
+  );
 
-    const filePath = path.join(__dirname, 'Vehicle', `${someParameter.plate}.json`);
+  ipcMain.handle(
+    "create-output-json-file",
+    async (event, someParameter = {}) => {
+      if (!someParameter.plate) {
+        throw new Error(
+          "Plate number is required in someParameter to create the file."
+        );
+      }
 
-    try {
-      // Check if file exists. If not, initialize with an empty array.
-      const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '[]';
-      let jsonData = [];
+      const filePath = path.join(
+        __dirname,
+        "Vehicle",
+        `${someParameter.plate}.json`
+      );
 
-      // Parse the existing file content or initialize as an empty array if parsing fails.
       try {
         // Check if file exists. If not, initialize with an empty array.
         const fileContent = fs.existsSync(filePath)
@@ -490,33 +563,47 @@ function registerIPCHandlers() {
 
         // Parse the existing file content or initialize as an empty array if parsing fails.
         try {
-          jsonData = JSON.parse(fileContent);
-        } catch {
-          console.warn("Invalid JSON format. Initializing empty array.");
+          // Check if file exists. If not, initialize with an empty array.
+          const fileContent = fs.existsSync(filePath)
+            ? fs.readFileSync(filePath, "utf-8")
+            : "[]";
+          let jsonData = [];
+
+          // Parse the existing file content or initialize as an empty array if parsing fails.
+          try {
+            jsonData = JSON.parse(fileContent);
+          } catch {
+            console.warn("Invalid JSON format. Initializing empty array.");
+          }
+
+          // Add new data with a unique id based on current array length.
+          jsonData.push({ ...someParameter, id: jsonData.length });
+          fs.writeFileSync(
+            filePath,
+            JSON.stringify(jsonData, null, 2),
+            "utf-8"
+          );
+
+          console.log(
+            `Data added successfully to ${someParameter.plate}.json!`
+          );
+          return `Data added successfully to ${someParameter.plate}.json`;
+        } catch (error) {
+          console.error("Error writing to JSON file:", error);
+          throw error;
         }
 
         // Add new data with a unique id based on current array length.
         jsonData.push({ ...someParameter, id: jsonData.length });
         fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
 
-        console.log(`Data added successfully to ${someParameter.plate}.json!`);
+        log.info(`Data added successfully to ${someParameter.plate}.json!`);
         return `Data added successfully to ${someParameter.plate}.json`;
       } catch (error) {
         console.error("Error writing to JSON file:", error);
         throw error;
       }
-
-      // Add new data with a unique id based on current array length.
-      jsonData.push({ ...someParameter, id: jsonData.length });
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
-
-      log.info(`Data added successfully to ${someParameter.plate}.json!`);
-      return `Data added successfully to ${someParameter.plate}.json`;
-    } catch (error) {
-      console.error('Error writing to JSON file:', error);
-      throw error;
     }
-  }
   );
 
   ipcMain.handle("get-json-data", async () => {
@@ -556,8 +643,8 @@ function registerIPCHandlers() {
       }
 
       jsonData[itemIndex] = { ...jsonData[itemIndex], ...updatedData };
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
-      log.info('Data updated successfully in JSON file!');
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+      log.info("Data updated successfully in JSON file!");
 
       return "Data updated successfully";
     } catch (error) {
@@ -567,8 +654,7 @@ function registerIPCHandlers() {
   });
 
   ipcMain.handle("get-desktop-properties", async () => {
-    const publicIp = await axios.get('https://api.ipify.org?format=json');
-
+    const publicIp = await axios.get("https://api.ipify.org?format=json");
 
     const properties = {
       Ipaddress: getLocalIpAddress(),
@@ -584,16 +670,23 @@ function registerIPCHandlers() {
       ProxyVpndetails: getProxyDetails(),
     };
 
-    console.log(properties)
+    console.log(properties);
 
     return properties;
   });
-
 }
 
 ipcMain.on("LOGIN", async () => {
-  console.log("login started");
   await auth.login();
+  app.quit();
+});
+
+ipcMain.handle("get-token", async () => {
+  return await auth.getToken(); // Return the token
+});
+
+ipcMain.on("logout", async () => {
+  await auth.logout(); // Call the logout method to clear the token
 });
 
 app.on("second-instance", (event, commandLine) => {
@@ -604,7 +697,9 @@ app.on("second-instance", (event, commandLine) => {
   }
 
   // Get the deep link URL (last argument in commandLine)
-  const deepLink = commandLine.find((arg) => arg.startsWith("electron-fiddle://"));
+  const deepLink = commandLine.find((arg) =>
+    arg.startsWith("electron-fiddle://")
+  );
   if (deepLink) {
     const parsedUrl = url.parse(deepLink, true); // Parse URL and query params
     const token = parsedUrl.query.token; // Extract token from query params
@@ -627,4 +722,3 @@ app.on("open-url", (event, deepLink) => {
     appWindow.webContents.send("deep-link-token", token);
   }
 });
-
