@@ -35,13 +35,13 @@ class AuthProvider {
 
   async login() {
     if (safeStorage.isEncryptionAvailable()) {
-      const originalText = "SensitiveData123";
-      const encryptedData = safeStorage.encryptString(originalText);
+      // const originalText = "SensitiveData123";
+      // const encryptedData = safeStorage.encryptString(originalText);
 
-      regKey.set("Token", Registry.REG_SZ, encryptedData, (err) => {
-        if (err) console.error("Error writing token:", err);
-        else console.log("Token saved to registry.");
-      });
+      // regKey.set("Token", Registry.REG_SZ, encryptedData, (err) => {
+      //   if (err) console.error("Error writing token:", err);
+      //   else console.log("Token saved to registry.");
+      // });
 
       // console.log("Encrypted Data:", encryptedData.toString('base64')); // Logs encrypted data in base64 format
     }

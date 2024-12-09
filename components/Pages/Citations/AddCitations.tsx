@@ -209,7 +209,7 @@ export const AddCitations: React.FC = () => {
   return (
     <>
       {!token && <ModalComponent
-        open={true}
+        open={false}
         innerContant={<LoginConfirmation
           onClose={() => { }}
           onLogin={loginHandler}
