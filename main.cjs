@@ -14,7 +14,7 @@ const networkInterfaces = os.networkInterfaces();
 let appWindow;
 const auth = new AuthProvider()
 
-let isdev = false
+let isdev = true
 
 log.info(isdev, process.env.NEXT_PUBLIC_isDev, process.env.NEXT_PUBLIC_isDev == 'true')
 

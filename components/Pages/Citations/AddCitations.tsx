@@ -196,7 +196,7 @@ export const AddCitations: React.FC = () => {
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
       
-  //     addCitationsFunction.
+  //     addCitationsFunction.deviceRegister
 
 
   //   }, 15 * 60 * 1000);
@@ -216,7 +216,7 @@ export const AddCitations: React.FC = () => {
         />
       )}
 
-      <ModalComponent open={false} innerContant={<Devicedetail />} />
+      <ModalComponent open={true} innerContant={<Devicedetail />} />
 
       <div
         className="citation"
