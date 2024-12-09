@@ -1,33 +1,35 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const sudo = require("sudo-prompt");
 const { exec } = require("child_process");
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
-const AuthProvider = require('./AuthProvider')
+const AuthProvider = require('./AuthProvider');
+const os = require('os');
+const axios = require('axios');
+const networkInterfaces = os.networkInterfaces();
 
 
 let appWindow;
 const auth = new AuthProvider()
 
 
-function runAdminScript() {
-  const scriptPath = path.join(app.getAppPath(), 'run_as_admin.ps1');
+async function runAdminScript() {
   const exePath = path.join(app.getAppPath(), 'CJNCitationService', 'CJNParser.Worker.exe');
-  const command = `powershell -ExecutionPolicy Bypass -File "${scriptPath}" -exePath "${exePath}"`;
-
+  const command = `sc.exe create ".NET Service 0.1" binpath= "${exePath}" start=auto && sc.exe start ".NET Service 0.2"`;
   log.info(command)
-  exec(command, (error, stdout, stderr) => {
+  sudo.exec(command, { name: "NetService" }, (error, stdout, stderr) => {
     if (error) {
-      log.info(`Error executing script: ${error}`);
-      return;
+      log.error(`Error: ${error.message}`);
     }
-    log.error(`Script output: ${stdout}`);
+    if (stderr) {
+      log.error(`Stderr: ${stderr}`);
+    }
+    log.info(stdout);
   });
 
-
-
+  // Handling default protocol client setup (this part seems unrelated to the script execution but included as it was in your original function)
   if (process.defaultApp) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient("electron-fiddle", process.execPath, [
@@ -37,33 +39,21 @@ function runAdminScript() {
       app.setAsDefaultProtocolClient("electron-fiddle");
     }
   }
-
-
-
 }
 
 
 function setupAutoUpdate() {
-  log.info('Setting up auto-update...');
-
-  // Set the feed URL
   autoUpdater.setFeedURL({
     provider: 'github',
     owner: 'swapnilMishra92121',
     repo: 'cjnrmsDestop',
     channel: 'latest',
   });
-
-  log.info('1', `https://github.com/swapnilMishra92121/cjnrmsDestop/releases/download/${app.getVersion()}/CjnCitation.Setup.${app.getVersion()}.exe`);
-
-  // Check for updates when the app is ready
   autoUpdater.checkForUpdatesAndNotify().then((val) => {
     log.info('Check for updates successful:', val);
   }).catch((err) => {
     log.error('Error checking for updates:', err);
   });
-
-  log.info('2');
 
   // Listen for the update events
   autoUpdater.on('update-available', (info) => {
@@ -112,11 +102,10 @@ function setupAutoUpdate() {
   });
 }
 
-// Create Window
 function createWindow() {
   appWindow = new BrowserWindow({
-    width: 1000,
-    height: 1000,
+    width: 2000,
+    height: 1200,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -135,7 +124,6 @@ function createWindow() {
   });
 }
 
-// this is for the Linux and Windows
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
@@ -155,19 +143,15 @@ if (!gotTheLock) {
   });
 
 }
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
 
 app.on("ready", async () => {
-  runAdminScript();
+  await runAdminScript();
   createWindow();
-  setupAutoUpdate();
+  // setupAutoUpdate();
   registerIPCHandlers();
 });
 
@@ -180,12 +164,51 @@ app.on("activate", () => {
 });
 
 
+function getLocalIpAddress() {
+  const interfaces = networkInterfaces;
+  let ipAddress = '';
+  for (let interfaceName in interfaces) {
+    for (let iface of interfaces[interfaceName]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        ipAddress = iface.address;
+        break;
+      }
+    }
+  }
+  return ipAddress;
+}
+
+async function getGeoLocation(ip) {
+  const response = await axios.get(`https://ipinfo.io/${ip}/json`);
+  return response.data.city + ', ' + response.data.region + ', ' + response.data.country;
+}
+
+function getDisplayResolution() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  return `${primaryDisplay.size.width}x${primaryDisplay.size.height}`;
+}
+
+function getMacAddress() {
+  for (let iface of Object.values(networkInterfaces)) {
+    for (let i of iface) {
+      if (i.mac && !i.internal) {
+        return i.mac;
+      }
+    }
+  }
+  return null;
+}
+
+function getProxyDetails() {
+  return 'Proxy details here';
+}
 
 function registerIPCHandlers() {
+
   ipcMain.handle("get-printers", async () => {
     if (appWindow && appWindow.webContents) {
-      const printers = await appWindow.webContents.getPrinters();
-      log.info(printers)
+      const printers = await appWindow.webContents.getPrintersAsync();
+      console.log(printers)
       return printers;
     }
     return [];
@@ -193,71 +216,6 @@ function registerIPCHandlers() {
 
   ipcMain.handle("print-pdf", async (event, printerName, content) => {
     try {
-      // const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
-      // const printWindow = new BrowserWindow({
-      //   show: false,
-      //   webPreferences: {
-      //     nodeIntegration: false,
-      //     contextIsolation: true,
-      //   },
-      // });
-      // const htmlContent = `
-      //   <!DOCTYPE html>
-      //   <html>
-      //   <head>
-      //     <title>Print Content</title>
-      //     <meta charset="UTF-8">
-      //   </head>
-      //   <body>
-      //     <h1>${content.title}</h1>
-      //     <p>${content.body}</p>
-      //   </body>
-      //   </html>
-      // `;
-      // await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
-      // const pdfBuffer = await printWindow.webContents.printToPDF({});
-      // fs.writeFileSync(pdfPath, pdfBuffer);
-      // const printResult = await new Promise((resolve) => {
-      //   printWindow.webContents.print(
-      //     {
-      //       silent: true,
-      //       deviceName: printerName,
-      //     },
-      //     (success, errorType) => {
-      //       if (!success) {
-      //         console.error('Print failed:', errorType);
-      //         resolve({ success: false, error: errorType });
-      //       } else {
-      //         resolve({ success: true });
-      //       }
-      //     }
-      //   );
-      // });
-      // printWindow.close();
-      // if (!printResult.success) {
-      //   throw new Error(printResult.error || 'Unknown print error');
-      // }
-      // return { success: true };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       const pdfPath = path.join(app.getPath('temp'), 'temp.pdf');
 
       // Create a hidden window for rendering the content
@@ -273,11 +231,9 @@ function registerIPCHandlers() {
       const templatePath = path.join(__dirname, 'PDFTemplate', 'page3.html');
       let htmlContent = fs.readFileSync(templatePath, 'utf-8');
 
-
+      // Load the JSON data
       const filePath = path.join(__dirname, 'SavedData', `citation-${content.Vehicles.plate}.json`);
-
       const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-
 
       // Replace placeholders in the template with the provided data
       htmlContent = bindDataToTemplate(htmlContent, jsonData);
@@ -291,79 +247,41 @@ function registerIPCHandlers() {
       // Save the PDF to a temporary file
       fs.writeFileSync(pdfPath, pdfBuffer);
 
+      // Print the PDF
+      const printResult = await new Promise((resolve) => {
+        renderWindow.webContents.print(
+          {
+            silent: true,
+            deviceName: printerName,
+          },
+          (success, errorType) => {
+            if (!success) {
+              log.error("Print failed:", errorType);
+              resolve({ success: false, error: errorType });
+            } else {
+              resolve({ success: true });
+            }
+          }
+        );
+      });
+
       // Close the rendering window
       renderWindow.close();
-
-      // Create a new window for PDF preview
-      const previewWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        show: true,
-        webPreferences: {
-          nodeIntegration: false,
-          contextIsolation: true,
-        },
-      });
-
-      // Load the generated PDF in the preview window
-      previewWindow.loadURL(`file://${pdfPath}`);
-
-      // Print the PDF silently to the selected printer when confirmed
-      const printResult = await new Promise((resolve) => {
-        previewWindow.webContents.once('did-finish-load', () => {
-          // Add a confirmation button in the preview window
-          previewWindow.webContents.executeJavaScript(`
-              const button = document.createElement('button');
-              button.textContent = 'Print';
-              button.style.position = 'fixed';
-              button.style.bottom = '20px';
-              button.style.right = '20px';
-              button.style.padding = '10px 20px';
-              button.style.fontSize = '16px';
-              button.style.zIndex = '1000';
-              button.addEventListener('click', () => window.postMessage('print', '*'));
-              document.body.appendChild(button);
-            `);
-
-          // Wait for the user to click the "Print" button
-          const { ipcMain } = require('electron');
-          ipcMain.once('print-pdf', () => {
-            previewWindow.webContents.print(
-              {
-                silent: true,
-                deviceName: printerName,
-              },
-              (success, errorType) => {
-                if (!success) {
-                  console.error('Print failed:', errorType);
-                  resolve({ success: false, error: errorType });
-                } else {
-                  resolve({ success: true });
-                }
-              }
-            );
-          });
-        });
-      });
 
       if (!printResult.success) {
         throw new Error(printResult.error || "Unknown print error");
       }
 
-      // Close the preview window after printing
-      previewWindow.close();
-
       return { success: true };
-
-
-
-
-
     } catch (error) {
-      console.error("Error in print-pdf handler:", error);
+      log.error("Error in print-pdf handler:", error);
       return { success: false, error: error.message };
     }
   });
+
+
+
+
 
 
 
@@ -374,6 +292,7 @@ function registerIPCHandlers() {
 * @param {object} data - The data object to bind.
 * @returns {string} - The HTML content with data bound.
 */
+
   function bindDataToTemplate(template, dataa) {
 
     log.info(dataa[0])
@@ -441,8 +360,6 @@ function registerIPCHandlers() {
 
   }
 
-
-
   ipcMain.handle('read-xml-files', async (event, someParameter = 'parser_vehicle_details') => {
     return new Promise((resolve, reject) => {
       const args = [
@@ -451,16 +368,19 @@ function registerIPCHandlers() {
         'read',
       ].join(' ');
 
+      log.info(args)
+      log.info(`${path.join(__dirname, "litedb_demo3.exe")} ${args}`)
+
       sudo.exec(
         `${path.join(__dirname, "litedb_demo3.exe")} ${args}`,
         { name: "LiteDB App" },
         (error, stdout, stderr) => {
           if (error) {
-            console.error(`Error: ${error.message}`);
+            log.error(`Error: ${error.message}`);
             reject(error);
           }
           if (stderr) {
-            console.error(`Stderr: ${stderr}`);
+            log.error(`Stderr: ${stderr}`);
           }
           resolve(stdout);
         }
@@ -609,7 +529,7 @@ function registerIPCHandlers() {
       const fileContent = fs.readFileSync(filePath, "utf-8");
       return JSON.parse(fileContent);
     } catch (error) {
-      console.error("Error reading JSON file:", error);
+      log.error("Error reading JSON file:", error);
       throw error;
     }
   });
@@ -641,9 +561,32 @@ function registerIPCHandlers() {
 
       return "Data updated successfully";
     } catch (error) {
-      console.error("Error updating JSON file:", error);
+      log.error("Error updating JSON file:", error);
       throw error;
     }
+  });
+
+  ipcMain.handle("get-desktop-properties", async () => {
+    const publicIp = await axios.get('https://api.ipify.org?format=json');
+
+
+    const properties = {
+      Ipaddress: getLocalIpAddress(),
+      GeoLocation: await getGeoLocation(publicIp.data.ip),
+      DeviceName: os.hostname(),
+      DeviceType: os.type(),
+      OperatingSystem: os.platform(),
+      SystemArchitecture: os.arch(),
+      DisplayResolution: getDisplayResolution(),
+      ApplicationVersion: app.getVersion(),
+      PublicIpaddress: publicIp.data.ip,
+      Macaddress: getMacAddress(),
+      ProxyVpndetails: getProxyDetails(),
+    };
+
+    console.log(properties)
+
+    return properties;
   });
 
 }
@@ -652,10 +595,6 @@ ipcMain.on("LOGIN", async () => {
   console.log("login started");
   await auth.login();
 });
-
-
-
-
 
 app.on("second-instance", (event, commandLine) => {
   // Focus the app window if already running

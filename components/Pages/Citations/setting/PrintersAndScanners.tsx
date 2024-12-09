@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { PrintersAndScannersIparams } from "./PrintersAndScannersI";
 
 const PrintersAndScanners: React.FC<PrintersAndScannersIparams> = ({
-  selectedPrinter,
   setSelectedPrinter,
 }) => {
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
@@ -18,16 +17,13 @@ const PrintersAndScanners: React.FC<PrintersAndScannersIparams> = ({
         console.error("Failed to get printers:", err);
       });
 
-
-      if(localStorage.getItem('PrinterName')){
-        setSelectedPrinter(String(localStorage.getItem('PrinterName')));
-      }
-      if(localStorage.getItem('activeBtn')){
-        setActiveBtn(Number(localStorage.getItem('activeBtn')));
-      }
+    if (localStorage.getItem("PrinterName")) {
+      setSelectedPrinter(String(localStorage.getItem("PrinterName")));
+    }
+    if (localStorage.getItem("activeBtn")) {
+      setActiveBtn(Number(localStorage.getItem("activeBtn")));
+    }
   }, []);
-
-  console.log(localStorage.getItem('PrinterName'))
 
   return (
     <div style={styles.container}>
@@ -45,9 +41,8 @@ const PrintersAndScanners: React.FC<PrintersAndScannersIparams> = ({
             <span>{printer.name}</span>
             <button
               onClick={() => {
-
-                localStorage.setItem('PrinterName', printer.name);
-                localStorage.setItem('activeBtn', String(index));
+                localStorage.setItem("PrinterName", printer.name);
+                localStorage.setItem("activeBtn", String(index));
                 setSelectedPrinter(printer.name);
                 setActiveBtn(index);
               }}
