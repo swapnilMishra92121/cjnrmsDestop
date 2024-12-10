@@ -12,6 +12,7 @@ interface ElectronAPI {
 	getToken:()=>Promise<string>;
 	logout:()=>void;
 	closeApp:()=>void;
+	getDesktopProperties:()=>any;
   }
   
   declare global {

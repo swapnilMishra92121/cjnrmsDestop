@@ -26,7 +26,7 @@ import { Devicedetail } from "./component/Devicedetail/Devicedetail";
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
- 
+  const [unitId, setUnitId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -34,6 +34,7 @@ export const AddCitations: React.FC = () => {
   const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
   const [AuditData, setAuditData] = useState<AuditFormData | undefined>();
+  const [showDeviceDetail, setShowDeviceDetail] = useState<boolean>(false);
   const [formData, setformData] = useState<FormData>({
     Vehicles: {
       plate: "",
@@ -195,7 +196,7 @@ export const AddCitations: React.FC = () => {
     window.electronAPI.sendLogin();
   };
 
-  const logOutHandler=async()=>{
+  const logOutHandler = async () => {
     await window.electronAPI.logout();  // Call logout function
     setToken(null);  // Clear token from state in UI
     console.log("Logged out successfully");
@@ -203,15 +204,22 @@ export const AddCitations: React.FC = () => {
 
   useEffect(() => {
     const fetchToken = async () => {
-      const token = await window.electronAPI.getToken();  // Fetch the token
-      console.log("token",token);
-      setToken(token);
-      // if(token){
-      //   window.electronAPI.closeApp();
-      // }
+      const access_token = await window.electronAPI.getToken();  // Fetch the token
+      console.log("access_Token", access_token);
+      setToken(access_token);
+      if (access_token) {
+        setShowDeviceDetail(true);
+      }
     };
     fetchToken();
   }, [token]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isFirstRegis = window.localStorage.getItem("isFirstRegister");
+      setUnitId(isFirstRegis);
+    }
+  }, []);
 
   return (
     <>
@@ -226,7 +234,11 @@ export const AddCitations: React.FC = () => {
         />
       )}
 
-      <ModalComponent open={false} innerContant={<Devicedetail />} />
+      {!unitId &&
+        <ModalComponent
+          open={showDeviceDetail}
+          innerContant={<Devicedetail setShowDeviceDetail={setShowDeviceDetail} />}
+        />}
 
       <div
         className="citation"
@@ -382,25 +394,25 @@ export const AddCitations: React.FC = () => {
                   title="Grid View"
                 />
               </Tooltip>
-              
-              <ButtonComponents
-                  name="Logout"
-                  showBackgroundColor={true}
-                  color={"red"}
-                  textColor={"#fff" }
-                  borderColor={ "gray"}
-                  handleClick={() => {
-                    logOutHandler()
-                  }}
-                />
 
-                {/* <Button
+              <ButtonComponents
+                name="Logout"
+                showBackgroundColor={true}
+                color={"red"}
+                textColor={"#fff"}
+                borderColor={"gray"}
+                handleClick={() => {
+                  logOutHandler()
+                }}
+              />
+
+              {/* <Button
                   onClick={() => {
                     logOutHandler()
                   }}
                   title="Logout"
                 /> */}
-              
+
             </Flex>
           </Flex>
 
