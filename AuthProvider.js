@@ -1,5 +1,6 @@
 const { PublicClientApplication } = require("@azure/msal-node");
-const { shell, safeStorage } = require("electron");
+const { shell } = require("electron");
+const Registry = require('winreg');
 const { promises } = require("fs");
 
 let Store; // Declare the Store variable
@@ -38,8 +39,11 @@ class AuthProvider {
   }
 
   async login() {
-    await this.initializeStore(); // Ensure store is initialized
-
+    await this.initializeStore(); 
+    const regKey = new Registry({
+      hive: Registry.HKLM, 
+      key: '\\Software\\CJNRMS'
+    });
     try {
       const openBrowser = async (url) => {
         console.log("Authentication URL:", url);
@@ -58,6 +62,11 @@ class AuthProvider {
         }
       );
       Store.set("access_token", authResponse.accessToken);
+      regKey.set('Token', Registry.REG_SZ, authResponse.accessToken, (err) => {
+        if (err) console.error('Error writing token:', err);
+        else console.log('Token saved to registry.');
+      });
+
       this.account = authResponse.account;
       return authResponse.accessToken;
     } catch (error) {
