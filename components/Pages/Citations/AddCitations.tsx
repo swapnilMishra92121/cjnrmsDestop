@@ -20,12 +20,14 @@ import { ModalComponent } from "@/components/CommonComponents/Modal/ModalCompone
 import { LoginConfirmation } from "@/components/CommonComponents/Modal/LoginConfirmation/LoginConfirmation";
 import PrintersAndScanners from "./setting/PrintersAndScanners";
 import { Devicedetail } from "./component/Devicedetail/Devicedetail";
+import { Loader } from "@/components/CommonComponents/Loader/Loader";
 
 
 
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
 export const AddCitations: React.FC = () => {
+  const [loading,setLoading] = useState(false);
   const [unitId, setUnitId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
@@ -223,6 +225,7 @@ export const AddCitations: React.FC = () => {
 
   return (
     <>
+    <Loader loading={loading}/>
       {!token && (
         <ModalComponent
           open={true}
@@ -237,7 +240,7 @@ export const AddCitations: React.FC = () => {
       {!unitId &&
         <ModalComponent
           open={showDeviceDetail}
-          innerContant={<Devicedetail setShowDeviceDetail={setShowDeviceDetail} />}
+          innerContant={<Devicedetail setShowDeviceDetail={setShowDeviceDetail}  setLoading={setLoading}/>}
         />}
 
       <div

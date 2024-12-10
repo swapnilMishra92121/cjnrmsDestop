@@ -15,7 +15,7 @@ const Squad = [
   { id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", value: "Squad 1" },
 ];
 
-export const Devicedetail: React.FC<DevicedetailIParams> = ({setShowDeviceDetail}) => {
+export const Devicedetail: React.FC<DevicedetailIParams> = ({setShowDeviceDetail,setLoading}) => {
   const devicedetailFunction = new DevicedetailFunction();
   const [UnitId, setUnitId] = useState<string>("");
   const [SquadId, setSquadId] = useState<string>("");
@@ -47,8 +47,9 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({setShowDeviceDetail
 
   const onSubmit = () => {
     localStorage.setItem("isFirstRegister","true");
-    devicedetailFunction.deviceRegister(desktopProperties, UnitId, SquadId);
     setShowDeviceDetail(false);
+    devicedetailFunction.deviceRegister(desktopProperties, UnitId, SquadId, setLoading);
+    // setShowDeviceDetail(false);
   };
 
   return (

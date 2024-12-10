@@ -1,14 +1,17 @@
 import { Fetcher } from "@/services/Fetcher";
 import { successCreatedMessage } from "@/utils/const";
 import { setDesktopPropertiesIState } from "./DevicedetailIParams";
+import { openNotificationWithIcon } from "@/components/CommonComponents/Toster/Toster";
 
 const fetcher = new Fetcher();
 export class DevicedetailFunction {
   async deviceRegister(
     desktopProperties: setDesktopPropertiesIState,
     UnitId: string,
-    SquadId: string
+    SquadId: string,
+    setLoading: (data: boolean) => void
   ) {
+    setLoading(true)
     const response = await fetcher.post(
       "/citation/device/register",
       {
@@ -35,6 +38,8 @@ export class DevicedetailFunction {
         show: true,
       }
     );
+    openNotificationWithIcon("success", "Device Register Successfully");
+    setLoading(false);
     let res = response?.Data;
   }
 }

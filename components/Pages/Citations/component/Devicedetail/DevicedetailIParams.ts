@@ -1,5 +1,6 @@
 export interface DevicedetailIParams{
-    setShowDeviceDetail:(data:boolean)=>void
+    setShowDeviceDetail:(data:boolean)=>void;
+    setLoading:(data:boolean)=>void;
 }
 
 export interface setDesktopPropertiesIState{
