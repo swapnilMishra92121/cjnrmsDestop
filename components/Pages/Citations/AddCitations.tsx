@@ -1,6 +1,6 @@
 "use client";
 import "./addCitation.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Subject from "./Tabs/Subject/Subject";
 import Vehicles from "./Tabs/Vehicles/Vehicles";
 import { Location } from "./Tabs/Location/Location";
@@ -23,17 +23,39 @@ import { Devicedetail } from "./component/Devicedetail/Devicedetail";
 import { Loader } from "@/components/CommonComponents/Loader/Loader";
 
 
-
 const { SplitView, GridView, Setting, newLogo, theme, account } = images;
 
+
+const SessionExpire: React.FC<{ login: () => void }> = ({ login }) => {
+  return (
+    <>
+      <div className="_session_expire_container">
+        <h2 className="session_expire_heading_container">
+          Session Expired
+        </h2>
+        <p>Your session has expired due to inactivity or for security reasons.
+          🔒 Please log in again to continue.
+          We value your security and ensure your data remains protected.
+          [Log In]
+          If you experience any issues, please contact support.</p>
+        <ButtonComponents
+          name="Login"
+          showBackgroundColor={true}
+          color="#3672b3"
+          handleClick={login}
+        />
+      </div>
+    </>
+  )
+}
 export const AddCitations: React.FC = () => {
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [unitId, setUnitId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [activeBtn, setActiveBtn] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(1);
   const [glanceView, setGlanceView] = useState<boolean>(false);
-  const [showUpdatePopUp, setShowUpdatePopUp] = useState<boolean>(false);
+  const [isSessionExpired, setShowIsSessionExpired] = useState<boolean>(false);
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
   const [AuditData, setAuditData] = useState<AuditFormData | undefined>();
   const [showDeviceDetail, setShowDeviceDetail] = useState<boolean>(false);
@@ -225,12 +247,10 @@ export const AddCitations: React.FC = () => {
 
   return (
     <>
-    <Loader loading={loading}/>
+      <Loader loading={loading} />
       {!token && (
         <ModalComponent
           open={true}
-          width={1000}
-          height={500}
           innerContant={
             <LoginConfirmation onClose={() => { }} onLogin={loginHandler} />
           }
@@ -240,8 +260,13 @@ export const AddCitations: React.FC = () => {
       {!unitId &&
         <ModalComponent
           open={showDeviceDetail}
-          innerContant={<Devicedetail setShowDeviceDetail={setShowDeviceDetail}  setLoading={setLoading}/>}
+          innerContant={<Devicedetail setShowDeviceDetail={setShowDeviceDetail} setLoading={setLoading} />}
         />}
+
+      {/* <ModalComponent
+        open={isSessionExpired}
+        innerContant={ <SessionExpire login={loginHandler}/>}
+      /> */}
 
       <div
         className="citation"

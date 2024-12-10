@@ -12,17 +12,27 @@ export const LoginConfirmation: React.FC<LoginConfirmationIProps> = ({
       <div>
         <div className="modal-content">
           <p className="modal-message">
-          Welcome to the CJNRMS <br />
-          Access your projects, journals, and resources all in one place.
-          Login to CJNRMS to Continue.
+            Welcome to Citation App!
           </p>
-          <div className="modal-actions">
-            <button className="modal-button-confirm" onClick={onLogin} style={{cursor:"pointer"}}>
+          <p className="modal-message-content">
+            To get started, you'll need to log in to your account.
+          </p>
+          <p className="modal-message-content-description">
+            Click the button below to open the login page in your browser.
+          </p>
+
+          <div className="modal-actions modal-actions-login-btn">
+            <div></div>
+            <button className="modal-button-confirm" onClick={onLogin} style={{ cursor: "pointer" }}>
               Login
             </button>
+            <div></div>
           </div>
         </div>
       </div>
+      <p className="notes_container">
+        <strong>Note:</strong> After logging in, click the link on the browser page to return to the app.
+      </p>
     </div>
   );
 };

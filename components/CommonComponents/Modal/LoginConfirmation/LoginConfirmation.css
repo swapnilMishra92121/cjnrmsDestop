@@ -6,9 +6,9 @@
 .modal-button-confirm {
     background-color: #3672b3;
     color: #fff;
-    padding: 5px 10px;
+    padding: 5px 15px;
     float: right;
-    font-size: 1rem;
+    font-size: 1.15rem;
     border-radius: 5px;
     border: none;
 }
@@ -29,4 +29,23 @@
 
 .ant-modal .css-tpassh{
     width: auto !important;
+}
+
+.modal-message-content{
+    font-size: 16px;
+    font-weight: 400;
+    /* margin:0px 5px; */
+}
+.modal-message-content-description{
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: -5px;
+}
+.notes_container{
+    font-size: 15px;
+    font-weight: 400;
+}
+.modal-actions-login-btn{
+    display: flex;
+    justify-content: space-between;
 }
