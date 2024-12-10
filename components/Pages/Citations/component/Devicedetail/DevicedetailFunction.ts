@@ -15,10 +15,6 @@ export class DevicedetailFunction {
     const response = await fetcher.post(
       "/citation/device/register",
       {
-        DesktopApplicationDetailId: null,
-        UserId: "9866a16e-7e81-41c3-ae0e-239858884115",
-        RegisterDateTime: "2024-12-06T08:51:27.677Z",
-        Ipaddress: desktopProperties.Ipaddress,
         GeoLocation: desktopProperties.GeoLocation,
         UnitId: UnitId,
         SquadId: SquadId,
@@ -28,10 +24,10 @@ export class DevicedetailFunction {
         SystemArchitecture: desktopProperties.SystemArchitecture,
         DisplayResolution: desktopProperties.DisplayResolution,
         ApplicationVersion: desktopProperties.ApplicationVersion,
-        LastUpdateDateTime: "2024-12-06T08:51:27.677Z",
         PublicIpaddress: desktopProperties.PublicIpaddress,
         Macaddress: desktopProperties.Macaddress,
         ProxyVpndetails: desktopProperties.ProxyVpndetails,
+        IsActive: true,
       },
       {
         message: successCreatedMessage,

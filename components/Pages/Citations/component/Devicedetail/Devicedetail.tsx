@@ -60,6 +60,7 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({setShowDeviceDetail
             id: state.id,
             value: state.value,
           }))}
+          width="100px"
           fieldName="Unit"
           value={UnitId}
           handleRowClick={(e) => {
@@ -73,6 +74,7 @@ export const Devicedetail: React.FC<DevicedetailIParams> = ({setShowDeviceDetail
             value: state.value,
           }))}
           fieldName="Squad"
+          width="100px"
           value={SquadId
             
           }

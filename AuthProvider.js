@@ -54,6 +54,7 @@ class AuthProvider {
           successTemplate: successTemplate,
           failureTemplate: "<h1> Opps! Something went wrong </h1>",
           redirectUri: "myapp://login-success", // Specify redirect_uri here
+          scopes:[`api://8d8db5bf-5726-471d-93df-3fddeca4a95a/ReadWrite`]
         }
       );
       Store.set("access_token", authResponse.accessToken);
