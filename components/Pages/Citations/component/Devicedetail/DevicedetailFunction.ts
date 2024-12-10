@@ -34,7 +34,6 @@ export class DevicedetailFunction {
         show: true,
       }
     );
-    openNotificationWithIcon("success", "Device Register Successfully");
     setLoading(false);
     let res = response?.Data;
   }
